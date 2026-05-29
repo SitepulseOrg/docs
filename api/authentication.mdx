@@ -1,0 +1,240 @@
+---
+title: "Authentication"
+description: "Personal access tokens, OAuth scopes, and security best practices"
+---
+
+SitePulse v1 uses [Laravel Passport](https://laravel.com/docs/passport) OAuth2 personal access tokens. Each token belongs to the SitePulse user who created it and acts on that user's behalf.
+
+## Personal access tokens
+
+Create and revoke tokens in the dashboard under **Settings → API tokens**.
+
+### Request headers
+
+Send the token on every request:
+
+<CodeGroup>
+
+```http Headers
+Authorization: Bearer {access_token}
+Accept: application/json
+```
+
+```javascript JavaScript
+const headers = {
+  Authorization: 'Bearer {access_token}',
+  Accept: 'application/json',
+};
+```
+
+```python Python
+headers = {
+    'Authorization': 'Bearer {access_token}',
+    'Accept': 'application/json',
+}
+```
+
+```go Go
+req.Header.Set("Authorization", "Bearer {access_token}")
+req.Header.Set("Accept", "application/json")
+```
+
+```ruby Ruby
+request['Authorization'] = 'Bearer {access_token}'
+request['Accept'] = 'application/json'
+```
+
+```php PHP
+$headers = [
+    'Authorization: Bearer {access_token}',
+    'Accept: application/json',
+];
+```
+
+</CodeGroup>
+
+For `POST`, `PATCH`, and `PUT` requests with a body, also send:
+
+<CodeGroup>
+
+```http Headers
+Content-Type: application/json
+```
+
+```javascript JavaScript
+headers['Content-Type'] = 'application/json';
+```
+
+```python Python
+headers['Content-Type'] = 'application/json'
+```
+
+```go Go
+req.Header.Set("Content-Type", "application/json")
+```
+
+```ruby Ruby
+request['Content-Type'] = 'application/json'
+```
+
+```php PHP
+$headers[] = 'Content-Type: application/json';
+```
+
+</CodeGroup>
+
+### Token lifetime
+
+Token expiration is configured when the token is created. Expired or revoked tokens return `401 Unauthorized`.
+
+## Email verification
+
+All `/api/v1/*` routes require a verified email address on the token owner. Unverified users receive an authentication error.
+
+## OAuth scopes
+
+Each token carries one or more scopes. Routes declare the minimum scope required. If the token lacks that scope, the API returns `403 Forbidden` even when the user would otherwise be allowed in the UI.
+
+### Available scopes
+
+| Scope | Description |
+|-------|-------------|
+| `teams:read` | Read teams and plan limits |
+| `sites:read` | Read sites and site monitoring data |
+| `sites:write` | Create and update sites |
+| `sites:delete` | Delete sites |
+| `checks:read` | Read check runs and results |
+| `checks:run` | Queue manual check runs |
+| `checks:delete` | Delete manual check runs |
+| `issues:read` | Read problem events (internal records used for notifications) |
+| `issues:write` | (No longer used – write routes removed) |
+
+<Info>
+  Scopes map to team permissions. For example, `sites:write` satisfies the `createSite` and `updateSite` permissions when the token is used. Team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.
+</Info>
+
+### Recommended scope sets
+
+Different use cases require different scope combinations:
+
+<AccordionGroup>
+  <Accordion title="Read-only monitoring">
+    ```
+    teams:read
+    sites:read
+    checks:read
+    issues:read
+    ```
+    
+    Perfect for dashboards and monitoring displays.
+  </Accordion>
+  
+  <Accordion title="Deploy / provision sites">
+    Add `sites:write` to the read-only set:
+    
+    ```
+    teams:read
+    sites:read
+    sites:write
+    checks:read
+    issues:read
+    ```
+  </Accordion>
+  
+  <Accordion title="CI check runner">
+    Add `checks:run` for running checks:
+    
+    ```
+    teams:read
+    sites:read
+    checks:read
+    checks:run
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Warning>
+  Grant only the scopes you need. This follows the principle of least privilege.
+</Warning>
+
+## Team access and billing
+
+Authentication proves **who** is calling. Team routes also enforce:
+
+<Steps>
+  <Step title="Membership">
+    The user must belong to the team in the URL (or implied by the site/check/issue).
+    
+    <Note>
+      Otherwise the API returns `404` to avoid leaking cross-tenant resources.
+    </Note>
+  </Step>
+  
+  <Step title="Active subscription">
+    The team must have active plan access.
+    
+    Otherwise the API returns `402` with:
+    
+    ```json
+    {
+      "message": "An active team subscription is required."
+    }
+    ```
+  </Step>
+  
+  <Step title="Role permissions">
+    Site, check, and issue policies apply on top of token scopes.
+  </Step>
+</Steps>
+
+## What v1 does not support
+
+The public v1 API documented here is limited to personal access tokens created in the dashboard. The following are not part of this guide:
+
+- Third-party OAuth authorization code flows (may be added later)
+- Client credentials / machine-only tokens for customers
+- Anonymous or unauthenticated endpoints
+
+## Security practices
+
+<CardGroup cols={2}>
+  <Card title="Store securely" icon="vault">
+    Store tokens in secrets managers, not source control
+  </Card>
+  <Card title="Separate environments" icon="layer-group">
+    Use separate tokens per environment (staging vs production)
+  </Card>
+  <Card title="Revoke immediately" icon="trash">
+    Revoke tokens immediately when an integration is retired
+  </Card>
+  <Card title="Narrow scopes" icon="filter">
+    Prefer narrow scopes and dedicated service users where your plan allows
+  </Card>
+</CardGroup>
+
+## Example: Creating a token
+
+<Steps>
+  <Step title="Navigate to API tokens">
+    In the SitePulse dashboard, go to **Settings → API tokens**.
+  </Step>
+  
+  <Step title="Create new token">
+    Click **Create Token** and provide:
+    - A descriptive name (e.g., "CI Pipeline" or "Monitoring Dashboard")
+    - Select required scopes
+  </Step>
+  
+  <Step title="Copy and secure">
+    Copy the token value immediately.
+    
+    <Warning>
+      The token is only shown once. Store it securely.
+    </Warning>
+  </Step>
+</Steps>
+
+## See also
+
+- [Requests and responses](/api/requests-responses)
+- [Endpoints](/api/endpoints)

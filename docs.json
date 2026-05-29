@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Sitepulse Docs",
+  "name": "SitePulse Docs",
   "colors": {
     "primary": "#7f22fe",
     "light": "#b5a2fa",
@@ -16,21 +16,32 @@
           "index",
           "quickstart"
         ]
+      },
+      {
+        "group": "User Guide",
+        "pages": [
+          "guide/dashboard",
+          "guide/sites",
+          "guide/checks",
+          "guide/notifications",
+          "guide/team-management",
+          "guide/account-settings"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api/overview",
+          "api/authentication",
+          "api/requests-responses",
+          "api/resources",
+          "api/endpoints",
+          "api/check-results"
+        ]
       }
     ],
     "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
+      
     }
   },
   "logo": {

@@ -1,0 +1,100 @@
+---
+title: "Notifications"
+description: "Configure alerts for monitoring problems via email, webhook, in-app, and browser push"
+---
+
+SitePulse notifies your team when automatic monitoring detects problems or when manual checks complete or fail. There are no issue pages or acknowledgement workflows — you receive notifications through the notification configurations you set up.
+
+## Notification configurations
+
+Admins and owners configure notification destinations under **Team Settings → Notifications**.
+
+You can add multiple email addresses and webhook URLs. Each configuration can:
+
+- Apply to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
+- Be enabled or disabled independently
+- Be tested directly from the settings screen
+
+Notification configurations determine **where** alerts go. The conditions for sending alerts (thresholds, quiet time) are controlled in the team's monitoring settings.
+
+## When notifications are sent
+
+### Automatic monitoring notifications
+
+When an automatic check detects a problem that meets the configured thresholds, SitePulse sends notifications to all enabled destinations for that tool.
+
+Notifications are typically sent for:
+
+- Problem detected (e.g., site down after confirmation retries, SSL nearing expiry, broken links exceeding threshold, performance degradation)
+- Problem recovered (when subsequent checks show the issue has cleared)
+
+<Note>
+  Exact trigger rules are defined in your team's monitoring settings (thresholds, confirmation retries, follow-up timing).
+</Note>
+
+### Manual check notifications
+
+When you run a manual check, SitePulse can notify the team on completion or failure (for longer-running checks like SSL, broken links, or performance that finish in the background).
+
+These notifications do not depend on the automatic monitoring thresholds.
+
+## Notification channels
+
+### Email
+
+Admins and owners add email addresses that receive alerts.
+
+Each email notification typically includes:
+
+- Summary of what was detected
+- Severity (critical / warning / info)
+- The affected site
+- Key details from the check result
+
+### Webhook
+
+Add webhook endpoints to receive HTTP notifications (GET or POST).
+
+Webhook configurations let you:
+
+- Choose the HTTP method
+- Filter to specific tools
+- Receive events for problem detection and recovery
+
+Use webhooks to integrate with Slack, Discord, PagerDuty, or your own automation.
+
+<Warning>
+  Webhook delivery failures do not affect monitoring or retry logic.
+</Warning>
+
+### In-app notifications
+
+While using the SitePulse dashboard, relevant notifications can appear in real time and update counts or summaries on the dashboard (subject to your notification settings and permissions).
+
+### Browser push notifications
+
+Enable browser push notifications in your personal account settings for problem lifecycle events on the device you're using.
+
+These are device-specific and respect team quiet time and notification configuration rules.
+
+## Quiet time
+
+**Quiet time** (configured in Team Settings → Monitoring) suppresses notifications during defined windows.
+
+Use it for:
+
+- Overnight or weekend periods when the team is unavailable
+- Planned maintenance windows
+
+Checks continue to run during quiet time — only the notifications are suppressed.
+
+## Managing notification configurations
+
+From the Notifications settings page, admins and owners can:
+
+- Add new email or webhook destinations
+- Edit existing configurations (tools, method, enabled state)
+- Test a configuration
+- Remove configurations that are no longer needed
+
+Each configuration is independent, so you can have different emails or webhooks for different tools or environments.

@@ -1,0 +1,122 @@
+---
+title: "Using Check Tools"
+description: "Five monitoring tools for comprehensive website health checks"
+---
+
+SitePulse includes five check tools for monitoring website health. Checks run against [sites](/guide/sites) that your team has added to SitePulse.
+
+## Available checks
+
+<CardGroup cols={2}>
+  <Card title="Status" icon="signal">
+    Whether the site is reachable, which HTTP status code it returns, how long it takes to respond, and whether redirects are working.
+  </Card>
+  <Card title="SSL" icon="lock">
+    Whether the TLS certificate is valid, who issued it, and when it expires.
+  </Card>
+  <Card title="DNS" icon="network-wired">
+    Which DNS records are published and whether the domain appears to be proxied through Cloudflare.
+  </Card>
+  <Card title="Broken Links" icon="link-slash">
+    Which links on the site return unsuccessful responses.
+  </Card>
+  <Card title="Performance" icon="gauge-high">
+    How quickly the page loads, Core Web Vitals, performance score, and suggested improvements.
+  </Card>
+</CardGroup>
+
+## Manual checks
+
+Use a manual check when you want an immediate result for a site. Status and DNS checks usually return quickly. SSL, broken-links, and performance checks can take longer and may finish in the background.
+
+### How to run a manual check
+
+<Steps>
+  <Step title="Navigate to the tool">
+    From the sidebar, expand **Manual Diagnostics** and click the desired tool (Status, SSL, DNS, Broken Links, or Performance).
+    
+    <Note>
+      Some tools may be disabled if your plan does not include them.
+    </Note>
+  </Step>
+  <Step title="Select a site">
+    On the tool page, select a site from your current team's sites. Pinned sites appear near the top.
+    
+    For Performance and Broken Links you can optionally provide a specific path.
+  </Step>
+  <Step title="Run the check">
+    Click **Run check**. The form submits to the appropriate backend action.
+  </Step>
+  <Step title="View results">
+    Results appear on the page. Completed results are also saved to the site's check history and visible on the site detail page.
+  </Step>
+</Steps>
+
+<Tip>
+  You can also trigger a specific tool for the current site directly from the site detail screen using the **Run Check** dropdown (top right of the site header). This deep-links into the chosen tool with the site pre-selected and the check starts automatically.
+</Tip>
+
+### Manual check results
+
+Manual check results appear on the site and check detail screens (under "Manual check history" on the site). If a manual check finishes or fails in the background, SitePulse sends the team a completion or failure notification.
+
+Previous manual checks for the selected site/tool are listed below the live result area so you can compare runs over time. Individual manual check records can be deleted from the check detail view when needed.
+
+## Automatic monitoring
+
+Automatic monitoring runs checks on the cadence allowed by the team's plan and monitoring settings. Automatic results are evaluated against your configured thresholds. When a check repeatedly fails or crosses a threshold, SitePulse sends notifications to the configured destinations (instead of notifying on every individual check result).
+
+When the problem later clears, recovery notifications are sent.
+
+<Info>
+  See [Notifications](/guide/notifications) for details on notification channels, quiet time, and configuration.
+</Info>
+
+## Team monitoring settings
+
+Team admins can control:
+
+| Setting | Description |
+|---------|-------------|
+| Monitored tools | Which tools are monitored automatically |
+| Check cadence | How often each check runs (subject to plan) |
+| Status headers | Status-check headers for sites requiring auth |
+| Problem thresholds | When notifications are triggered for failures |
+| Confirmation retry | Timing for confirmation retries |
+| Follow-up timing | How often to check during incidents |
+| Quiet time | When to suppress notifications |
+
+<Note>
+  Some site settings can override team defaults for a specific site.
+</Note>
+
+## Reading results
+
+Use check results to decide what action to take:
+
+<AccordionGroup>
+  <Accordion title="Status failures">
+    Usually mean the site is down, blocked, or redirecting incorrectly.
+  </Accordion>
+  <Accordion title="SSL failures">
+    Usually mean the certificate is expired, missing, misconfigured, or not yet trusted.
+  </Accordion>
+  <Accordion title="DNS failures">
+    Usually mean required records are missing or changed.
+  </Accordion>
+  <Accordion title="Broken-link failures">
+    Identify pages or URLs that need cleanup.
+  </Accordion>
+  <Accordion title="Performance failures">
+    Identify slow responses, poor Core Web Vitals, or optimization opportunities.
+  </Accordion>
+</AccordionGroup>
+
+## Check status values
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Queued or currently running |
+| `completed` | Finished successfully |
+| `failed` | Finished with error |
+| `skipped` | Not run (due to plan or config) |

@@ -1,0 +1,323 @@
+---
+title: "Resources"
+description: "Field-by-field schemas for users, teams, sites, checks, notification-related events, and reports"
+---
+
+JSON shapes returned by v1 API resources.
+
+## User
+
+Returned on `GET /me` and nested on some notification event responses.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | integer | User id |
+| `name` | string | Display name |
+| `email` | string | Email address |
+| `email_verified_at` | string \| null | ISO 8601 when verified |
+
+### Example
+
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "email_verified_at": "2026-05-28T10:00:00+00:00"
+}
+```
+
+## Team
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | integer | Team id (use in `/teams/{team}` paths) |
+| `name` | string | Team name |
+| `personal_team` | boolean | Whether this is the user's personal team |
+| `owner_id` | integer | Owner user id |
+| `sites_count` | integer | Present when counted |
+| `members_count` | integer | Members including owner, when counted |
+| `limits` | object | Plan limits (see below) |
+| `created_at` | string | ISO 8601 |
+| `updated_at` | string | ISO 8601 |
+
+### Team limits object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `plan` | string | Plan key (e.g., `starter`, `pro`) |
+| `sites` | object | `{ "used", "limit", "remaining" }` style summary |
+| `seats` | object | Seat usage; may include `members`, `pending_invitations` |
+| `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools on plan |
+| `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
+| `history_retention_days` | integer \| null | How long check history is kept |
+| `priority_queue` | boolean | Whether checks use priority queue |
+
+### Example
+
+```json
+{
+  "id": 1,
+  "name": "Acme Inc",
+  "personal_team": false,
+  "owner_id": 1,
+  "sites_count": 12,
+  "members_count": 5,
+  "limits": {
+    "plan": "pro",
+    "sites": {
+      "used": 12,
+      "limit": 50,
+      "remaining": 38
+    },
+    "enabled_checks": {
+      "allowed": ["status", "ssl", "dns", "broken-links", "performance"]
+    },
+    "minimum_check_cadence_minutes": 5,
+    "history_retention_days": 90,
+    "priority_queue": true
+  },
+  "created_at": "2026-01-15T10:00:00+00:00",
+  "updated_at": "2026-05-28T14:30:00+00:00"
+}
+```
+
+## Site
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uuid` | string | Site identifier in API paths |
+| `team_id` | integer | Owning team |
+| `name` | string | Display name |
+| `url` | string | Canonical monitored URL |
+| `domain` | string | Hostname derived from URL |
+| `notes` | string \| null | Team notes |
+| `js_rendered` | boolean | Use JS rendering for broken-link crawls |
+| `is_pinned` | boolean | Pinned on sites list |
+| `enabled_checks` | string[] | Enabled tool values |
+| `monitoring` | object | See monitoring object below |
+| `issue_settings` | object \| null | Per-site issue thresholds (inherits team when null) |
+| `latest_checks` | object | Latest check per tool, when loaded |
+| `reports` | object | Absolute URLs to report endpoints |
+| `created_at` | string | ISO 8601 |
+| `updated_at` | string | ISO 8601 |
+
+### Monitoring object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `automatic_check_cadences` | object | Map of tool value → interval in minutes |
+| `status_check_header` | object \| null | Optional `{ "name", "value" }` header for status checks |
+
+### Latest checks object
+
+Keys are tool values (`status`, `ssl`, `dns`, `broken-links`, `performance`). Values are [Check](#check) objects or `null` if no check exists.
+
+### Reports object
+
+| Field | Type |
+|-------|------|
+| `uptime` | string (URL) |
+| `performance` | string (URL) |
+
+These are fully qualified route URLs for the report endpoints on this site.
+
+### Example
+
+```json
+{
+  "uuid" : "9d4e2c8f-1234-5678-9abc-def012345678",
+  "team_id": 1,
+  "name": "Example Site",
+  "url": "https://example.com",
+  "domain": "example.com",
+  "notes": "Production website",
+  "js_rendered": false,
+  "is_pinned": true,
+  "enabled_checks": ["status", "ssl", "performance"],
+  "monitoring": {
+    "automatic_check_cadences": {
+      "status": 5,
+      "ssl": 1440,
+      "performance": 60
+    },
+    "status_check_header": null
+  },
+  "issue_settings": null,
+  "reports": {
+    "uptime": "https://app.sitepulse.dev/api/v1/sites/9d4e2c8f.../reports/uptime",
+    "performance": "https://app.sitepulse.dev/api/v1/sites/9d4e2c8f.../reports/performance"
+  },
+  "created_at": "2026-05-20T10:00:00+00:00",
+  "updated_at": "2026-05-28T14:30:00+00:00"
+}
+```
+
+## Check
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uuid` | string | Check identifier |
+| `type` | string | Tool value |
+| `status` | string | `pending`, `completed`, `failed`, `skipped` |
+| `automatic` | boolean | Scheduled vs manual run |
+| `run_reason` | string \| null | `scheduled`, `confirmation_retry`, `incident_follow_up` when set |
+| `site` | object \| null | `{ uuid, name, url, domain }` when loaded |
+| `result` | mixed | Tool-specific payload; see [Check results](/api/check-results) |
+| `error` | mixed | Error payload when failed |
+| `created_at` | string | ISO 8601 |
+| `updated_at` | string | ISO 8601 |
+| `completed_at` | string \| null | ISO 8601 when finished |
+
+### Example
+
+```json
+{
+  "uuid": "9d4e2c8f-abcd-5678-9abc-def012345678",
+  "type": "status",
+  "status": "completed",
+  "automatic": false,
+  "run_reason": null,
+  "site": {
+    "uuid": "9d4e2c8f-1234-5678-9abc-def012345678",
+    "name": "Example Site",
+    "url": "https://example.com",
+    "domain": "example.com"
+  },
+  "result": {
+    "up": true,
+    "code": 200,
+    "url": "https://example.com",
+    "effective_url": "https://example.com",
+    "response_time": 142.37,
+    "redirected": false,
+    "redirect_count": 0
+  },
+  "error": null,
+  "created_at": "2026-05-28T14:30:00+00:00",
+  "updated_at": "2026-05-28T14:30:05+00:00",
+  "completed_at": "2026-05-28T14:30:05+00:00"
+}
+```
+
+## Issue (internal problem event record)
+
+SitePulse uses internal "issue" records to deduplicate problem events and drive notifications. These are **not** user-managed work items — there are no issue pages or acknowledgement flows in the product.
+
+The API exposes read-only access to recent problem events for integrations that need to correlate notifications or query history.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uuid` | string | Event identifier |
+| `team_id` | integer | Owning team |
+| `type` | string | Check tool that detected the problem |
+| `severity` | string | `critical`, `warning`, `info` |
+| `fingerprint` | string | Stable key used for deduplication and recovery matching |
+| `summary` | string | Human-readable summary of the problem |
+| `context` | object \| null | Structured details from the check |
+| `site` | Site \| null | Affected site when loaded |
+| `check` | Check \| null | The check that triggered the event |
+| `is_active` | boolean | Whether the problem is still considered open |
+| `opened_at` | string | ISO 8601 |
+| `resolved_at` | string \| null | ISO 8601 when recovered |
+| `last_evaluated_at` | string \| null | ISO 8601 |
+| `created_at` | string | ISO 8601 |
+| `updated_at` | string | ISO 8601 |
+
+### Example
+
+```json
+{
+  "uuid": "9d4e2c8f-issue-5678-9abc-def012345678",
+  "team_id": 1,
+  "type": "status",
+  "severity": "critical",
+  "fingerprint": "status:example.com:down",
+  "summary": "example.com is down (HTTP 500)",
+  "context": {
+    "response_code": 500
+  },
+  "is_active": true,
+  "opened_at": "2026-05-28T14:00:00+00:00",
+  "resolved_at": null,
+  "last_evaluated_at": "2026-05-28T14:30:00+00:00",
+  "created_at": "2026-05-28T14:00:00+00:00",
+  "updated_at": "2026-05-28T14:30:00+00:00"
+}
+```
+
+## Uptime report
+
+Returned by `GET /sites/{site}/reports/uptime`.
+
+```json
+{
+  "data": {
+    "days": [
+      {
+        "date": "2026-05-28T00:00:00+00:00",
+        "uptime_percentage": 99.5,
+        "total_checks": 288,
+        "up_checks": 287
+      }
+    ],
+    "total_uptime_percentage": 99.2
+  }
+}
+```
+
+<Info>
+  - Based on **automatic** completed `status` checks
+  - Days without checks have `uptime_percentage: null` and `total_checks: 0`
+  - Default range: 90 days; override with `?days=` (max 365)
+</Info>
+
+## Performance report
+
+Returned by `GET /sites/{site}/reports/performance`.
+
+```json
+{
+  "data": {
+    "days": [
+      {
+        "date": "2026-05-28T00:00:00+00:00",
+        "performance_score": 87.5,
+        "response_time": 420,
+        "speed": 3.2,
+        "total_checks": 24
+      }
+    ],
+    "total_performance_score": 85.1,
+    "total_response_time": 450,
+    "total_speed": 3.4,
+    "total_checks": 720
+  }
+}
+```
+
+<Info>
+  - Based on **automatic** completed `performance` checks
+  - Default range: 30 days; override with `?days=` (max 365)
+</Info>
+
+## Bulk site create response
+
+`POST /teams/{team}/sites/bulk` returns:
+
+```json
+{
+  "data": {
+    "created": [ /* Site resources */ ],
+    "skipped": [],
+    "failed": [
+      { "url": "https://invalid", "error": "..." }
+    ]
+  }
+}
+```
+
+## See also
+
+- [Endpoints](/api/endpoints)
+- [Check result payloads](/api/check-results)

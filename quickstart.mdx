@@ -1,47 +1,69 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Get started with SitePulse in minutes"
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+This guide will help you set up your first monitored site and run your first check.
 
 ## Prerequisites
 
-Before you begin, you must have:
+Before you begin, you need:
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+- A verified email address
+- Access to a website you want to monitor
 
 ## Get started
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Create your account">
+    Visit [app.sitepulse.dev](https://app.sitepulse.dev) and sign up. You'll need to verify your email before accessing the dashboard.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
-
-    ```bash
-    your-cli init
-    ```
+  <Step title="Create or join a team">
+    After verifying your email, create a team or accept an invitation if someone has already invited you. Teams allow you to collaborate and share monitoring responsibilities.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
-    ```
+  <Step title="Add your first site">
+    From the dashboard, click **Add Site** and provide:
+    - **URL** - The website you want to monitor (e.g., `https://example.com`)
+    - **Display Name** (optional) - A friendly name for the site
+    - **Enabled Checks** - Select which monitoring tools to enable (Status, SSL, DNS, Broken Links, Performance)
+    
+    SitePulse will automatically fetch the site's favicon and screenshot, then start monitoring.
+  </Step>
+  <Step title="Run a manual check">
+    To get immediate results:
+    1. Navigate to **Manual Diagnostics** in the sidebar
+    2. Select a check tool (Status is fastest)
+    3. Choose your site from the dropdown
+    4. Click **Run check**
+    
+    Results appear immediately for quick checks like Status and DNS.
+  </Step>
+  <Step title="Configure monitoring">
+    Navigate to **Team Settings → Monitoring** to configure:
+    - Check cadence (how often checks run)
+    - Enabled tools (which checks run automatically)
+    - Problem thresholds (when to trigger notifications)
+    - Notifications (email and webhook destinations)
   </Step>
 </Steps>
 
 <Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+  Need help? Reach out to us at [support@spacemancodes.ltd](mailto:support@spacemancodes.ltd).
 </Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Dashboard Overview" icon="chart-line" href="/guide/dashboard">
+    Learn how to use the dashboard effectively
+  </Card>
+  <Card title="Managing Sites" icon="globe" href="/guide/sites">
+    Add, edit, and organize your monitored sites
+  </Card>
+  <Card title="Understanding Checks" icon="magnifying-glass" href="/guide/checks">
+    Learn about the five monitoring tools
+  </Card>
+  <Card title="API Integration" icon="code" href="/api/overview">
+    Automate with the SitePulse API
+  </Card>
+</CardGroup>

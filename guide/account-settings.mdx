@@ -1,0 +1,166 @@
+---
+title: "Account and Preferences"
+description: "Manage your personal profile, security, appearance, and notification preferences"
+---
+
+These settings are per-user (not per-team). Team-wide settings are managed separately under [Team Management](/guide/team-management).
+
+## Profile
+
+Update the information that identifies you across SitePulse:
+
+<AccordionGroup>
+  <Accordion title="Name and email">
+    Change your display name or login email. Changing email may require re-verification depending on your setup.
+  </Accordion>
+  <Accordion title="Avatar">
+    Upload a new profile image used in:
+    - User menu
+    - Team contexts
+    - Team notes on sites and other objects
+    
+    Changes propagate immediately after save.
+  </Accordion>
+  <Accordion title="Delete account">
+    Permanently remove your user record. This is a destructive action that also removes you from any teams you belong to.
+    
+    <Warning>
+      You will be asked to confirm. This action cannot be undone.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+**Access:** Dashboard → user menu (bottom of sidebar) → Settings → Profile
+
+## Password
+
+Change your account password at any time. You must know your current password to set a new one.
+
+<Info>
+  After a successful password change you remain logged in.
+</Info>
+
+## Switching teams
+
+If you belong to multiple teams:
+
+<Steps>
+  <Step title="Open team switcher">
+    Use the team switcher in the sidebar header (visible when you have more than one team).
+  </Step>
+  <Step title="Select a team">
+    Selecting a different team changes your "current team" context for the rest of the session.
+  </Step>
+  <Step title="Remember scope">
+    Sites, monitoring settings, and billing are always scoped to the current team.
+  </Step>
+</Steps>
+
+<Tip>
+  You can leave a team from the switcher menu (owner removal or self-removal rules apply per policy).
+</Tip>
+
+## General preferences
+
+### Appearance
+
+Choose your preferred theme:
+
+<Tabs>
+  <Tab title="Light">
+    Light theme for daytime use.
+  </Tab>
+  <Tab title="Dark">
+    Dark theme for reduced eye strain.
+  </Tab>
+  <Tab title="System">
+    Automatically match your operating system's theme preference.
+  </Tab>
+</Tabs>
+
+The choice applies across the entire application UI (dashboard, tools, settings, etc.).
+
+### Browser push notifications
+
+Enable native browser push notifications for problem detection and recovery events on the current device:
+
+<Steps>
+  <Step title="Toggle notifications">
+    Toggle the switch in General settings.
+  </Step>
+  <Step title="Grant permission">
+    The browser will prompt for permission on first enable.
+  </Step>
+  <Step title="Configure">
+    Notifications respect your team's quiet time and notification destination rules.
+  </Step>
+</Steps>
+
+<Note>
+  This is device-specific and in addition to in-app, email, and webhook notifications.
+</Note>
+
+<Warning>
+  If permission is denied in browser settings, the toggle is unavailable until you reset site permissions. Browser notifications are supported in modern browsers; unsupported browsers show a disabled state.
+</Warning>
+
+## Two-factor authentication (2FA)
+
+2FA requirements are controlled at the team level by owners/admins. See your team's security settings for the current requirement.
+
+<AccordionGroup>
+  <Accordion title="When 2FA is required">
+    When a team you belong to enforces 2FA, you must enable it on your account before you can access team-scoped areas.
+  </Accordion>
+  <Accordion title="Setup and management">
+    Setup, recovery codes, and management happen during the login/confirmation flow or via Fortify-powered screens (2FA challenge, etc.).
+  </Accordion>
+  <Accordion title="Scope">
+    Once enabled for your account it applies when any enforcing team is active.
+  </Accordion>
+</AccordionGroup>
+
+## API tokens
+
+Create personal access tokens for the [SitePulse API](/api/overview) under **Settings → API tokens**.
+
+<Steps>
+  <Step title="Create token">
+    Give each token a descriptive name (for example `Production deploy` or `CI uptime`).
+  </Step>
+  <Step title="Select scopes">
+    Select only the [OAuth scopes](/api/authentication#oauth-scopes) the integration needs:
+    - `teams:read` - Read teams and plan limits
+    - `sites:read` / `sites:write` / `sites:delete` - Site management
+    - `checks:read` / `checks:run` / `checks:delete` - Check operations
+    - `issues:read` / `issues:write` - Read notification-related data (if exposed via API)
+  </Step>
+  <Step title="Save token">
+    Copy the token when it is created.
+    
+    <Warning>
+      SitePulse cannot show it again after you close the dialog.
+    </Warning>
+  </Step>
+  <Step title="Revoke when done">
+    Revoke tokens you no longer use from the API tokens page.
+  </Step>
+</Steps>
+
+<Info>
+  Tokens authenticate as your user. Team membership, role permissions, and subscription status still apply to API requests.
+</Info>
+
+## Related team settings
+
+Some preferences that affect your day-to-day experience are actually team-wide and managed by admins/owners under team management:
+
+| Setting | Location |
+|---------|----------|
+| Monitoring cadences and enabled tools | Team Settings → Monitoring |
+| Problem detection thresholds and quiet time | Team Settings → Monitoring |
+| Notification destinations (email/webhook) | Team Settings → Notifications |
+| Team 2FA enforcement | Team Settings → Security |
+| Billing and member roles | Team Settings → Billing / Members |
+
+Your personal settings only cover appearance, profile data, password, browser notifications, and current-team selection.

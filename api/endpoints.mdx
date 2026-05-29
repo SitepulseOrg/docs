@@ -1,0 +1,331 @@
+---
+title: "Endpoints"
+description: "Complete v1 HTTP reference for all API routes"
+---
+
+All paths are prefixed with `/api/v1`. Unless noted, requests require:
+
+- `Authorization: Bearer {token}`
+- `Accept: application/json`
+- Verified user email
+- Appropriate [OAuth scope](/api/authentication#oauth-scopes)
+
+Team-scoped routes also require [active team subscription](/api/authentication#team-access-and-billing).
+
+## Me
+
+### GET /me
+
+Returns the authenticated user and all teams they belong to.
+
+**Scope:** `teams:read`
+
+**Response `200`:**
+
+```json
+{
+  "data": {
+    "user": { "id": 1, "name": "...", "email": "...", "email_verified_at": "..." },
+    "teams": [ /* Team resources with limits */ ]
+  }
+}
+```
+
+## Teams
+
+### GET /teams
+
+List teams for the authenticated user.
+
+**Scope:** `teams:read`  
+**Team permission:** `viewAny` on teams
+
+**Response `200`:** `{ "data": [ Team, ... ] }`
+
+### GET /teams/\{team\}
+
+Show one team by numeric id.
+
+**Scope:** `teams:read`  
+**Team permission:** `view` on team
+
+**Response `200`:** Team resource
+
+## Sites
+
+Team-scoped site management uses numeric `{team}` id. Individual site routes use `{site}` uuid.
+
+### GET /teams/\{team\}/sites
+
+Paginated site list for a team. Includes latest check per tool.
+
+**Scope:** `sites:read`  
+**Team permission:** `viewAny` sites
+
+**Query parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `search` | string | Filter by name or URL (partial match) |
+| `pinned` | boolean | `true` = pinned only; `false` = unpinned only |
+| `tool` | string | Sites with this tool enabled |
+| `status` | string | Sites with a check in this status (`pending`, `completed`, ...) |
+| `sort` | string | `created_at`, `-created_at`, `name`, `-name`, `pinned` |
+| `page` | integer | Page number |
+| `per_page` | integer | Page size (max 100) |
+
+**Response `200`:** Paginated [Site](/api/resources#site) collection
+
+### POST /teams/\{team\}/sites
+
+Create a site.
+
+**Scope:** `sites:write`  
+**Team permission:** `create` site  
+**Response:** `201` with Site resource
+
+**Body:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `url` | yes | Valid HTTP(S) URL (normalized) |
+| `name` | no | Display name; generated from domain if omitted |
+| `notes` | no | Team notes |
+| `js_rendered` | no | Boolean; broken-link JS rendering |
+| `settings.enabled_checks` | no | Array of tool values |
+| `settings.status_check_header` | no | `{ "name", "value" }` for status checks |
+
+<Warning>
+  Plan limits apply to site count and enabled checks.
+</Warning>
+
+**Example:**
+
+```json
+{
+  "url": "https://example.com",
+  "name": "Example",
+  "settings": {
+    "enabled_checks": ["status", "ssl"]
+  }
+}
+```
+
+### POST /teams/\{team\}/sites/bulk
+
+Create up to 100 sites in one request.
+
+**Scope:** `sites:write`  
+**Team permission:** `create` site  
+**Response `200`:** [Bulk response](/api/resources#bulk-site-create-response)
+
+**Body:**
+
+```json
+{
+  "sites": [
+    { "url": "https://a.example.com", "name": "A" },
+    { "url": "https://b.example.com" }
+  ]
+}
+```
+
+### GET /sites/\{site\}
+
+Show one site by uuid.
+
+**Scope:** `sites:read`  
+**Team permission:** `view` site
+
+**Response `200`:** Site resource with `latest_checks`
+
+### PATCH /sites/\{site\}
+
+Update a site. Sends the full site shape expected by the dashboard update form (including `url`).
+
+**Scope:** `sites:write`  
+**Team permission:** `update` site  
+**Response `200`:** Updated Site resource
+
+**Body (all optional except `url` is required when sent):**
+
+| Field | Description |
+|-------|-------------|
+| `url` | Canonical URL |
+| `name` | Display name |
+| `notes` | Notes |
+| `pinned` | Boolean pin state |
+| `js_rendered` | Broken-link JS mode |
+| `settings.enabled_checks` | Tool array |
+| `settings.status_check_header` | Status header override |
+| `settings.automatic_check_cadences` | Tool → minutes map |
+| `settings.issues` | Issue threshold overrides |
+
+<Note>
+  Updating enabled checks or cadences resyncs automatic schedules.
+</Note>
+
+### DELETE /sites/\{site\}
+
+Delete a site and its schedules, checks, and issues.
+
+**Scope:** `sites:delete`  
+**Team permission:** `delete` site  
+**Response:** `204 No Content`
+
+## Checks
+
+### GET /sites/\{site\}/checks
+
+Paginated check history for a site.
+
+**Scope:** `checks:read`  
+**Team permission:** `viewChecks`
+
+**Query parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `type` | string | Tool filter |
+| `status` | string | Check status |
+| `automatic` | boolean | Automatic vs manual |
+| `run_reason` | string | `scheduled`, `confirmation_retry`, `incident_follow_up` |
+| `from` | date | `created_at` ≥ date |
+| `to` | date | `created_at` ≤ date (must be ≥ `from`) |
+| `page`, `per_page` | integer | Pagination |
+
+**Response `200`:** Paginated [Check](/api/resources#check) collection
+
+### POST /sites/\{site\}/checks
+
+Queue one or more manual checks.
+
+**Scope:** `checks:run`  
+**Team permission:** `createCheck`  
+**Rate limit:** 10 requests / minute  
+**Response:** `202 Accepted` with array of Check resources (usually `pending`)
+
+**Body:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `tools` | no | Tool values to run; defaults to all **enabled** site tools |
+| `automatic` | no | Boolean; default `false` for API runs |
+
+**Rules:**
+
+- Each tool must be enabled on the site
+- Each tool must be allowed on the team's plan
+
+**Example:**
+
+```json
+{
+  "tools": ["status", "ssl"],
+  "automatic": false
+}
+```
+
+<Info>
+  Poll `GET /checks/{check}` until `status` is terminal. See [Check results](/api/check-results).
+</Info>
+
+### GET /checks/\{check\}
+
+Show one check by uuid, including full `result` and nested `site` summary.
+
+**Scope:** `checks:read`  
+**Team permission:** `view` check (via site team membership)
+
+**Response `200`:** Check resource
+
+### DELETE /checks/\{check\}
+
+Delete a **manual** check (`automatic: false`).
+
+**Scope:** `checks:delete`  
+**Team permission:** `deleteCheck`  
+**Response:** `204` on success; `403` for automatic checks
+
+## Reports
+
+Read-only aggregates. Require `sites:read` and `view` on the site.
+
+### GET /sites/\{site\}/reports/uptime
+
+Daily uptime percentages from automatic status checks.
+
+**Query:** `days` (integer, default `90`, max `365`)
+
+**Response `200`:** [Uptime report](/api/resources#uptime-report)
+
+### GET /sites/\{site\}/reports/performance
+
+Daily performance aggregates from automatic performance checks.
+
+**Query:** `days` (integer, default `30`, max `365`)
+
+**Response `200`:** [Performance report](/api/resources#performance-report)
+
+## Problem events
+
+These endpoints provide read-only access to internal problem event records. SitePulse uses these records to deduplicate problems and drive notifications. There are no issue pages, acknowledgement, or notes in the product.
+
+### GET /issues
+
+Paginated list of recent problem events across teams the user can view.
+
+**Scope:** `issues:read`  
+**Team permission:** `viewIssues` per team
+
+**Query parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `team` | integer | — | Limit to one team id |
+| `status` | string | `active` | `active` or `open` (problem currently firing), `resolved` |
+| `site` | string | — | Site uuid |
+| `tool` | string | — | Check tool (status, ssl, dns, broken_links, performance) |
+| `severity` | string | — | `critical`, `warning`, `info` |
+| `page`, `per_page` | integer | | Pagination |
+
+**Response `200`:** Paginated collection of problem event records (see [Issue (internal problem event record)](/api/resources#issue) in the resource reference).
+
+### GET /issues/\{issue\}
+
+Retrieve a single problem event record with related site and check details.
+
+**Scope:** `issues:read`  
+**Team permission:** `view` the event's team
+
+**Response `200`:** [Issue (internal problem event record)](/api/resources#issue) resource (read-only; no notes or timeline of user actions)
+
+## Endpoint summary
+
+Quick reference table:
+
+| Method | Path | Scope |
+|--------|------|-------|
+| `GET` | `/me` | `teams:read` |
+| `GET` | `/teams` | `teams:read` |
+| `GET` | `/teams/{team}` | `teams:read` |
+| `GET` | `/teams/{team}/sites` | `sites:read` |
+| `POST` | `/teams/{team}/sites` | `sites:write` |
+| `POST` | `/teams/{team}/sites/bulk` | `sites:write` |
+| `GET` | `/sites/{site}` | `sites:read` |
+| `PATCH` | `/sites/{site}` | `sites:write` |
+| `DELETE` | `/sites/{site}` | `sites:delete` |
+| `GET` | `/sites/{site}/checks` | `checks:read` |
+| `POST` | `/sites/{site}/checks` | `checks:run` |
+| `GET` | `/sites/{site}/reports/uptime` | `sites:read` |
+| `GET` | `/sites/{site}/reports/performance` | `sites:read` |
+| `GET` | `/checks/{check}` | `checks:read` |
+| `DELETE` | `/checks/{check}` | `checks:delete` |
+| `GET` | `/issues` | `issues:read` |
+| `GET` | `/issues/{issue}` | `issues:read` |
+
+## See also
+
+- [API overview](/api/overview)
+- [Authentication](/api/authentication)
+- [Resource reference](/api/resources)

@@ -1,0 +1,93 @@
+---
+title: "Using the Dashboard"
+description: "Your at-a-glance workspace for site health and monitoring"
+---
+
+The SitePulse dashboard is your at-a-glance workspace for site health. It surfaces problems, highlights your pinned priority sites, and provides quick actions.
+
+## What you see on the dashboard
+
+After logging in with a current team and active subscription, the dashboard shows:
+
+<AccordionGroup>
+  <Accordion title="Problem summaries">
+    Deferred cards that highlight critical issues:
+    - Sites that are currently down (status failures)
+    - Sites with invalid or expiring SSL certificates
+    - Sites with broken links (total count across affected sites)
+    - Sites with low performance scores or slow response times
+  </Accordion>
+  
+  <Accordion title="Pinned sites">
+    Your most important sites stay visible here:
+    - Shows latest status and uptime percentage over recent periods
+    - Links into detailed site information
+    - Uptime stats are calculated from recent status checks
+  </Accordion>
+  
+  <Accordion title="Quick actions">
+    Common next steps for managing your sites:
+    - Review all sites
+    - Run a manual status check
+    - Add another site
+  </Accordion>
+</AccordionGroup>
+
+<Info>
+  If there are no active problems and you have pinned sites, the dashboard stays clean and focused on your priorities.
+</Info>
+
+## Pinning sites
+
+Pinning controls what appears in the dashboard's pinned section and pushes important sites to the top of the sites list.
+
+**How to pin sites:**
+
+- From the sites list (or table row actions), use the row menu to "Pin" or "Unpin" a site
+- You can also toggle pin state while editing a site
+- Pinned sites sort first (by pin time, newest pins first), then newest unpinned sites
+
+<Tip>
+  Use pinning for production sites, key clients, or anything you want visible without filtering.
+</Tip>
+
+The dashboard shows a "Pin the sites you want on the dashboard" callout until you have at least one pinned site.
+
+## Quick actions and navigation
+
+<CardGroup cols={3}>
+  <Card title="Review all sites" icon="list">
+    Jumps to the full sites list for filtering, bulk actions, and deeper history
+  </Card>
+  <Card title="Run a status check" icon="magnifying-glass">
+    Opens the manual Status tool pre-filled for immediate diagnostics
+  </Card>
+  <Card title="Add another site" icon="plus">
+    Starts the site creation flow
+  </Card>
+</CardGroup>
+
+The sidebar also provides direct access to:
+
+- Sites list and creation
+- Team monitoring settings
+- Notifications configuration (in team settings)
+- Individual manual diagnostic tools (Status, SSL, DNS, Broken Links, Performance)
+
+## Real-time updates
+
+Problem summaries and dashboard signals can update live via notifications while you have the dashboard open (subject to your notification and browser permission settings).
+
+## Tips
+
+<Steps>
+  <Step title="Start with critical sites">
+    Add your critical sites and pin the top 3–5 for immediate visibility.
+  </Step>
+  <Step title="Use manual tools when needed">
+    Use the manual tools area (or the "Run Check" dropdown on any site detail) when you need an on-demand result instead of waiting for the next automatic check.
+  </Step>
+  <Step title="Remember the dashboard is a summary">
+    The dashboard does not replace the full sites list or individual check histories — it is a curated summary for fast situational awareness.
+  </Step>
+</Steps>

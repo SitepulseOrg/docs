@@ -1,0 +1,512 @@
+---
+title: "API Overview"
+description: "Programmatic access to teams, sites, checks, reports, and notification events"
+---
+
+The SitePulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v1`. Responses use stable resource shapes designed for integrations and automation.
+
+## What you can do with the API
+
+<CardGroup cols={2}>
+  <Card title="Teams" icon="users">
+    List teams and plan limits
+  </Card>
+  <Card title="Sites" icon="globe">
+    Create and manage monitored sites
+  </Card>
+  <Card title="Checks" icon="magnifying-glass">
+    Queue manual checks and read results
+  </Card>
+  <Card title="Reports" icon="chart-line">
+    Pull uptime and performance reports
+  </Card>
+  <Card title="Notifications & Events" icon="bell">
+    Access notification history and problem events (powered by internal issue records)
+  </Card>
+</CardGroup>
+
+## Base URL
+
+All API endpoints use this base URL:
+
+```
+https://app.sitepulse.dev/api/v1
+```
+
+Replace `app.sitepulse.dev` with your SitePulse installation hostname if using a self-hosted instance.
+
+<Note>
+  All paths in this documentation are relative to the base URL unless noted otherwise.
+</Note>
+
+## Quick start
+
+<Steps>
+  <Step title="Create an API token">
+    In the SitePulse dashboard, open **Settings → API tokens**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
+    
+    <Warning>
+      Copy the token when it is shown. SitePulse does not display it again.
+    </Warning>
+  </Step>
+  
+  <Step title="Call the API">
+    Use the token in the `Authorization` header:
+    
+    <CodeGroup>
+
+    ```bash cURL
+    curl -sS \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -H "Accept: application/json" \
+      "https://app.sitepulse.dev/api/v1/me"
+    ```
+
+    ```javascript JavaScript
+    const response = await fetch('https://app.sitepulse.dev/api/v1/me', {
+      headers: {
+        Authorization: 'Bearer YOUR_TOKEN',
+        Accept: 'application/json',
+      },
+    });
+    const data = await response.json();
+    ```
+
+    ```python Python
+    import requests
+
+    response = requests.get(
+        'https://app.sitepulse.dev/api/v1/me',
+        headers={
+            'Authorization': 'Bearer YOUR_TOKEN',
+            'Accept': 'application/json',
+        },
+    )
+    data = response.json()
+    ```
+
+    ```go Go
+    req, _ := http.NewRequest(http.MethodGet, "https://app.sitepulse.dev/api/v1/me", nil)
+    req.Header.Set("Authorization", "Bearer YOUR_TOKEN")
+    req.Header.Set("Accept", "application/json")
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+    fmt.Println(string(body))
+    ```
+
+    ```ruby Ruby
+    require 'net/http'
+    require 'json'
+
+    uri = URI('https://app.sitepulse.dev/api/v1/me')
+    request = Net::HTTP::Get.new(uri)
+    request['Authorization'] = 'Bearer YOUR_TOKEN'
+    request['Accept'] = 'application/json'
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    data = JSON.parse(response.body)
+    ```
+
+    ```php PHP
+    $ch = curl_init('https://app.sitepulse.dev/api/v1/me');
+    curl_setopt_array($ch, [
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer YOUR_TOKEN',
+            'Accept: application/json',
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+    ```
+
+    </CodeGroup>
+  </Step>
+  
+  <Step title="Work inside a team">
+    Most write operations require an active team context. Team-scoped routes resolve the team from the URL (`/teams/{team}/sites`) or from the site or check in the path.
+    
+    <CodeGroup>
+
+    ```bash cURL
+    curl -sS \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -H "Accept: application/json" \
+      "https://app.sitepulse.dev/api/v1/teams"
+    ```
+
+    ```javascript JavaScript
+    const response = await fetch('https://app.sitepulse.dev/api/v1/teams', {
+      headers: {
+        Authorization: 'Bearer YOUR_TOKEN',
+        Accept: 'application/json',
+      },
+    });
+    const data = await response.json();
+    ```
+
+    ```python Python
+    import requests
+
+    response = requests.get(
+        'https://app.sitepulse.dev/api/v1/teams',
+        headers={
+            'Authorization': 'Bearer YOUR_TOKEN',
+            'Accept': 'application/json',
+        },
+    )
+    data = response.json()
+    ```
+
+    ```go Go
+    req, _ := http.NewRequest(http.MethodGet, "https://app.sitepulse.dev/api/v1/teams", nil)
+    req.Header.Set("Authorization", "Bearer YOUR_TOKEN")
+    req.Header.Set("Accept", "application/json")
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+    fmt.Println(string(body))
+    ```
+
+    ```ruby Ruby
+    require 'net/http'
+    require 'json'
+
+    uri = URI('https://app.sitepulse.dev/api/v1/teams')
+    request = Net::HTTP::Get.new(uri)
+    request['Authorization'] = 'Bearer YOUR_TOKEN'
+    request['Accept'] = 'application/json'
+
+    response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(request)
+    end
+
+    data = JSON.parse(response.body)
+    ```
+
+    ```php PHP
+    $ch = curl_init('https://app.sitepulse.dev/api/v1/teams');
+    curl_setopt_array($ch, [
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer YOUR_TOKEN',
+            'Accept: application/json',
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+    ```
+
+    </CodeGroup>
+  </Step>
+  
+  <Step title="Create a site and run a check">
+    <CodeGroup>
+
+    ```bash cURL
+    TEAM_ID=1
+
+    # Create a site
+    curl -sS -X POST \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -H "Accept: application/json" \
+      -H "Content-Type: application/json" \
+      -d '{"url":"https://example.com","name":"Example","settings":{"enabled_checks":["status"]}}' \
+      "https://app.sitepulse.dev/api/v1/teams/${TEAM_ID}/sites"
+
+    # Run a status check (returns 202 with pending check records)
+    curl -sS -X POST \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -H "Accept: application/json" \
+      -H "Content-Type: application/json" \
+      -d '{"tools":["status"],"automatic":false}' \
+      "https://app.sitepulse.dev/api/v1/sites/{site-uuid}/checks"
+
+    # Poll until completed
+    curl -sS \
+      -H "Authorization: Bearer YOUR_TOKEN" \
+      -H "Accept: application/json" \
+      "https://app.sitepulse.dev/api/v1/checks/{check-uuid}"
+    ```
+
+    ```javascript JavaScript
+    const headers = {
+      Authorization: 'Bearer YOUR_TOKEN',
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    };
+
+    const teamId = 1;
+
+    // Create a site
+    const siteResponse = await fetch(
+      `https://app.sitepulse.dev/api/v1/teams/${teamId}/sites`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          url: 'https://example.com',
+          name: 'Example',
+          settings: { enabled_checks: ['status'] },
+        }),
+      }
+    );
+    const site = await siteResponse.json();
+
+    // Run a status check (returns 202 with pending check records)
+    const checkResponse = await fetch(
+      `https://app.sitepulse.dev/api/v1/sites/${site.data.uuid}/checks`,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ tools: ['status'], automatic: false }),
+      }
+    );
+    const check = await checkResponse.json();
+
+    // Poll until completed
+    const resultResponse = await fetch(
+      `https://app.sitepulse.dev/api/v1/checks/${check.data[0].uuid}`,
+      { headers: { Authorization: headers.Authorization, Accept: headers.Accept } }
+    );
+    const result = await resultResponse.json();
+    ```
+
+    ```python Python
+    import requests
+
+    headers = {
+        'Authorization': 'Bearer YOUR_TOKEN',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    }
+
+    team_id = 1
+
+    # Create a site
+    site = requests.post(
+        f'https://app.sitepulse.dev/api/v1/teams/{team_id}/sites',
+        headers=headers,
+        json={
+            'url': 'https://example.com',
+            'name': 'Example',
+            'settings': {'enabled_checks': ['status']},
+        },
+    ).json()
+
+    # Run a status check (returns 202 with pending check records)
+    check = requests.post(
+        f"https://app.sitepulse.dev/api/v1/sites/{site['data']['uuid']}/checks",
+        headers=headers,
+        json={'tools': ['status'], 'automatic': False},
+    ).json()
+
+    # Poll until completed
+    result = requests.get(
+        f"https://app.sitepulse.dev/api/v1/checks/{check['data'][0]['uuid']}",
+        headers={'Authorization': headers['Authorization'], 'Accept': headers['Accept']},
+    ).json()
+    ```
+
+    ```go Go
+    headers := map[string]string{
+        "Authorization": "Bearer YOUR_TOKEN",
+        "Accept":        "application/json",
+        "Content-Type":  "application/json",
+    }
+
+    teamID := 1
+
+    // Create a site
+    siteBody := strings.NewReader(`{"url":"https://example.com","name":"Example","settings":{"enabled_checks":["status"]}}`)
+    siteReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://app.sitepulse.dev/api/v1/teams/%d/sites", teamID), siteBody)
+    for key, value := range headers {
+        siteReq.Header.Set(key, value)
+    }
+    siteResp, _ := http.DefaultClient.Do(siteReq)
+    defer siteResp.Body.Close()
+    siteData, _ := io.ReadAll(siteResp.Body)
+
+    // Run a status check (returns 202 with pending check records)
+    checkBody := strings.NewReader(`{"tools":["status"],"automatic":false}`)
+    checkReq, _ := http.NewRequest(http.MethodPost, "https://app.sitepulse.dev/api/v1/sites/{site-uuid}/checks", checkBody)
+    for key, value := range headers {
+        checkReq.Header.Set(key, value)
+    }
+    checkResp, _ := http.DefaultClient.Do(checkReq)
+    defer checkResp.Body.Close()
+    checkData, _ := io.ReadAll(checkResp.Body)
+
+    // Poll until completed
+    resultReq, _ := http.NewRequest(http.MethodGet, "https://app.sitepulse.dev/api/v1/checks/{check-uuid}", nil)
+    resultReq.Header.Set("Authorization", headers["Authorization"])
+    resultReq.Header.Set("Accept", headers["Accept"])
+    resultResp, _ := http.DefaultClient.Do(resultReq)
+    defer resultResp.Body.Close()
+    resultData, _ := io.ReadAll(resultResp.Body)
+    fmt.Println(string(siteData), string(checkData), string(resultData))
+    ```
+
+    ```ruby Ruby
+    require 'net/http'
+    require 'json'
+
+    headers = {
+      'Authorization' => 'Bearer YOUR_TOKEN',
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json',
+    }
+
+    team_id = 1
+
+    # Create a site
+    site_uri = URI("https://app.sitepulse.dev/api/v1/teams/#{team_id}/sites")
+    site_request = Net::HTTP::Post.new(site_uri)
+    headers.each { |key, value| site_request[key] = value }
+    site_request.body = {
+      url: 'https://example.com',
+      name: 'Example',
+      settings: { enabled_checks: ['status'] },
+    }.to_json
+
+    site_response = Net::HTTP.start(site_uri.hostname, site_uri.port, use_ssl: true) do |http|
+      http.request(site_request)
+    end
+    site = JSON.parse(site_response.body)
+
+    # Run a status check (returns 202 with pending check records)
+    check_uri = URI("https://app.sitepulse.dev/api/v1/sites/#{site['data']['uuid']}/checks")
+    check_request = Net::HTTP::Post.new(check_uri)
+    headers.each { |key, value| check_request[key] = value }
+    check_request.body = { tools: ['status'], automatic: false }.to_json
+
+    check_response = Net::HTTP.start(check_uri.hostname, check_uri.port, use_ssl: true) do |http|
+      http.request(check_request)
+    end
+    check = JSON.parse(check_response.body)
+
+    # Poll until completed
+    result_uri = URI("https://app.sitepulse.dev/api/v1/checks/#{check['data'][0]['uuid']}")
+    result_request = Net::HTTP::Get.new(result_uri)
+    result_request['Authorization'] = headers['Authorization']
+    result_request['Accept'] = headers['Accept']
+
+    result_response = Net::HTTP.start(result_uri.hostname, result_uri.port, use_ssl: true) do |http|
+      http.request(result_request)
+    end
+    result = JSON.parse(result_response.body)
+    ```
+
+    ```php PHP
+    $headers = [
+        'Authorization: Bearer YOUR_TOKEN',
+        'Accept: application/json',
+        'Content-Type: application/json',
+    ];
+
+    $teamId = 1;
+
+    // Create a site
+    $ch = curl_init("https://app.sitepulse.dev/api/v1/teams/{$teamId}/sites");
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+        CURLOPT_POSTFIELDS => json_encode([
+            'url' => 'https://example.com',
+            'name' => 'Example',
+            'settings' => ['enabled_checks' => ['status']],
+        ]),
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    $site = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+
+    // Run a status check (returns 202 with pending check records)
+    $ch = curl_init("https://app.sitepulse.dev/api/v1/sites/{$site['data']['uuid']}/checks");
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+        CURLOPT_POSTFIELDS => json_encode(['tools' => ['status'], 'automatic' => false]),
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    $check = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+
+    // Poll until completed
+    $ch = curl_init("https://app.sitepulse.dev/api/v1/checks/{$check['data'][0]['uuid']}");
+    curl_setopt_array($ch, [
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer YOUR_TOKEN',
+            'Accept: application/json',
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+    ]);
+    $result = json_decode(curl_exec($ch), true);
+    curl_close($ch);
+    ```
+
+    </CodeGroup>
+  </Step>
+</Steps>
+
+## Versioning
+
+Only `/api/v1` is documented here. Breaking changes will ship under a new version prefix.
+
+<Warning>
+  Non-versioned routes under `/api/` (dashboard tools, legacy check data) are for the web app and are not part of the public v1 contract.
+</Warning>
+
+## Requirements
+
+Before using the API, ensure you have:
+
+- A verified SitePulse user account (email verified)
+- An active subscription on the team you are accessing (inactive billing returns `402`)
+- API token scopes that cover the operation (missing scope returns `403`)
+- Team membership and role permissions for the underlying action (returns `403` or `404` as appropriate)
+
+## API documentation
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api/authentication">
+    Personal access tokens, OAuth scopes, and required headers
+  </Card>
+  <Card title="Requests & Responses" icon="arrows-rotate" href="/api/requests-responses">
+    JSON conventions, pagination, team context, errors, and rate limits
+  </Card>
+  <Card title="Resources" icon="database" href="/api/resources">
+    Field-by-field schemas for users, teams, sites, checks, notification events, and reports
+  </Card>
+  <Card title="Endpoints" icon="list" href="/api/endpoints">
+    Complete HTTP method and path reference
+  </Card>
+  <Card title="Check Results" icon="check" href="/api/check-results">
+    Result object shapes per check tool
+  </Card>
+</CardGroup>
+
+## Related guides
+
+- [Account settings - API tokens](/guide/account-settings#api-tokens)
+- [Managing sites](/guide/sites)
+- [Using check tools](/guide/checks)
+- [Notifications](/guide/notifications)

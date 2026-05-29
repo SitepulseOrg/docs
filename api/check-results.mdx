@@ -1,0 +1,285 @@
+---
+title: "Check Results"
+description: "Result object shapes per check tool"
+---
+
+The `result` field on [Check](/api/resources#check) resources is tool-specific. Values are normalized JSON (enums become strings, nested objects are plain arrays).
+
+## Status check
+
+HTTP reachability check (`type: "status"`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `up` | boolean | `true` when HTTP status is 2xx or 3xx |
+| `code` | integer | Status code; `0` on connection failure |
+| `url` | string | Requested URL |
+| `effective_url` | string | Final URL after redirects |
+| `response_time` | float | Total time in milliseconds |
+| `redirected` | boolean | Whether redirects occurred |
+| `redirect_count` | integer | Number of redirects |
+| `redirects` | string[] | Redirect chain (optional) |
+| `error` | string | Present on connection/validation failure |
+
+### Example (up)
+
+```json
+{
+  "up": true,
+  "code": 200,
+  "url": "https://example.com",
+  "effective_url": "https://example.com",
+  "response_time": 142.37,
+  "redirected": false,
+  "redirect_count": 0
+}
+```
+
+### Example (down)
+
+```json
+{
+  "up": false,
+  "code": 500,
+  "url": "https://example.com",
+  "effective_url": "https://example.com",
+  "response_time": 523.12,
+  "redirected": false,
+  "redirect_count": 0,
+  "error": "Internal Server Error"
+}
+```
+
+## SSL check
+
+TLS certificate inspection on port 443 (`type: "ssl"`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `domain` | string | Domain checked |
+| `ip` | string | Resolved IPv4 |
+| `is_valid` | boolean | Certificate not expired |
+| `issuer` | string | CA name |
+| `issued_to` | string | Certificate CN |
+| `valid_from` | string | Start datetime |
+| `valid_to` | string | End datetime |
+| `days_left` | integer | Days until expiry |
+| `subject` | string | Subject CN |
+| `serial_number` | string | Serial |
+| `fingerprint` | string | Certificate hash |
+| `info` | object | Raw OpenSSL parse output |
+
+### Example
+
+```json
+{
+  "domain": "example.com",
+  "ip": "93.184.216.34",
+  "is_valid": true,
+  "issuer": "Let's Encrypt",
+  "issued_to": "example.com",
+  "valid_from": "2026-04-01T00:00:00+00:00",
+  "valid_to": "2026-07-01T00:00:00+00:00",
+  "days_left": 35,
+  "subject": "CN=example.com",
+  "serial_number": "ABC123...",
+  "fingerprint": "SHA256:...",
+  "info": { /* Raw OpenSSL data */ }
+}
+```
+
+## DNS check
+
+DNS records via Cloudflare DoH (`type: "dns"`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `records` | object | Keys: record types (`A`, `AAAA`, `MX`, ...) with record arrays |
+| `is_cloudflare` | boolean | Domain uses Cloudflare DNS/proxy |
+
+<Note>
+  Record shapes vary by type. Each entry includes `host`, `ttl`, `type`, and type-specific fields such as `ip` for A/AAAA.
+</Note>
+
+### Example
+
+```json
+{
+  "records": {
+    "A": [
+      {
+        "host": "example.com",
+        "ttl": 300,
+        "type": "A",
+        "ip": "93.184.216.34"
+      }
+    ],
+    "MX": [
+      {
+        "host": "example.com",
+        "ttl": 3600,
+        "type": "MX",
+        "priority": 10,
+        "target": "mail.example.com"
+      }
+    ]
+  },
+  "is_cloudflare": false
+}
+```
+
+## Broken links check
+
+Site crawl for failing links (`type: "broken-links"`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `found` | integer | Count of broken links |
+| `crawled` | integer | Pages crawled |
+| `links` | array | Broken link details |
+
+### Link object
+
+Each item in the `links` array includes:
+
+- `url` - The broken link URL
+- `status` - HTTP status code
+- `source` - Page where the link was found
+- Additional context
+
+### Example
+
+```json
+{
+  "found": 3,
+  "crawled": 12,
+  "links": [
+    {
+      "url": "https://example.com/missing-page",
+      "status": 404,
+      "source": "https://example.com/blog"
+    },
+    {
+      "url": "https://example.com/broken-image.jpg",
+      "status": 404,
+      "source": "https://example.com/about"
+    }
+  ]
+}
+```
+
+<Info>
+  Issue evaluation often uses `found` against configured thresholds.
+</Info>
+
+## Performance check
+
+Lighthouse-based performance audit (`type: "performance"`).
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `response_time` | float | Direct GET response time (ms) |
+| `url` | string | Audited URL |
+| `speed_metrics` | object | Lighthouse output |
+
+### Speed metrics object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `performance_score` | integer \| null | 0–100 score |
+| `core_web_vitals` | object | Lab metrics (LCP, INP, CLS, etc.) |
+| `real_user_metrics` | object | CrUX page data (Google provider) |
+| `origin_metrics` | object | CrUX origin data |
+| `opportunities` | array | Failed audits with savings hints |
+
+<Note>
+  Each core web vital entry typically includes `value`, `display_value`, and `score`.
+</Note>
+
+### Example
+
+```json
+{
+  "response_time": 420.5,
+  "url": "https://example.com",
+  "speed_metrics": {
+    "performance_score": 87,
+    "core_web_vitals": {
+      "lcp": {
+        "value": 2400,
+        "display_value": "2.4 s",
+        "score": 0.92
+      },
+      "cls": {
+        "value": 0.05,
+        "display_value": "0.05",
+        "score": 0.95
+      }
+    },
+    "opportunities": [
+      {
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "savings": "450 ms"
+      }
+    ]
+  }
+}
+```
+
+## Errors
+
+When `status` is `failed`, the check may include an `error` field which can be:
+
+- A simple error string
+- A structured object (for example `{ "message": "...", "data": "..." }`)
+
+Use `error` together with `result` to diagnose failures.
+
+### Example
+
+```json
+{
+  "uuid": "...",
+  "type": "status",
+  "status": "failed",
+  "result": null,
+  "error": {
+    "message": "Connection timeout",
+    "data": "Failed to connect after 30 seconds"
+  },
+  "completed_at": "2026-05-28T14:30:00+00:00"
+}
+```
+
+## Polling check runs
+
+<Steps>
+  <Step title="Queue checks">
+    `POST /sites/{site}/checks` returns `202` with check records in `pending` status.
+  </Step>
+  <Step title="Poll for completion">
+    Poll `GET /checks/{uuid}` until `status` is `completed` or `failed`.
+  </Step>
+  <Step title="Read results">
+    Read `result` when `completed`.
+  </Step>
+</Steps>
+
+<Tip>
+  Status checks often complete synchronously. SSL, DNS, broken-links, and performance checks usually run on queues and take longer.
+</Tip>
+
+## Check status values
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Queued or currently running |
+| `completed` | Finished successfully |
+| `failed` | Finished with error |
+| `skipped` | Not run (due to plan or config) |
+
+## See also
+
+- [Endpoints - Checks](/api/endpoints#checks)
+- [Using check tools](/guide/checks)

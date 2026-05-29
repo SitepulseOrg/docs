@@ -1,0 +1,128 @@
+---
+title: "Managing Sites"
+description: "Add, configure, and monitor websites with SitePulse"
+---
+
+Sites are the websites your team wants SitePulse to monitor. Each site belongs to the current team and can have its own enabled checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
+
+<Note>
+  Pinned sites appear first on the sites list and power the [dashboard](/guide/dashboard) overview.
+</Note>
+
+## Adding a site
+
+To add a site, enter the website URL and optionally provide:
+
+- **Display name** - A friendly name for the site
+- **Notes** - Team notes for context
+- **Enabled checks** - Which check tools should be enabled
+- **Status-check header** - If the site requires a shared header
+- **JavaScript rendering** - Whether broken-link checks should render JavaScript
+
+<Info>
+  If you leave the name blank, SitePulse generates one from the domain.
+</Info>
+
+SitePulse rejects duplicate sites within the same team and enforces your plan's site and check-tool limits.
+
+After a site is created, SitePulse:
+- Fetches the favicon and screenshot
+- Starts the selected checks
+- Creates automatic schedules for enabled checks
+
+## Bulk importing sites
+
+Bulk import can add several sites at once. You can paste a list of URLs or upload a `.txt`, `.csv`, or `.xlsx` file.
+
+<Steps>
+  <Step title="Prepare your file">
+    Files can include URL and Name columns. If no headers are present, SitePulse treats the first column as the URL and the second as the optional name.
+  </Step>
+  <Step title="Upload">
+    Navigate to the sites list and select **Bulk Import**. Paste URLs or upload your file.
+  </Step>
+  <Step title="Review">
+    Bulk import checks for duplicate and invalid URLs before creating the sites.
+  </Step>
+</Steps>
+
+## Sites list
+
+The sites list shows the current team's sites with their latest health signals. Pinned sites appear first, followed by the newest sites.
+
+<Tip>
+  Use pinning for important sites that should stay near the top of the list.
+</Tip>
+
+## Site detail page
+
+The site detail page shows:
+
+- Site name, URL, screenshot, favicon, and notes
+- Latest status, SSL, DNS, broken-link, and performance checks
+- Uptime reports (today / 30 / 90 days)
+- Performance trend data
+- Manual check history with links to full tool results
+
+<CardGroup cols={1}>
+  <Card title="Run Check dropdown" icon="play">
+    The site header includes a **Run Check** dropdown that lets you immediately trigger any enabled tool for this site. It deep-links into the manual diagnostics tool with the site pre-selected.
+  </Card>
+</CardGroup>
+
+This page is the main place to review how one site is doing. From here you can also jump straight into editing or visiting the live site.
+
+## Editing a site
+
+Users with permission can edit:
+
+| Setting | Description |
+|---------|-------------|
+| Name | Display name |
+| URL | Monitored URL |
+| Notes | Team notes |
+| Pin state | Whether pinned on sites list |
+| JavaScript rendering | For broken-link checks |
+| Enabled checks | Which tools are enabled |
+| Status-check header | Override header |
+| Check cadence | Override team default |
+| Problem threshold overrides | Override team notification thresholds |
+
+<Warning>
+  Changing enabled checks or cadence settings updates the site's automatic monitoring schedule.
+</Warning>
+
+## Site-specific overrides
+
+Most sites can inherit team monitoring defaults. Use site-specific overrides only when one site needs different behavior.
+
+Common override examples:
+
+<AccordionGroup>
+  <Accordion title="Different status-check header">
+    A site needs a different status-check header from the team default.
+  </Accordion>
+  <Accordion title="Different check frequency">
+    A site should check status more or less often than the team default.
+  </Accordion>
+  <Accordion title="Different problem thresholds">
+    A site needs different thresholds for triggering notifications.
+  </Accordion>
+  <Accordion title="Temporary notification snooze">
+    A site needs notifications paused during maintenance.
+  </Accordion>
+  <Accordion title="JavaScript rendering">
+    A JavaScript-heavy site needs JS rendering for broken-link checks.
+  </Accordion>
+</AccordionGroup>
+
+## Deleting a site
+
+Deleting a site removes it from the team's active monitoring. SitePulse also removes the site's:
+
+- Automatic schedules
+- Check history
+
+<Warning>
+  Use deletion when the team no longer needs to monitor that website. This action cannot be undone.
+</Warning>
