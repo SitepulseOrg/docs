@@ -95,6 +95,10 @@ Create a site.
 | `settings.enabled_checks` | no | Array of tool values |
 | `settings.status_check_header` | no | `{ "name", "value" }` for status checks |
 
+<Note>
+  The API accepts omitted `name` and `settings.status_check_header` values. The dashboard add-site form requires a display name and does not expose status-check header fields; configure header overrides from the site edit page or team monitoring settings.
+</Note>
+
 <Warning>
   Plan limits apply to site count and automatic monitoring cadence.
 </Warning>

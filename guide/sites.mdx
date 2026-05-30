@@ -11,17 +11,18 @@ Sites are the websites your team wants SitePulse to monitor. Each site belongs t
 
 ## Adding a site
 
-To add a site, enter the website URL and optionally provide:
+To add a site from the dashboard, enter:
 
 - **Display name** - A friendly name for the site
-- **Notes** - Team notes for context
+- **URL** - The website to monitor
 - **Enabled checks** - Which check tools should be enabled
-- **Status-check header** - If the site requires a shared header
 - **JavaScript rendering** - Whether broken-link checks should render JavaScript
 
 <Info>
-  If you leave the name blank, SitePulse generates one from the domain.
+  The dashboard form requires a display name before you can create the site. API requests can omit `name`; in that case SitePulse generates one from the domain.
 </Info>
+
+Status-check header overrides are configured after creation from the site edit page. Team-wide status headers are configured under **Team Settings → Monitoring**.
 
 SitePulse rejects duplicate sites within the same team and enforces your plan's site and check-tool limits.
 

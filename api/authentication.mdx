@@ -107,7 +107,6 @@ Each token carries one or more scopes. Routes declare the minimum scope required
 | `checks:run` | Queue manual check runs |
 | `checks:delete` | Delete manual check runs |
 | `issues:read` | Read problem events (internal records used for notifications) |
-| `issues:write` | (No longer used – write routes removed) |
 
 <Info>
   Scopes map to team permissions. For example, `sites:write` satisfies the `createSite` and `updateSite` permissions when the token is used. Team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.
@@ -125,13 +124,13 @@ Different use cases require different scope combinations:
     checks:read
     issues:read
     ```
-    
+
     Perfect for dashboards and monitoring displays.
   </Accordion>
-  
+
   <Accordion title="Deploy / provision sites">
     Add `sites:write` to the read-only set:
-    
+
     ```
     teams:read
     sites:read
@@ -140,10 +139,10 @@ Different use cases require different scope combinations:
     issues:read
     ```
   </Accordion>
-  
+
   <Accordion title="CI check runner">
     Add `checks:run` for running checks:
-    
+
     ```
     teams:read
     sites:read
@@ -164,24 +163,24 @@ Authentication proves **who** is calling. Team routes also enforce:
 <Steps>
   <Step title="Membership">
     The user must belong to the team in the URL (or implied by the site/check/issue).
-    
+
     <Note>
       Otherwise the API returns `404` to avoid leaking cross-tenant resources.
     </Note>
   </Step>
-  
+
   <Step title="Active subscription">
     The team must have active plan access.
-    
+
     Otherwise the API returns `402` with:
-    
+
     ```json
     {
       "message": "An active team subscription is required."
     }
     ```
   </Step>
-  
+
   <Step title="Role permissions">
     Site, check, and issue policies apply on top of token scopes.
   </Step>
@@ -218,16 +217,16 @@ The public v1 API documented here is limited to personal access tokens created i
   <Step title="Navigate to API tokens">
     In the SitePulse dashboard, go to **Settings → API tokens**.
   </Step>
-  
+
   <Step title="Create new token">
     Click **Create Token** and provide:
     - A descriptive name (e.g., "CI Pipeline" or "Monitoring Dashboard")
     - Select required scopes
   </Step>
-  
+
   <Step title="Copy and secure">
     Copy the token value immediately.
-    
+
     <Warning>
       The token is only shown once. Store it securely.
     </Warning>

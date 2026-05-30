@@ -96,6 +96,9 @@ DNS records via Cloudflare DoH (`type: "dns"`).
 |-------|------|-------------|
 | `records` | object | Keys: record types (`A`, `AAAA`, `MX`, ...) with record arrays |
 | `is_cloudflare` | boolean | Domain uses Cloudflare DNS/proxy |
+| `ip_enrichment` | object | Public IP enrichment keyed by IP address |
+| `hosting_provider` | object \| null | Detected hosting provider from enriched IP data |
+| `reputation` | object | Domain and IP reputation details |
 
 <Note>
   Record shapes vary by type. Each entry includes `host`, `ttl`, `type`, and type-specific fields such as `ip` for A/AAAA.
@@ -124,7 +127,37 @@ DNS records via Cloudflare DoH (`type: "dns"`).
       }
     ]
   },
-  "is_cloudflare": false
+  "is_cloudflare": false,
+  "ip_enrichment": {
+    "93.184.216.34": {
+      "ip": "93.184.216.34",
+      "asn": 15133,
+      "asn_name": "EDGECAST",
+      "asn_org_name": "Edgecast Inc.",
+      "country": "US",
+      "country_name": "United States",
+      "website": "https://www.edgecast.com/",
+      "source": "cloudflare_radar"
+    }
+  },
+  "hosting_provider": {
+    "name": "Edgecast Inc.",
+    "asn": 15133,
+    "country": "US",
+    "source": "cloudflare_radar"
+  },
+  "reputation": {
+    "status": "clean",
+    "flags": {
+      "malware": false,
+      "phishing": false
+    },
+    "risk_score": 0,
+    "risk_types": [],
+    "suspected_malware_family": null,
+    "ip_reputation": {},
+    "source": "cloudflare_intel"
+  }
 }
 ```
 
@@ -136,11 +169,11 @@ Site crawl for failing links (`type: "broken-links"`).
 |-------|------|-------------|
 | `found` | integer | Count of broken links |
 | `crawled` | integer | Pages crawled |
-| `links` | array | Broken link details |
+| `urls` | array | Broken URL details |
 
-### Link object
+### URL object
 
-Each item in the `links` array includes:
+Each item in the `urls` array includes:
 
 - `url` - The broken link URL
 - `status` - HTTP status code
@@ -153,7 +186,7 @@ Each item in the `links` array includes:
 {
   "found": 3,
   "crawled": 12,
-  "links": [
+  "urls": [
     {
       "url": "https://example.com/missing-page",
       "status": 404,
