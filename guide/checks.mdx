@@ -36,7 +36,7 @@ Use a manual check when you want an immediate result for a site. Status and DNS 
     From the sidebar, expand **Manual Diagnostics** and click the desired tool (Status, SSL, DNS, Broken Links, or Performance).
     
     <Note>
-      Some tools may be disabled if your plan does not include them.
+      All check tools are available across all pricing tiers.
     </Note>
   </Step>
   <Step title="Select a site">
@@ -90,6 +90,61 @@ Team admins can control:
   Some site settings can override team defaults for a specific site.
 </Note>
 
+### Problem thresholds
+
+Problem thresholds decide when automatic monitoring opens an issue and sends notifications. Manual checks are still saved to check history, but they do not open issues from these thresholds.
+
+Configure team defaults under **Team Settings → Monitoring**. Use a site-specific override only when one site needs different rules from the team default.
+
+<AccordionGroup>
+  <Accordion title="Status thresholds">
+    Status thresholds control uptime incidents.
+
+    - **Failures to open**: How many failed automatic status checks are required before SitePulse opens an issue.
+    - **Successes to resolve**: How many successful automatic status checks are required before SitePulse marks the issue recovered.
+    - **Confirmation retry**: How soon SitePulse reruns a failed status check before opening an issue.
+    - **Incident follow-up**: How often SitePulse checks an active uptime incident until it recovers.
+  </Accordion>
+  <Accordion title="SSL thresholds">
+    SSL thresholds control certificate-expiry warnings.
+
+    - **Expiry days**: How many days before certificate expiry SitePulse should open an SSL issue.
+
+    SitePulse can also open an issue when a certificate is invalid, missing, or cannot be verified.
+  </Accordion>
+  <Accordion title="DNS thresholds">
+    DNS thresholds control record-change and DNS-health issues.
+
+    - **Hard failures only**: Open DNS issues only for failures that prevent DNS from resolving.
+    - **Expected records**: Define records that should exist, one per line, such as `A`, `AAAA`, `CNAME`, `MX`, `NS`, or `TXT`.
+
+    Use expected records when you want SitePulse to catch missing or changed DNS entries, not just DNS lookup failures.
+  </Accordion>
+  <Accordion title="Broken-link thresholds">
+    Broken-link thresholds control crawl issues.
+
+    - **Minimum broken links**: How many broken URLs must be found before the result counts as a breach.
+    - **Consecutive breaches to open**: How many breached automatic crawls are required before SitePulse opens an issue.
+
+    Use this to avoid alerts for a single transient link failure.
+  </Accordion>
+  <Accordion title="Performance thresholds">
+    Performance thresholds control slow-site and poor-score issues.
+
+    - **Minimum score**: The lowest acceptable performance score.
+    - **Maximum response time**: The slowest acceptable response time in milliseconds.
+    - **Consecutive breaches to open**: How many breached automatic performance checks are required before SitePulse opens an issue.
+
+    A performance check can breach because the score is too low, the response is too slow, or both.
+  </Accordion>
+</AccordionGroup>
+
+### Quiet time
+
+Quiet time suppresses notifications during a configured time window. Checks continue to run, issues can still open or recover, and the dashboard still updates.
+
+Use quiet time for planned maintenance windows, overnight periods, or times when the team does not want email or webhook alerts.
+
 ## Reading results
 
 Use check results to decide what action to take:
@@ -112,6 +167,16 @@ Use check results to decide what action to take:
   </Accordion>
 </AccordionGroup>
 
+### HTTP status code 0
+
+Status code `0` means SitePulse did not receive an HTTP response from the target site. It is not a real HTTP status code.
+
+Common causes include DNS failures, connection timeouts, TLS connection errors, refused connections, or a target URL that SitePulse blocks for safety.
+
+<Info>
+  For target-site HTTP checks, SitePulse first uses the normal network resolver. If that attempt fails because the connection cannot be established, SitePulse retries over IPv4. This helps when a domain publishes both IPv4 and IPv6 addresses but IPv6 is unreachable from the SitePulse worker.
+</Info>
+
 ## Check status values
 
 | Status | Description |
@@ -119,4 +184,4 @@ Use check results to decide what action to take:
 | `pending` | Queued or currently running |
 | `completed` | Finished successfully |
 | `failed` | Finished with error |
-| `skipped` | Not run (due to plan or config) |
+| `skipped` | Not run due to configuration |

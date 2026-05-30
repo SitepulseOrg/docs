@@ -45,10 +45,10 @@ Returned on `GET /me` and nested on some notification event responses.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `plan` | string | Plan key (e.g., `starter`, `pro`) |
+| `plan` | string | Plan key (`starter`, `growth`, `agency`) |
 | `sites` | object | `{ "used", "limit", "remaining" }` style summary |
 | `seats` | object | Seat usage; may include `members`, `pending_invitations` |
-| `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools on plan |
+| `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools available to the team |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
 | `history_retention_days` | integer \| null | How long check history is kept |
 | `priority_queue` | boolean | Whether checks use priority queue |
@@ -64,7 +64,7 @@ Returned on `GET /me` and nested on some notification event responses.
   "sites_count": 12,
   "members_count": 5,
   "limits": {
-    "plan": "pro",
+    "plan": "growth",
     "sites": {
       "used": 12,
       "limit": 50,
@@ -202,7 +202,7 @@ These are fully qualified route URLs for the report endpoints on this site.
 
 ## Issue (internal problem event record)
 
-SitePulse uses internal "issue" records to deduplicate problem events and drive notifications. These are **not** user-managed work items — there are no issue pages or acknowledgement flows in the product.
+SitePulse uses internal "issue" records to deduplicate problem events and drive notifications.
 
 The API exposes read-only access to recent problem events for integrations that need to correlate notifications or query history.
 

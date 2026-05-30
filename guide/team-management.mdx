@@ -62,10 +62,11 @@ Team monitoring settings define the default automatic-check behavior for the tea
 | **Status headers** | Default headers for status checks |
 | **Problem thresholds** | When to trigger notifications for failures |
 | **Quiet time** | When to suppress notifications |
+| **Confirmation retry** | How soon to recheck a failed uptime result before opening an issue |
 | **Follow-up timing** | How often to check during incidents |
 
 <Tip>
-  Individual [sites](/guide/sites) can override some monitoring settings when a site needs different behavior from the team default.
+  Individual [sites](/guide/sites) can override some monitoring settings when a site needs different behavior from the team default. See [Problem thresholds](/guide/checks#problem-thresholds) for the full threshold reference.
 </Tip>
 
 ## Notifications
@@ -100,17 +101,26 @@ See the [Notifications](/guide/notifications) guide for full details on channels
 Billing is managed by the team owner. The billing page shows:
 
 - Current plan and available plans
-- Plan limits (sites, members, tools, cadence)
+- Plan limits (sites, members, cadence)
 - Payment method details
 - Invoice history
 - Checkout and Stripe billing portal (when available)
+
+### Plans and cadences
+
+SitePulse offers three pricing tiers with different minimum automatic monitoring cadences. All check tools are enabled across all plans.
+
+| Plan | Minimum cadence |
+| :--- | :-------------- |
+| **Starter** | 30 minutes |
+| **Growth** | 5 minutes |
+| **Agency** | 1 minute |
 
 <AccordionGroup>
   <Accordion title="Plan limits">
     Plan limits affect:
     - Number of sites you can monitor
     - Number of team members
-    - Available check tools
     - Automatic monitoring cadence (how often checks run)
     - Check history retention
     - Priority queue access
