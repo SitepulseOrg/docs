@@ -271,18 +271,21 @@ Tool values in request bodies and responses:
 | `failed` | Finished with error |
 | `skipped` | Not run (for example plan or config) |
 
-### Problem event status (internal)
+### Issue status
 
 | Value | Description |
 |-------|-------------|
-| `open` | Problem is currently active (notifications may be firing) |
-| `resolved` | Problem has recovered |
+| `open` | Active incident |
+| `acknowledged` | Acknowledged by a team member |
+| `resolved` | Problem has cleared |
+
+Filter with `status=active` to include both `open` and `acknowledged` issues.
 
 <Note>
-  These are internal states used for notification deduplication. The API only supports read access.
+  The API supports read access only. Acknowledge and resolve actions are available in the dashboard **Issues** page.
 </Note>
 
-### Problem event severity
+### Issue severity
 
 | Value |
 |-------|

@@ -23,7 +23,10 @@
           "guide/dashboard",
           "guide/sites",
           "guide/checks",
+          "guide/monitoring",
+          "guide/issues",
           "guide/notifications",
+          "guide/webhooks",
           "guide/team-management",
           "guide/account-settings"
         ]

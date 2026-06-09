@@ -106,7 +106,7 @@ Each token carries one or more scopes. Routes declare the minimum scope required
 | `checks:read` | Read check runs and results |
 | `checks:run` | Queue manual check runs |
 | `checks:delete` | Delete manual check runs |
-| `issues:read` | Read problem events (internal records used for notifications) |
+| `issues:read` | Read issues (monitoring incidents) |
 
 <Info>
   Scopes map to team permissions. For example, `sites:write` satisfies the `createSite` and `updateSite` permissions when the token is used. Team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.

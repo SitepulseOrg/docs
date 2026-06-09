@@ -1,0 +1,350 @@
+---
+title: "Webhook notifications"
+description: "Configure HTTP webhooks for issue alerts, payload format, delivery behavior, and testing"
+---
+
+SitePulse can deliver issue lifecycle alerts to URLs you control. This guide covers webhook-style channels: the generic **Webhook** channel, **Slack webhook**, **Microsoft Teams**, and the connected **Slack** app (which posts to a Slack incoming webhook under the hood).
+
+<Info>
+  Email and in-app notifications use separate delivery paths. See [Notifications](/guide/notifications) for the full channel overview.
+</Info>
+
+## Create a webhook configuration
+
+Admins and owners manage webhook destinations under **Notifications** in the sidebar.
+
+<Steps>
+  <Step title="Add a configuration">
+    Click **Add configuration** and choose a channel:
+    - **Webhook** — your own HTTP endpoint
+    - **Slack webhook** — Slack incoming webhook URL
+    - **Microsoft Teams** — Teams workflow incoming webhook URL
+    - **Slack** — OAuth app connection (no URL required; SitePulse stores the webhook URL after you connect)
+  </Step>
+  <Step title="Set the destination">
+    For URL-based channels, paste a public `http://` or `https://` endpoint (max 2,048 characters). For the Slack app, click **Connect Slack** and complete authorization in Slack.
+  </Step>
+  <Step title="Choose events">
+    Select one or both:
+    - **Issue detected** — fires when a new issue opens or a resolved issue reopens
+    - **Issue resolved** — fires when automatic monitoring confirms recovery
+  </Step>
+  <Step title="Choose tool scope">
+    Apply the configuration to **all checks** or only **specific tools** (Status, SSL, DNS, Broken Links, Performance).
+  </Step>
+  <Step title="Choose HTTP method (Webhook channel only)">
+    Generic webhook configurations support **POST** (default) or **GET**. Slack webhook, Microsoft Teams, and the Slack app always use POST.
+  </Step>
+  <Step title="Test and save">
+    Use **Test** to send a sample payload before saving. Enable the configuration when you are ready to receive production alerts.
+  </Step>
+</Steps>
+
+## Configuration fields
+
+| Field | Applies to | Description |
+|-------|------------|-------------|
+| **Channel** | All | `webhook`, `slack`, `slack_app`, or `microsoft_teams` |
+| **Destination** | URL channels | Public HTTP(S) webhook URL |
+| **HTTP method** | `webhook` only | `post` or `get` |
+| **Events** | All | `open` (Issue detected) and/or `resolve` (Issue resolved) |
+| **Tool scope** | All | All tools, or a subset of enabled check tools |
+| **Enabled** | All | Toggle delivery without deleting the configuration |
+
+A configuration delivers an alert only when **all** of the following are true:
+
+1. The configuration is **enabled**
+2. The issue transition matches a subscribed **event** (`open` or `resolve`)
+3. The issue's check tool is in scope (all tools, or listed in the configuration)
+4. The team is **not** in **quiet time**
+5. The destination URL passes SitePulse's outbound safety checks
+
+<Note>
+  Acknowledging or refreshing an issue does not send webhook alerts. Only **open** (including reopen) and **resolve** transitions trigger delivery.
+</Note>
+
+## Delivery behavior
+
+Webhook alerts are sent asynchronously after the issue transition commits to the database.
+
+| Behavior | Detail |
+|----------|--------|
+| **Timing** | Queued job; not synchronous with the check that opened the issue |
+| **Quiet time** | Suppresses all outbound issue alerts (webhooks, email, in-app) |
+| **Connect timeout** | 5 seconds |
+| **Total timeout** | 10 seconds |
+| **Retries** | Up to 3 attempts at 200ms, 500ms, and 1000ms intervals |
+| **Redirects** | Disabled |
+| **Response handling** | Non-2xx responses are logged; monitoring and issue state are unaffected |
+| **Failures** | Exceptions are logged and swallowed — they do not roll back the issue |
+
+<Warning>
+  SitePulse does not retry failed webhooks beyond the short HTTP retry window. Build idempotent handlers and do not rely on webhooks as the only record of an incident.
+</Warning>
+
+## Request format
+
+### POST (recommended)
+
+SitePulse sends `Content-Type: application/json` with `Accept: application/json`.
+
+**Generic webhook** — raw issue lifecycle JSON (see [Production payload](#production-payload) below).
+
+**Slack webhook / Slack app** — Slack [Block Kit](https://api.slack.com/block-kit) message JSON with `text` and `blocks` fields.
+
+**Microsoft Teams** — Office 365 Connector [MessageCard](https://learn.microsoft.com/en-us/outlook/actionable-messages/message-card-reference) JSON.
+
+### GET (generic webhook only)
+
+SitePulse sends the production payload as **query string parameters** on the configured URL. Nested objects are encoded using Laravel's query serialization (e.g. `issue[summary]=...`, `team[id]=...`).
+
+Use GET only when your receiver cannot accept POST bodies. POST is recommended for nested payloads.
+
+## Headers
+
+All HTTP webhook deliveries include channel-specific headers where applicable:
+
+| Header | Test delivery | Issue delivery | Value |
+|--------|---------------|----------------|-------|
+| `X-SitePulse-Event` | `notification.test` | `issue.opened` or `issue.recovered` | Event name |
+| `X-SitePulse-Delivery` | `test` | `issue-lifecycle` | Delivery type |
+
+The `X-SitePulse-Event` header mirrors the `event` field in the JSON body (for POST) or query payload (for GET).
+
+### Event mapping
+
+| UI label | Internal transition | `event` value | When it fires |
+|----------|---------------------|---------------|---------------|
+| Issue detected | `open` | `issue.opened` | New issue opens |
+| Issue detected | `open` (from reopen) | `issue.opened` | Previously resolved issue fails again |
+| Issue resolved | `resolve` | `issue.recovered` | Automatic monitoring confirms recovery |
+
+The `transition` field in the payload reflects the internal transition (`open` or `resolve`), not `reopen`.
+
+## Production payload
+
+Generic **Webhook** channel deliveries use this JSON shape on POST:
+
+```json
+{
+  "event": "issue.opened",
+  "transition": "open",
+  "occurred_at": "2026-05-25T12:00:00+00:00",
+  "team": {
+    "id": 1,
+    "name": "Example Team"
+  },
+  "issue": {
+    "id": 123,
+    "type": "status",
+    "status": "open",
+    "severity": "critical",
+    "fingerprint": "status:down",
+    "summary": "Example is down",
+    "link": "https://app.sitepulse.dev/dashboard/issues?status=active&site=..."
+  },
+  "site": {
+    "id": 10,
+    "uuid": "9d4e2c8f-1234-5678-9abc-def012345678",
+    "name": "Example",
+    "url": "https://example.com",
+    "domain": "example.com"
+  }
+}
+```
+
+### Field reference
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `event` | string | `issue.opened` or `issue.recovered` |
+| `transition` | string | `open` or `resolve` |
+| `occurred_at` | string | ISO 8601 timestamp when the alert was generated |
+| `team.id` | integer | Team id |
+| `team.name` | string | Team display name |
+| `issue.id` | integer | Internal issue id |
+| `issue.type` | string | Check tool: `status`, `ssl`, `dns`, `broken-links`, `performance` |
+| `issue.status` | string | Issue status at time of delivery (`open`, `acknowledged`, or `resolved`) |
+| `issue.severity` | string | `critical`, `warning`, or `info` |
+| `issue.fingerprint` | string | Stable deduplication key (e.g. `status:down`, `ssl:expiring`) |
+| `issue.summary` | string | Human-readable issue title |
+| `issue.link` | string | URL to the filtered Issues page in SitePulse |
+| `site.id` | integer | Internal site id |
+| `site.uuid` | string | Site UUID (used in API paths) |
+| `site.name` | string | Site display name |
+| `site.url` | string | Monitored URL |
+| `site.domain` | string | Hostname derived from the URL |
+
+<Info>
+  Read issue history programmatically with the [Issues API](/api/endpoints#issues) (`issues:read` scope). Webhook `issue.id` is the internal integer id, not the UUID exposed by the API.
+</Info>
+
+## Test payload
+
+The **Test** button sends a different payload from production issue alerts. Use it to verify connectivity, not to validate your issue handler.
+
+```json
+{
+  "event": "notification.test",
+  "sent_at": "2026-05-25T12:00:00+00:00",
+  "team": {
+    "id": 1,
+    "name": "Example Team"
+  },
+  "configuration": {
+    "id": 42,
+    "channel": "webhook",
+    "destination": "https://hooks.example.com/sitepulse"
+  },
+  "message": "This is a test webhook from SitePulse."
+}
+```
+
+Test deliveries set `X-SitePulse-Delivery: test` and `X-SitePulse-Event: notification.test`.
+
+Slack and Microsoft Teams test messages use channel-specific formatting (Slack blocks or Teams MessageCard) with the same test metadata.
+
+You can test unsaved modal values from the configuration dialog before creating or updating a configuration.
+
+## Channel-specific formatting
+
+### Slack (app and webhook)
+
+Production Slack messages are POSTed as JSON with:
+
+- `text` — short summary line
+- `blocks` — formatted sections for summary, site, tool, severity, status, and a **View issue** button linking to `issue.link`
+
+Titles:
+- Issue detected: `SitePulse detected an issue: {site name}`
+- Issue resolved: `SitePulse recovered: {site name}`
+
+### Microsoft Teams
+
+Production Teams messages are POSTed as MessageCard JSON with:
+
+- `themeColor` — red (`DC2626`) for detected issues, green (`16A34A`) for recoveries
+- `title`, `text`, and `sections` with site/tool/severity/status facts
+- `potentialAction` with a **View issue** link
+
+## Destination URL requirements
+
+Webhook URLs must be:
+
+- Valid `http://` or `https://` URLs
+- Publicly reachable from SitePulse workers
+- Free of embedded credentials (`user:pass@host` is rejected)
+
+SitePulse blocks destinations that resolve to private, loopback, or link-local addresses. This includes hostnames like `localhost`, `*.local`, and hosts whose DNS resolves to non-public IPs.
+
+<Warning>
+  Internal network URLs (private RFC 1918 ranges, metadata endpoints, etc.) are rejected by design.
+</Warning>
+
+## Example receiver
+
+Minimal POST handler (Node.js / Express):
+
+```javascript
+app.post('/sitepulse/hooks', express.json(), (req, res) => {
+  const event = req.get('X-SitePulse-Event');
+
+  if (event === 'notification.test') {
+    console.log('Test webhook received');
+    return res.sendStatus(200);
+  }
+
+  if (event === 'issue.opened') {
+    console.log(`Issue opened: ${req.body.issue.summary}`);
+    // Page on-call, create ticket, etc.
+  }
+
+  if (event === 'issue.recovered') {
+    console.log(`Issue recovered: ${req.body.issue.summary}`);
+    // Close ticket, notify channel, etc.
+  }
+
+  res.sendStatus(200);
+});
+```
+
+Return any `2xx` status promptly. SitePulse treats other responses as delivery failures.
+
+## Integration recipes
+
+### Event type reference
+
+Use this table when building idempotent handlers for the generic **Webhook** channel (POST JSON):
+
+| `X-SitePulse-Event` | `event` (body) | `transition` | Suggested action |
+|---------------------|----------------|--------------|------------------|
+| `notification.test` | `notification.test` | — | Verify connectivity only |
+| `issue.opened` | `issue.opened` | `open` | Page on-call, open ticket, post to chat |
+| `issue.recovered` | `issue.recovered` | `resolve` | Resolve ticket, notify recovery |
+
+<Note>
+  Slack, Slack webhook, and Microsoft Teams channels receive **formatted** payloads (Block Kit or MessageCard), not the raw issue JSON above. Use the generic Webhook channel for custom integrations.
+</Note>
+
+### PagerDuty (Events API v2)
+
+Route SitePulse alerts to PagerDuty using a generic webhook and a small translation layer.
+
+<Steps>
+  <Step title="Create a SitePulse webhook">
+    Under **Notifications**, add a **Webhook** configuration:
+    - Method: **POST**
+    - Events: **Issue detected** and **Issue resolved**
+    - Destination: your PagerDuty integration endpoint or middleware URL
+  </Step>
+  <Step title="Translate events">
+    Map SitePulse events to PagerDuty `trigger` and `resolve` actions using `X-SitePulse-Event` or `event` in the body.
+  </Step>
+  <Step title="Use a stable dedup key">
+    Use `issue.fingerprint` combined with `site.uuid` as PagerDuty `dedup_key` so reopen and recovery events update the same incident.
+  </Step>
+</Steps>
+
+**Example middleware** (forwards to PagerDuty Events API v2):
+
+```javascript
+app.post('/sitepulse/pagerduty', express.json(), async (req, res) => {
+  const event = req.get('X-SitePulse-Event');
+  const { issue, site } = req.body;
+
+  if (event === 'notification.test') {
+    return res.sendStatus(200);
+  }
+
+  const dedupKey = `${site.uuid}:${issue.fingerprint}`;
+  const summary = issue.summary || `SitePulse alert for ${site.name}`;
+
+  const payload = {
+    routing_key: process.env.PAGERDUTY_ROUTING_KEY,
+    event_action: event === 'issue.recovered' ? 'resolve' : 'trigger',
+    dedup_key: dedupKey,
+    payload: {
+      summary,
+      severity: issue.severity === 'critical' ? 'critical' : 'warning',
+      source: site.domain,
+      custom_details: issue,
+    },
+  };
+
+  await fetch('https://events.pagerduty.com/v2/enqueue', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  res.sendStatus(200);
+});
+```
+
+Store `PAGERDUTY_ROUTING_KEY` in your middleware environment, not in SitePulse.
+
+## Related guides
+
+- [Notifications](/guide/notifications) — all channels, quiet time, and manual check alerts
+- [Managing issues](/guide/issues) — issue statuses and dashboard triage
+- [Issues API](/api/endpoints#issues) — programmatic issue access

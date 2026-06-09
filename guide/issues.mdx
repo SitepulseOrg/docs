@@ -1,0 +1,97 @@
+---
+title: "Managing Issues"
+description: "Track, acknowledge, and resolve monitoring incidents across your team"
+---
+
+Issues are team-scoped incident records created when **automatic** monitoring crosses your configured thresholds. They group repeated failures for the same site and check tool so you can triage problems without an alert for every individual check.
+
+<Info>
+  Manual checks save results to check history and can send completion notifications, but they do not open or resolve issues.
+</Info>
+
+## When issues are created
+
+SitePulse opens an issue when an automatic check meets the problem thresholds configured under **[Monitoring](/guide/monitoring)** and the check tool has **issue opening enabled** for that team or site. Examples include:
+
+- Repeated status failures after confirmation retries
+- Invalid or expiring SSL certificates
+- DNS hard failures or missing expected records
+- Broken-link counts above your threshold across consecutive crawls
+- Performance scores or response times below configured limits
+
+When the underlying problem clears on subsequent automatic checks, SitePulse marks the issue **resolved** and can send recovery notifications.
+
+See [Monitoring settings](/guide/monitoring#issue-settings) and [Problem thresholds](/guide/checks#problem-thresholds) for the full threshold reference.
+
+## Issue statuses
+
+| Status | Description |
+|--------|-------------|
+| `open` | Active incident that needs attention |
+| `acknowledged` | Someone on the team has acknowledged the issue |
+| `resolved` | The problem has cleared; kept for history |
+
+Resolved issues can reopen automatically if the same site, tool, and failure type occurs again.
+
+## Severities
+
+| Severity | Typical use |
+|----------|-------------|
+| `critical` | Site down, invalid SSL, DNS hard failures |
+| `warning` | Expiring certificates, broken-link thresholds, performance breaches |
+| `info` | Lower-priority signals when configured |
+
+## Using the Issues page
+
+Open **Issues** from the sidebar to see incidents for the current team.
+
+The page supports:
+
+- **Status tabs** — Active (open + acknowledged), Open, Acknowledged, or Resolved
+- **Filters** — Site, check tool, and severity
+- **Sorting** — Summary, site, tool, status, or opened time
+- **Bulk actions** — Acknowledge, resolve, or delete selected issues
+
+<Steps>
+  <Step title="Review active incidents">
+    Start on the **Active** tab to see open and acknowledged issues across the team.
+  </Step>
+  <Step title="Acknowledge when triaged">
+    Acknowledge an issue when someone is investigating. Acknowledgement is recorded with the acting user and timestamp.
+  </Step>
+  <Step title="Resolve or wait for recovery">
+    Resolve an issue manually when appropriate, or let automatic monitoring resolve it when checks pass again.
+  </Step>
+</Steps>
+
+<Tip>
+  The dashboard problem summaries link into relevant sites and tools. Use **Issues** when you need a full incident list with filters and bulk actions.
+</Tip>
+
+## Notifications and quiet time
+
+Issue lifecycle events drive outbound alerts:
+
+- **Issue detected** — when a new issue opens (including when a resolved issue reopens)
+- **Issue resolved** — when automatic monitoring confirms recovery
+
+Configure destinations under **Notifications**. Quiet time (set in **Monitoring**) suppresses outbound alerts but does not stop checks or issue evaluation.
+
+See [Notifications](/guide/notifications) for channel setup and [Webhook notifications](/guide/webhooks) for HTTP payload and delivery details.
+
+## Site-level controls
+
+Per-site settings can affect issue behavior:
+
+- **Snooze** — pauses issue opening until a datetime passes
+- **Threshold overrides** — different problem rules for one site
+- **Enabled issue tools** — disable issue opening per tool while checks still run
+- **Disabled check tools** — if a tool is not enabled on the site, it is not checked or evaluated
+
+See [Managing sites](/guide/sites#site-specific-overrides) for override options.
+
+## API access
+
+Integrations can read issues through the v1 API with the `issues:read` scope. The API is read-only — acknowledge and resolve actions are available in the dashboard only.
+
+See [Issues endpoints](/api/endpoints#issues) and the [Issue resource](/api/resources#issue).

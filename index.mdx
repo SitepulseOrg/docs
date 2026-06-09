@@ -3,7 +3,7 @@ title: "Welcome to SitePulse"
 description: "Comprehensive website monitoring for uptime, SSL, DNS, broken links, and performance"
 ---
 
-SitePulse helps teams monitor website health across uptime, SSL, DNS, broken links, and performance. Each site can be checked manually, monitored automatically, and the team receives notifications when problems are detected.
+SitePulse helps teams monitor website health across uptime, SSL, DNS, broken links, and performance. Each site can be checked manually, monitored automatically, and the team receives notifications when issues are detected or resolved.
 
 ## What SitePulse does
 
@@ -30,6 +30,12 @@ SitePulse provides continuous monitoring for critical website health metrics:
   <Card title="Managing Sites" icon="globe" href="/guide/sites">
     Add and configure monitored sites
   </Card>
+  <Card title="Managing Issues" icon="triangle-exclamation" href="/guide/issues">
+    Track and resolve monitoring incidents
+  </Card>
+  <Card title="Monitoring settings" icon="activity" href="/guide/monitoring">
+    Cadence, thresholds, and quiet time
+  </Card>
 </CardGroup>
 
 ## Key Features
@@ -39,12 +45,18 @@ SitePulse provides continuous monitoring for critical website health metrics:
     Schedule checks to run automatically at your preferred intervals
   </Card>
   <Card title="Alerts & Notifications" icon="bell">
-    Get notified via email, webhook, or in-app when problems are detected
+    Get notified via email, Slack, Microsoft Teams, webhooks, or in-app when issues are detected
   </Card>
   <Card title="Team Collaboration" icon="users">
     Invite team members and manage access controls
   </Card>
-  <Card title="Integrations" icon="plug">
-    Connect alerts to Slack, PagerDuty, and other tools via webhooks
+  <Card title="Issue tracking" icon="triangle-exclamation">
+    Acknowledge and resolve incidents from the Issues page
+  </Card>
+  <Card title="Webhook integrations" icon="webhook" href="/guide/webhooks">
+    HTTP payloads, headers, and delivery behavior for custom automation
+  </Card>
+  <Card title="Integrations" icon="plug" href="/guide/webhooks#integration-recipes">
+    PagerDuty, Slack, Microsoft Teams, and custom automation
   </Card>
 </CardGroup>

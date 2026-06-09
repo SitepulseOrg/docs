@@ -163,7 +163,50 @@ Update a site. Sends the full site shape expected by the dashboard update form (
 | `settings.enabled_checks` | Tool array |
 | `settings.status_check_header` | Status header override |
 | `settings.automatic_check_cadences` | Tool → minutes map |
-| `settings.issues` | Issue threshold overrides |
+| `settings.issues` | Per-site issue settings (see below) |
+
+#### `settings.issues` fields
+
+All fields are optional. Omitted fields inherit team defaults.
+
+| Field | Type | Limits | Description |
+|-------|------|--------|-------------|
+| `enabled_tools` | string[] | dashboard tools | Tools that can open issues on this site |
+| `snoozed_until` | string (date) | — | Pause issue opening until datetime |
+| `status.failures_to_open` | integer | min 1 | Failures before opening status issue |
+| `status.successes_to_resolve` | integer | min 1 | Successes before resolving |
+| `status.confirmation_retry_minutes` | integer | 1–5 | Confirmation retry delay |
+| `status.incident_follow_up_minutes` | integer | 1–60 | Active incident follow-up interval |
+| `ssl.expiry_days` | integer | min 1 | Days before expiry to alert |
+| `links.min_broken_count` | integer | min 1 | Broken URLs to breach |
+| `links.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches to open |
+| `links.ignore_paths` | string[] | max 255 chars each | Crawl exclusion paths |
+| `performance.min_score` | integer | 1–100 | Minimum score |
+| `performance.max_response_time_ms` | integer | min 1 | Max response time (ms) |
+| `performance.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches to open |
+| `dns.hard_failures_only` | boolean | — | Hard failures only |
+| `dns.expected_records` | object | — | Expected DNS records by type |
+
+**Example:**
+
+```json
+{
+  "settings": {
+    "issues": {
+      "enabled_tools": ["status", "ssl"],
+      "links": {
+        "ignore_paths": ["/admin", "/preview"]
+      },
+      "dns": {
+        "hard_failures_only": false,
+        "expected_records": {
+          "A": ["203.0.113.1"]
+        }
+      }
+    }
+  }
+}
+```
 
 <Note>
   Updating enabled checks or cadences resyncs automatic schedules.
@@ -270,13 +313,13 @@ Daily performance aggregates from automatic performance checks.
 
 **Response `200`:** [Performance report](/api/resources#performance-report)
 
-## Problem events
+## Issues
 
-These endpoints provide read-only access to internal problem event records. SitePulse uses these records to deduplicate problems and drive notifications. There are no issue pages, acknowledgement, or notes in the product.
+Read-only access to issue records. The dashboard **Issues** page supports acknowledge, resolve, and bulk actions; those operations are not available through the API.
 
 ### GET /issues
 
-Paginated list of recent problem events across teams the user can view.
+Paginated list of issues across teams the user can view.
 
 **Scope:** `issues:read`  
 **Team permission:** `viewIssues` per team
@@ -286,22 +329,22 @@ Paginated list of recent problem events across teams the user can view.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `team` | integer | — | Limit to one team id |
-| `status` | string | `active` | `active` or `open` (problem currently firing), `resolved` |
+| `status` | string | `active` | `active` (open + acknowledged), `open`, `acknowledged`, or `resolved` |
 | `site` | string | — | Site uuid |
-| `tool` | string | — | Check tool (status, ssl, dns, broken_links, performance) |
+| `tool` | string | — | Check tool (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
 | `severity` | string | — | `critical`, `warning`, `info` |
-| `page`, `per_page` | integer | | Pagination |
+| `page`, `per_page` | integer | | Pagination (max 100 per page) |
 
-**Response `200`:** Paginated collection of problem event records (see [Issue (internal problem event record)](/api/resources#issue) in the resource reference).
+**Response `200`:** Paginated collection of [Issue](/api/resources#issue) resources.
 
 ### GET /issues/\{issue\}
 
-Retrieve a single problem event record with related site and check details.
+Retrieve a single issue with related site, check, timeline, and acknowledgement/resolution metadata.
 
 **Scope:** `issues:read`  
-**Team permission:** `view` the event's team
+**Team permission:** `view` the issue's team
 
-**Response `200`:** [Issue (internal problem event record)](/api/resources#issue) resource (read-only; no notes or timeline of user actions)
+**Response `200`:** [Issue](/api/resources#issue) resource
 
 ## Endpoint summary
 

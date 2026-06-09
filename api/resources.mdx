@@ -1,13 +1,13 @@
 ---
 title: "Resources"
-description: "Field-by-field schemas for users, teams, sites, checks, notification-related events, and reports"
+description: "Field-by-field schemas for users, teams, sites, checks, issues, and reports"
 ---
 
 JSON shapes returned by v1 API resources.
 
 ## User
 
-Returned on `GET /me` and nested on some notification event responses.
+Returned on `GET /me` and nested on some issue responses.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -67,8 +67,8 @@ Returned on `GET /me` and nested on some notification event responses.
     "plan": "growth",
     "sites": {
       "used": 12,
-      "limit": 50,
-      "remaining": 38
+      "limit": 25,
+      "remaining": 13
     },
     "enabled_checks": {
       "allowed": ["status", "ssl", "dns", "broken-links", "performance"]
@@ -96,7 +96,7 @@ Returned on `GET /me` and nested on some notification event responses.
 | `is_pinned` | boolean | Pinned on sites list |
 | `enabled_checks` | string[] | Enabled tool values |
 | `monitoring` | object | See monitoring object below |
-| `issue_settings` | object \| null | Per-site issue thresholds (inherits team when null) |
+| `issue_settings` | object \| null | Per-site issue settings (inherits team defaults when null) |
 | `latest_checks` | object | Latest check per tool, when loaded |
 | `reports` | object | Absolute URLs to report endpoints |
 | `created_at` | string | ISO 8601 |
@@ -121,6 +121,32 @@ Keys are tool values (`status`, `ssl`, `dns`, `broken-links`, `performance`). Va
 | `performance` | string (URL) |
 
 These are fully qualified route URLs for the report endpoints on this site.
+
+### Issue settings object
+
+Returned as `issue_settings` on Site resources. When `null`, the site inherits team defaults.
+
+<Note>
+  PATCH requests use `settings.issues` in the request body. The response returns the normalized shape as `issue_settings`.
+</Note>
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `enabled_tools` | string[] | Tools that can open issues (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
+| `snoozed_until` | string \| null | ISO 8601 datetime; issue opening paused until this time |
+| `status.failures_to_open` | integer | Failed status checks before opening an issue |
+| `status.successes_to_resolve` | integer | Successful status checks before resolving |
+| `status.confirmation_retry_minutes` | integer | Minutes before confirmation retry (1–5) |
+| `status.incident_follow_up_minutes` | integer | Minutes between incident follow-up checks (1–60) |
+| `ssl.expiry_days` | integer | Days before expiry to open SSL warning issue |
+| `links.min_broken_count` | integer | Minimum broken URLs to breach threshold |
+| `links.consecutive_breaches_to_open` | integer | Consecutive breached crawls before opening issue |
+| `links.ignore_paths` | string[] | URL paths excluded from broken-link crawls |
+| `performance.min_score` | integer | Minimum acceptable score (1–100) |
+| `performance.max_response_time_ms` | integer | Maximum response time in milliseconds |
+| `performance.consecutive_breaches_to_open` | integer | Consecutive breached checks before opening issue |
+| `dns.hard_failures_only` | boolean | Only open DNS issues on lookup failures |
+| `dns.expected_records` | object | Map of record type → array of expected values |
 
 ### Example
 
@@ -200,25 +226,29 @@ These are fully qualified route URLs for the report endpoints on this site.
 }
 ```
 
-## Issue (internal problem event record)
+## Issue
 
-SitePulse uses internal "issue" records to deduplicate problem events and drive notifications.
-
-The API exposes read-only access to recent problem events for integrations that need to correlate notifications or query history.
+Issues represent monitoring incidents opened by automatic checks. The API exposes read-only access for integrations that need to correlate webhook notifications or query incident history.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `uuid` | string | Event identifier |
+| `uuid` | string | Issue identifier |
 | `team_id` | integer | Owning team |
 | `type` | string | Check tool that detected the problem |
+| `status` | string | `open`, `acknowledged`, or `resolved` |
 | `severity` | string | `critical`, `warning`, `info` |
-| `fingerprint` | string | Stable key used for deduplication and recovery matching |
-| `summary` | string | Human-readable summary of the problem |
-| `context` | object \| null | Structured details from the check |
+| `fingerprint` | string | Stable key for deduplication (e.g. `status:down`, `ssl:expiring`) |
+| `summary` | string | Human-readable summary |
+| `context` | object \| null | Structured evaluation payload from the check |
 | `site` | Site \| null | Affected site when loaded |
-| `check` | Check \| null | The check that triggered the event |
-| `is_active` | boolean | Whether the problem is still considered open |
+| `check` | Check \| null | Latest check tied to the issue |
+| `previous_check` | Check \| null | Prior check used for comparison when loaded |
+| `acknowledged_by` | User \| null | User who acknowledged the issue |
+| `resolved_by` | User \| null | User who resolved the issue (or null when resolved automatically) |
+| `timeline` | array | Lifecycle events (`opened`, `acknowledged`, `resolved`) with timestamps and actors |
+| `is_active` | boolean | `true` when status is `open` or `acknowledged` |
 | `opened_at` | string | ISO 8601 |
+| `acknowledged_at` | string \| null | ISO 8601 |
 | `resolved_at` | string \| null | ISO 8601 when recovered |
 | `last_evaluated_at` | string \| null | ISO 8601 |
 | `created_at` | string | ISO 8601 |
@@ -231,14 +261,19 @@ The API exposes read-only access to recent problem events for integrations that 
   "uuid": "9d4e2c8f-issue-5678-9abc-def012345678",
   "team_id": 1,
   "type": "status",
+  "status": "open",
   "severity": "critical",
-  "fingerprint": "status:example.com:down",
-  "summary": "example.com is down (HTTP 500)",
+  "fingerprint": "status:down",
+  "summary": "Example is down (HTTP 500)",
   "context": {
     "response_code": 500
   },
+  "timeline": [
+    { "key": "opened", "timestamp": "2026-05-28T14:00:00+00:00", "user": null }
+  ],
   "is_active": true,
   "opened_at": "2026-05-28T14:00:00+00:00",
+  "acknowledged_at": null,
   "resolved_at": null,
   "last_evaluated_at": "2026-05-28T14:30:00+00:00",
   "created_at": "2026-05-28T14:00:00+00:00",

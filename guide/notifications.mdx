@@ -1,48 +1,59 @@
 ---
 title: "Notifications"
-description: "Configure alerts for monitoring problems via email, webhook, and in-app notifications"
+description: "Configure alerts for monitoring issues via email, Slack, Microsoft Teams, webhooks, and in-app notifications"
 ---
 
-SitePulse notifies your team when automatic monitoring detects problems or when manual checks complete or fail.
+SitePulse notifies your team when automatic monitoring opens or resolves issues, and when manual checks complete or fail in the background.
 
 ## Notification configurations
 
-Admins and owners configure notification destinations under **Team Settings → Notifications**.
+Admins and owners configure notification destinations under **Notifications** in the sidebar.
 
-You can add multiple email addresses and webhook URLs. Each configuration can:
+You can add multiple destinations across these channels:
 
+| Channel | Description |
+|---------|-------------|
+| **Email** | Send alerts to one or more email addresses |
+| **Slack** | Connect the SitePulse Slack app and choose a channel |
+| **Slack webhook** | Send to a Slack incoming webhook URL |
+| **Microsoft Teams** | Send to a Microsoft Teams incoming webhook URL |
+| **Webhook** | Generic HTTP endpoint (GET or POST) |
+
+Each configuration can:
+
+- Subscribe to **Issue detected** and/or **Issue resolved** events
 - Apply to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
 - Be enabled or disabled independently
 - Be tested directly from the settings screen
 
-Notification configurations determine **where** alerts go. The conditions for sending alerts (thresholds, quiet time) are controlled in the team's monitoring settings.
+Notification configurations determine **where** alerts go. The conditions for opening issues (thresholds, confirmation retries, follow-up timing) are controlled in **[Monitoring](/guide/monitoring)**.
 
 ## When notifications are sent
 
-### Automatic monitoring notifications
+### Issue lifecycle notifications
 
-When an automatic check detects a problem that meets the configured thresholds, SitePulse sends notifications to all enabled destinations for that tool.
+When automatic monitoring opens an issue or marks one resolved, SitePulse sends notifications to all enabled destinations that subscribe to the matching event and tool scope.
 
-Notifications are typically sent for:
-
-- Problem detected (e.g., site down after confirmation retries, SSL nearing expiry, broken links exceeding threshold, performance degradation)
-- Problem recovered (when subsequent checks show the issue has cleared)
+| Event | When it fires |
+|-------|---------------|
+| **Issue detected** | A new issue opens, or a previously resolved issue reopens |
+| **Issue resolved** | Automatic checks confirm the underlying problem has cleared |
 
 <Note>
-  Exact trigger rules are defined in your team's monitoring settings (thresholds, confirmation retries, follow-up timing).
+  Exact trigger rules are defined in your team's monitoring settings (thresholds, confirmation retries, follow-up timing). See [Managing issues](/guide/issues) for how issues relate to notifications.
 </Note>
 
 ### Manual check notifications
 
 When you run a manual check, SitePulse can notify the team on completion or failure (for longer-running checks like SSL, broken links, or performance that finish in the background).
 
-These notifications do not depend on the automatic monitoring thresholds.
+These notifications do not depend on automatic monitoring thresholds and do not open issues.
 
 ## Notification channels
 
 ### Email
 
-Admins and owners add email addresses that receive alerts.
+Add email addresses that receive issue alerts.
 
 Each email notification typically includes:
 
@@ -51,44 +62,50 @@ Each email notification typically includes:
 - The affected site
 - Key details from the check result
 
-### Webhook
+### Slack
 
-Add webhook endpoints to receive HTTP notifications (GET or POST).
+**Slack app** — Click **Connect Slack** when creating a configuration, authorize the SitePulse app, and pick a channel. No webhook URL is required.
 
-Webhook configurations let you:
+**Slack webhook** — Paste a Slack incoming webhook URL if you prefer webhook-based delivery.
 
-- Choose the HTTP method
-- Filter to specific tools
-- Receive events for problem detection and recovery
+### Microsoft Teams
 
-Use webhooks to integrate with Slack, Discord, PagerDuty, or your own automation.
+Add a Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams workflow webhooks.
 
-<Warning>
-  Webhook delivery failures do not affect monitoring or retry logic.
-</Warning>
+### Generic webhook
+
+Add webhook endpoints to receive HTTP notifications (GET or POST) for issue lifecycle events.
+
+Use webhooks to integrate with PagerDuty, custom automation, or other systems.
+
+See [Webhook notifications](/guide/webhooks) for configuration fields, payload schemas, headers, delivery behavior, test vs production payloads, and URL requirements.
 
 ### In-app notifications
 
-While using the SitePulse dashboard, relevant notifications can appear in real time and update counts or summaries on the dashboard (subject to your notification settings and permissions).
+While using the SitePulse dashboard, issue lifecycle notifications appear in real time and update counts on the dashboard (subject to quiet time and your permissions).
 
 ## Quiet time
 
-**Quiet time** (configured in Team Settings → Monitoring) suppresses notifications during defined windows.
+**Quiet time** (configured in **Monitoring**) suppresses outbound notifications during defined windows.
 
 Use it for:
 
 - Overnight or weekend periods when the team is unavailable
 - Planned maintenance windows
 
-Checks continue to run during quiet time — only the notifications are suppressed.
+Checks continue to run during quiet time — only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.
 
 ## Managing notification configurations
 
-From the Notifications settings page, admins and owners can:
+From the Notifications page, admins and owners can:
 
-- Add new email or webhook destinations
-- Edit existing configurations (tools, method, enabled state)
-- Test a configuration
+- Add new destinations for any supported channel
+- Edit existing configurations (channel, events, tools, enabled state)
+- Test a configuration (webhook, Slack webhook, Slack app, and Microsoft Teams channels)
 - Remove configurations that are no longer needed
 
-Each configuration is independent, so you can have different emails or webhooks for different tools or environments.
+Each configuration is independent, so you can route different tools or environments to different destinations.
+
+<Card title="Webhook reference" icon="webhook" href="/guide/webhooks">
+  Payload format, headers, GET vs POST, retries, and example receiver code
+</Card>

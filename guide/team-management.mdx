@@ -6,8 +6,16 @@ description: "Team setup, members, invitations, billing, notifications, and secu
 Teams allow you to collaborate with others and share monitoring responsibilities. Each team has its own sites, monitoring settings, billing, and member access controls.
 
 <Info>
-  See also [Account and Preferences](/guide/account-settings) for per-user profile, password, and appearance settings.
+  See also [Account and Preferences](/guide/account-settings) for per-user profile, password, passkeys, and appearance settings.
 </Info>
+
+## Personal team
+
+When you register, SitePulse creates a **personal team** for your account. This is your default workspace for adding sites and running checks.
+
+- The personal team cannot be deleted
+- You can create additional teams for clients or projects
+- The API exposes `personal_team: true` on the team resource for your personal workspace
 
 ## Creating or joining a team
 
@@ -27,13 +35,13 @@ SitePulse uses three practical access levels:
 
 <CardGroup cols={3}>
   <Card title="Owner" icon="crown">
-    Manage the team, billing, members, security, monitoring, notifications, sites, and checks.
+    Manage the team, billing, members, security, monitoring, notifications, sites, checks, and issues.
   </Card>
   <Card title="Admin" icon="user-shield">
-    Manage team settings, members, monitoring, notifications, sites, and checks.
+    Manage team settings, members, monitoring, notifications, sites, checks, and issues.
   </Card>
   <Card title="Member" icon="user">
-    Work with sites, checks, and notifications without managing team administration or billing.
+    Work with sites, checks, issues, and notifications without managing team administration or billing.
   </Card>
 </CardGroup>
 
@@ -51,54 +59,47 @@ Admins and owners can invite members by email and choose a role.
 - Invitees can decline their own invitations
 - When a member's role changes, SitePulse emails that member so they know their access changed
 
+Open **Manage Team → Members** from the team switcher menu to manage members and invitations.
+
+## Browsing teams
+
+If you belong to multiple teams:
+
+- Use the **team switcher** in the sidebar header for quick switching
+- Open **Teams** (`/teams`) from the user menu to see all workspaces you can access and switch context from a full list
+
 ## Monitoring
 
-Team monitoring settings define the default automatic-check behavior for the team. Admins and owners can update:
+Team monitoring settings define automatic check cadence, issue thresholds, and quiet time. Admins and owners configure these under **Monitoring** in the sidebar.
 
-| Setting | Description |
-|---------|-------------|
-| **Cadence** | How often each check tool runs |
-| **Enabled tools** | Which tools are monitored automatically |
-| **Status headers** | Default headers for status checks |
-| **Problem thresholds** | When to trigger notifications for failures |
-| **Quiet time** | When to suppress notifications |
-| **Confirmation retry** | How soon to recheck a failed uptime result before opening an issue |
-| **Follow-up timing** | How often to check during incidents |
-
-<Tip>
-  Individual [sites](/guide/sites) can override some monitoring settings when a site needs different behavior from the team default. See [Problem thresholds](/guide/checks#problem-thresholds) for the full threshold reference.
-</Tip>
+See the [Monitoring settings](/guide/monitoring) guide for cadence presets, default thresholds, enabled issue tools, DNS expected records, and quiet time.
 
 ## Notifications
 
-Admins and owners set up notification configurations under **Team Settings → Notifications**. These control where alerts are sent when automatic monitoring detects problems (or when problems recover) and for manual check results.
+Admins and owners set up notification destinations under **Notifications** in the sidebar. These control where alerts are sent when issues are detected or resolved, and for manual check results.
 
 <Tabs>
-  <Tab title="Email notifications">
-    Add email addresses that receive problem alerts.
-    
-    **Email notifications typically include:**
-    - Problem summary and severity
-    - Affected site
-    - Key details from the triggering check
+  <Tab title="Email">
+    Add email addresses that receive issue alerts.
   </Tab>
-  <Tab title="Webhook notifications">
-    Add webhook URLs to receive HTTP alerts for integrations (Slack, PagerDuty, custom automation, etc.).
-    
-    **Webhook options:**
-    - Method: `GET` or `POST`
-    - Filter to specific tools or all tools
-    - Events for problem detection and recovery
+  <Tab title="Slack">
+    Connect the SitePulse Slack app and choose a channel, or use a Slack incoming webhook URL.
+  </Tab>
+  <Tab title="Microsoft Teams">
+    Add a Microsoft Teams incoming webhook URL for issue updates.
+  </Tab>
+  <Tab title="Webhook">
+    Add generic webhook URLs (GET or POST) for PagerDuty, custom automation, and other integrations.
   </Tab>
 </Tabs>
 
-Each notification configuration can target all tools or selected tools only. Admins and owners can enable, disable, test, edit, or remove configurations at any time.
+Each notification configuration can subscribe to issue detected and resolved events, target all tools or selected tools only, and be enabled, disabled, tested, edited, or removed at any time.
 
-See the [Notifications](/guide/notifications) guide for full details on channels, quiet time, and when alerts fire.
+See the [Notifications](/guide/notifications) guide for full details on channels, events, quiet time, and when alerts fire. For HTTP payload schemas and delivery behavior, see [Webhook notifications](/guide/webhooks).
 
 ## Billing
 
-Billing is managed by the team owner. The billing page shows:
+Billing is managed by the team owner under **Manage Team → Billing**. The billing page shows:
 
 - Current plan and available plans
 - Plan limits (sites, members, cadence)
@@ -106,40 +107,40 @@ Billing is managed by the team owner. The billing page shows:
 - Invoice history
 - Checkout and Stripe billing portal (when available)
 
-### Plans and cadences
+### Plans
 
-SitePulse offers three pricing tiers with different minimum automatic monitoring cadences. All check tools are enabled across all plans.
+SitePulse offers three pricing tiers. All plans include all five check tools.
 
-| Plan | Minimum cadence |
-| :--- | :-------------- |
-| **Starter** | 30 minutes |
-| **Growth** | 5 minutes |
-| **Agency** | 1 minute |
+| Plan | Monthly | Yearly | Sites | Seats | Min cadence | History retention | Priority queue |
+| :--- | :------ | :----- | :---- | :---- | :---------- | :---------------- | :------------- |
+| **Starter** | £10 | £100 | 5 | 3 | 30 minutes | 30 days | No |
+| **Growth** | £25 | £250 | 25 | 10 | 5 minutes | 90 days | Yes |
+| **Agency** | £50 | £500 | 100 | 25 | 1 minute | 365 days | Yes |
 
 <AccordionGroup>
-  <Accordion title="Plan limits">
-    Plan limits affect:
+  <Accordion title="What plan limits affect">
+    Plan limits control:
     - Number of sites you can monitor
     - Number of team members
-    - Automatic monitoring cadence (how often checks run)
-    - Check history retention
-    - Priority queue access
+    - Fastest allowed automatic monitoring cadence
+    - How long check history is retained
+    - Whether checks use the priority queue (Growth and Agency)
   </Accordion>
 </AccordionGroup>
 
 ## Security
 
-Teams can require two-factor authentication (2FA) for all members. When this setting is enabled, users must enable 2FA before continuing to team-scoped dashboard areas.
+Teams can require two-factor authentication (2FA) for all members. Owners and admins configure this under **Manage Team → General** in the Security section.
 
 <Steps>
-  <Step title="Navigate to security settings">
-    Owners and admins can find security settings under **Team Settings → Security**.
+  <Step title="Open Manage Team">
+    Use the team switcher menu and select **Manage Team**.
   </Step>
   <Step title="Enable 2FA requirement">
-    Toggle the "Require two-factor authentication" setting.
+    Toggle **Require two-factor authentication** in the Security section.
   </Step>
   <Step title="Team members enable 2FA">
-    Once enabled, all team members will be prompted to set up 2FA on their next login.
+    Once enabled, all team members are prompted to set up 2FA before accessing team-scoped dashboard areas.
   </Step>
 </Steps>
 

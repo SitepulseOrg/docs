@@ -42,7 +42,7 @@ Use a manual check when you want an immediate result for a site. Status and DNS 
   <Step title="Select a site">
     On the tool page, select a site from your current team's sites. Pinned sites appear near the top.
     
-    For Performance checks, you can optionally provide a specific path.
+    **Performance** is the only manual tool with an optional **path** field. Use it to check a specific page (for example `/pricing`) instead of the site's root URL.
   </Step>
   <Step title="Run the check">
     Click **Run check**. The form submits to the appropriate backend action.
@@ -62,6 +62,16 @@ Manual check results appear on the site and check detail screens (under "Manual 
 
 Previous manual checks for the selected site/tool are listed below the live result area so you can compare runs over time. Individual manual check records can be deleted from the check detail view when needed.
 
+### Check deep links
+
+SitePulse provides a redirect URL for linking directly to a check result:
+
+```
+https://app.sitepulse.dev/dashboard/check-link/{check-uuid}
+```
+
+This redirects to the check detail on the site page. Use it in custom integrations or internal runbooks when you have a check UUID from the API or webhook context.
+
 ## Automatic monitoring
 
 Automatic monitoring runs checks on the cadence allowed by the team's plan and monitoring settings. Automatic results are evaluated against your configured thresholds. When a check repeatedly fails or crosses a threshold, SitePulse sends notifications to the configured destinations (instead of notifying on every individual check result).
@@ -74,27 +84,13 @@ When the problem later clears, recovery notifications are sent.
 
 ## Team monitoring settings
 
-Team admins can control:
-
-| Setting | Description |
-|---------|-------------|
-| Monitored tools | Which tools are monitored automatically |
-| Check cadence | How often each check runs (subject to plan) |
-| Status headers | Status-check headers for sites requiring auth |
-| Problem thresholds | When notifications are triggered for failures |
-| Confirmation retry | Timing for confirmation retries |
-| Follow-up timing | How often to check during incidents |
-| Quiet time | When to suppress notifications |
-
-<Note>
-  Some site settings can override team defaults for a specific site.
-</Note>
+Team admins configure automatic cadence, issue thresholds, and quiet time on the **[Monitoring](/guide/monitoring)** page in the sidebar. Sites can override team defaults on the site edit page.
 
 ### Problem thresholds
 
 Problem thresholds decide when automatic monitoring opens an issue and sends notifications. Manual checks are still saved to check history, but they do not open issues from these thresholds.
 
-Configure team defaults under **Team Settings → Monitoring**. Use a site-specific override only when one site needs different rules from the team default.
+Configure team defaults under **Monitoring**. Use a site-specific override only when one site needs different rules from the team default. See [Monitoring settings](/guide/monitoring) for default values and the enabled issue tools toggle.
 
 <AccordionGroup>
   <Accordion title="Status thresholds">
@@ -125,8 +121,9 @@ Configure team defaults under **Team Settings → Monitoring**. Use a site-speci
 
     - **Minimum broken links**: How many broken URLs must be found before the result counts as a breach.
     - **Consecutive breaches to open**: How many breached automatic crawls are required before SitePulse opens an issue.
+    - **Ignore paths** (site override): URL paths excluded from the crawl (for example `/admin`). Configure on the [site edit page](/guide/sites#site-specific-overrides).
 
-    Use this to avoid alerts for a single transient link failure.
+    Use consecutive breaches to avoid alerts for a single transient link failure.
   </Accordion>
   <Accordion title="Performance thresholds">
     Performance thresholds control slow-site and poor-score issues.
@@ -143,7 +140,7 @@ Configure team defaults under **Team Settings → Monitoring**. Use a site-speci
 
 Quiet time suppresses notifications during a configured time window. Checks continue to run, issues can still open or recover, and the dashboard still updates.
 
-Use quiet time for planned maintenance windows, overnight periods, or times when the team does not want email or webhook alerts.
+Use quiet time for planned maintenance windows, overnight periods, or times when the team does not want outbound alerts.
 
 ## Reading results
 

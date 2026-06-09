@@ -32,13 +32,19 @@ Update the information that identifies you across SitePulse:
 
 **Access:** Dashboard → user menu (bottom of sidebar) → Settings → Profile
 
-## Password
+## Password, passkeys, and recovery
 
 Change your account password at any time. You must know your current password to set a new one.
 
 <Info>
   After a successful password change you remain logged in.
 </Info>
+
+**Forgot password:** From the login page, use **Forgot your password?** to receive a reset link by email.
+
+You can also register **passkeys** on the Password settings page for passwordless sign-in. Passkeys use your device's biometrics or security key and work alongside your password. The login page offers **Use Passkey** when your browser supports WebAuthn.
+
+**Access:** Dashboard → user menu → Settings → Password
 
 ## Switching teams
 
@@ -80,6 +86,8 @@ Choose your preferred theme:
 
 The choice applies across the entire application UI (dashboard, tools, settings, etc.).
 
+You can also toggle light/dark mode quickly from the **user menu** in the sidebar footer without opening Settings.
+
 ## Two-factor authentication (2FA)
 
 2FA requirements are controlled at the team level by owners/admins. See your team's security settings for the current requirement.
@@ -89,7 +97,7 @@ The choice applies across the entire application UI (dashboard, tools, settings,
     When a team you belong to enforces 2FA, you must enable it on your account before you can access team-scoped areas.
   </Accordion>
   <Accordion title="Setup and management">
-    Setup, recovery codes, and management happen during the login/confirmation flow or via Fortify-powered screens (2FA challenge, etc.).
+    Enable 2FA from **Settings → Password**. SitePulse shows a QR code and recovery codes during setup. Store recovery codes securely — they let you sign in if you lose access to your authenticator app.
   </Accordion>
   <Accordion title="Scope">
     Once enabled for your account it applies when any enforcing team is active.
@@ -109,7 +117,7 @@ Create personal access tokens for the [SitePulse API](/api/overview) under **Set
     - `teams:read` - Read teams and plan limits
     - `sites:read` / `sites:write` / `sites:delete` - Site management
     - `checks:read` / `checks:run` / `checks:delete` - Check operations
-    - `issues:read` / `issues:write` - Read notification-related data (if exposed via API)
+    - `issues:read` - Read issues (incident records)
   </Step>
   <Step title="Save token">
     Copy the token when it is created.
@@ -133,10 +141,10 @@ Some preferences that affect your day-to-day experience are actually team-wide a
 
 | Setting | Location |
 |---------|----------|
-| Monitoring cadences and enabled tools | Team Settings → Monitoring |
-| Problem detection thresholds and quiet time | Team Settings → Monitoring |
-| Notification destinations (email/webhook) | Team Settings → Notifications |
-| Team 2FA enforcement | Team Settings → Security |
-| Billing and member roles | Team Settings → Billing / Members |
+| Monitoring cadences and enabled tools | **Monitoring** (sidebar) |
+| Problem detection thresholds and quiet time | **Monitoring** (sidebar) |
+| Notification destinations | **Notifications** (sidebar) |
+| Team 2FA enforcement | **Manage Team → General** |
+| Billing and member roles | **Manage Team → Billing / Members** |
 
-Your personal settings only cover appearance, profile data, password, and current-team selection.
+Your personal settings cover appearance, profile data, password, passkeys, API tokens, and team switching.

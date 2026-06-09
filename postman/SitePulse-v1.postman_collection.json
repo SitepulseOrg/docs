@@ -1,0 +1,805 @@
+{
+  "info": {
+    "name": "SitePulse API v1",
+    "description": "Public SitePulse v1 API. Set base_url and auth_token in your Postman environment before sending requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "v1",
+      "item": [
+        {
+          "name": "me",
+          "item": [
+            {
+              "name": "[GET] api/v1/me",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/me",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "teams",
+          "item": [
+            {
+              "name": "[GET] api/v1/teams",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/teams",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "teams"
+                  ]
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[GET] api/v1/teams/{team}",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/teams/:team",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "teams",
+                    ":team"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "sites",
+              "item": [
+                {
+                  "name": "[GET] api/v1/teams/{team}/sites",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/teams/:team/sites",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "teams",
+                        ":team",
+                        "sites"
+                      ],
+                      "variable": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"search\": \"sample_text\",\n    \"pinned\": 0,\n    \"tool\": \"sample_text\",\n    \"status\": \"sample_text\",\n    \"sort\": \"sample_text\",\n    \"page\": 8,\n    \"per_page\": 39,\n    \"include\": \"sample_text\"\n}",
+                      "options": []
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "[POST] api/v1/teams/{team}/sites",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/teams/:team/sites",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "teams",
+                        ":team",
+                        "sites"
+                      ],
+                      "variable": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"name\": \"sample_text\",\n    \"notes\": \"sample_text\",\n    \"settings\": {\n        \"enabled_checks\": [],\n        \"status_check_header\": {\n            \"name\": \"sample_text\",\n            \"value\": \"sample_text\"\n        }\n    },\n    \"settings.enabled_checks\": [\n        []\n    ],\n    \"url\": \"sample_text\",\n    \"js_rendered\": 0\n}",
+                      "options": []
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "bulk",
+                  "item": [
+                    {
+                      "name": "[POST] api/v1/teams/{team}/sites/bulk",
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json",
+                            "type": "text"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json",
+                            "type": "text"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{base_url}}/api/v1/teams/:team/sites/bulk",
+                          "host": [
+                            "{{base_url}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "teams",
+                            ":team",
+                            "sites",
+                            "bulk"
+                          ],
+                          "variable": []
+                        },
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n    \"sites\": [\n        {\n            \"url\": \"sample_text\",\n            \"name\": \"sample_text\"\n        }\n    ]\n}",
+                          "options": []
+                        },
+                        "auth": {
+                          "type": "bearer",
+                          "bearer": [
+                            {
+                              "key": "token",
+                              "value": "{{auth_token}}"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "sites",
+          "item": [
+            {
+              "name": "[GET] api/v1/sites/{site}",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/sites/:site",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "sites",
+                    ":site"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[PATCH] api/v1/sites/{site}",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/sites/:site",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "sites",
+                    ":site"
+                  ],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"sample_text\",\n    \"notes\": \"sample_text\",\n    \"pinned\": 0,\n    \"js_rendered\": 1,\n    \"url\": \"sample_text\",\n    \"settings\": {\n        \"enabled_checks\": [],\n        \"status_check_header\": {\n            \"name\": \"sample_text\",\n            \"value\": \"sample_text\"\n        },\n        \"automatic_check_cadences\": [],\n        \"issues\": {\n            \"enabled_tools\": [],\n            \"snoozed_until\": \"sample_text\",\n            \"status\": {\n                \"failures_to_open\": 3,\n                \"successes_to_resolve\": 10,\n                \"confirmation_retry_minutes\": 3,\n                \"incident_follow_up_minutes\": 5\n            },\n            \"ssl\": {\n                \"expiry_days\": 5\n            },\n            \"links\": {\n                \"min_broken_count\": 5,\n                \"consecutive_breaches_to_open\": 5,\n                \"ignore_paths\": []\n            },\n            \"performance\": {\n                \"min_score\": 21,\n                \"max_response_time_ms\": 3,\n                \"consecutive_breaches_to_open\": 3\n            },\n            \"dns\": {\n                \"hard_failures_only\": 0,\n                \"expected_records\": []\n            }\n        }\n    },\n    \"settings.enabled_checks\": [\n        []\n    ],\n    \"settings.automatic_check_cadences\": [\n        []\n    ],\n    \"settings.issues.enabled_tools\": [\n        []\n    ],\n    \"settings.issues.links.ignore_paths\": [\n        []\n    ],\n    \"settings.issues.dns.expected_records\": [\n        {\n            \"\": [\n                []\n            ]\n        }\n    ]\n}",
+                  "options": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[DELETE] api/v1/sites/{site}",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/sites/:site",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "sites",
+                    ":site"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "checks",
+              "item": [
+                {
+                  "name": "[GET] api/v1/sites/{site}/checks",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/sites/:site/checks",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "sites",
+                        ":site",
+                        "checks"
+                      ],
+                      "variable": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"type\": \"sample_text\",\n    \"status\": \"sample_text\",\n    \"automatic\": 1,\n    \"run_reason\": \"sample_text\",\n    \"from\": \"sample_text\",\n    \"to\": \"sample_text\",\n    \"page\": 2,\n    \"per_page\": 68\n}",
+                      "options": []
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "[POST] api/v1/sites/{site}/checks",
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/sites/:site/checks",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "sites",
+                        ":site",
+                        "checks"
+                      ],
+                      "variable": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"tools\": [\n        []\n    ],\n    \"automatic\": 0\n}",
+                      "options": []
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "reports",
+              "item": [
+                {
+                  "name": "uptime",
+                  "item": [
+                    {
+                      "name": "[GET] api/v1/sites/{site}/reports/uptime",
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json",
+                            "type": "text"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json",
+                            "type": "text"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{base_url}}/api/v1/sites/:site/reports/uptime",
+                          "host": [
+                            "{{base_url}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "sites",
+                            ":site",
+                            "reports",
+                            "uptime"
+                          ],
+                          "variable": []
+                        },
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n    \"days\": 113\n}",
+                          "options": []
+                        },
+                        "auth": {
+                          "type": "bearer",
+                          "bearer": [
+                            {
+                              "key": "token",
+                              "value": "{{auth_token}}"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "name": "performance",
+                  "item": [
+                    {
+                      "name": "[GET] api/v1/sites/{site}/reports/performance",
+                      "request": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json",
+                            "type": "text"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json",
+                            "type": "text"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{base_url}}/api/v1/sites/:site/reports/performance",
+                          "host": [
+                            "{{base_url}}"
+                          ],
+                          "path": [
+                            "api",
+                            "v1",
+                            "sites",
+                            ":site",
+                            "reports",
+                            "performance"
+                          ],
+                          "variable": []
+                        },
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n    \"days\": 245\n}",
+                          "options": []
+                        },
+                        "auth": {
+                          "type": "bearer",
+                          "bearer": [
+                            {
+                              "key": "token",
+                              "value": "{{auth_token}}"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "checks",
+          "item": [
+            {
+              "name": "[GET] api/v1/checks/{check}",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/checks/:check",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "checks",
+                    ":check"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[DELETE] api/v1/checks/{check}",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/checks/:check",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "checks",
+                    ":check"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "issues",
+          "item": [
+            {
+              "name": "[GET] api/v1/issues",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/issues",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "issues"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"team\": 4,\n    \"status\": \"sample_text\",\n    \"site\": \"sample_text\",\n    \"tool\": \"sample_text\",\n    \"severity\": \"sample_text\",\n    \"page\": 8,\n    \"per_page\": 25\n}",
+                  "options": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "name": "[GET] api/v1/issues/{issue}",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/issues/:issue",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "issues",
+                    ":issue"
+                  ],
+                  "variable": []
+                },
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{auth_token}}"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://app.sitepulse.dev",
+      "type": "string"
+    }
+  ]
+}

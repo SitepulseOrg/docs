@@ -1,0 +1,124 @@
+---
+title: "Monitoring settings"
+description: "Configure automatic check cadence, issue thresholds, quiet time, and team defaults"
+---
+
+The **Monitoring** page in the sidebar controls how SitePulse runs automatic checks and when monitoring problems open issues for your team. Admins and owners can edit these settings; members can view them.
+
+<Info>
+  Individual [sites](/guide/sites) can override cadence, thresholds, and other issue settings. Team defaults apply when a site has no override.
+</Info>
+
+## Two save sections
+
+The Monitoring page has two independent forms:
+
+| Section | What it controls | Save button |
+|---------|------------------|-------------|
+| **Monitoring settings** | Per-tool automatic check cadence and team status-check header | Save monitoring settings |
+| **Issue settings** | Enabled issue tools, quiet time, and problem thresholds | Save issue settings |
+
+Changes to one section do not affect the other until you save that section.
+
+## Automatic check cadence
+
+For each enabled check tool, choose how often SitePulse runs **automatic** checks:
+
+- Status
+- SSL
+- DNS
+- Broken Links
+- Performance
+
+Cadence presets range from every minute to every week. Your [plan](/guide/team-management#plans) sets the **fastest** cadence allowed (Starter: 30 minutes, Growth: 5 minutes, Agency: 1 minute). Presets faster than your plan minimum are disabled in the dropdown.
+
+When you change a site's enabled checks or cadence overrides, SitePulse resyncs that site's automatic schedules.
+
+## Status check header
+
+Set a default HTTP header for **status** checks across the team. Use this when monitored sites require authentication or a custom header to respond correctly.
+
+Format: header **name** and **value** (for example `Authorization` and a bearer token).
+
+Sites can override this header on the [site edit page](/guide/sites#editing-a-site).
+
+## Quiet time
+
+Quiet time suppresses **outbound** notifications (email, Slack, Teams, webhooks, in-app alerts) during a daily window.
+
+| Setting | Description |
+|---------|-------------|
+| **Enabled** | Turn quiet time on or off |
+| **From** | Start time (team timezone) |
+| **Until** | End time (team timezone) |
+
+Checks continue to run during quiet time. Issues can still open, acknowledge, and resolve — only alerts are suppressed.
+
+See [Notifications](/guide/notifications#quiet-time) for how quiet time interacts with each channel.
+
+## Issue settings
+
+Issue settings define when automatic monitoring **opens** or **resolves** issues and sends notifications. Configure defaults here; override per site when needed.
+
+### Enabled issue tools
+
+Each check tool has an **Enabled** / **Disabled** toggle. When disabled, automatic checks for that tool still run and save results, but they do not open or resolve issues.
+
+Use this to monitor a tool without generating incidents (for example, run performance checks for trends only).
+
+### Default thresholds
+
+New teams inherit these defaults (from SitePulse configuration):
+
+| Tool | Setting | Default |
+|------|---------|---------|
+| **Status** | Failures to open incident | 2 |
+| **Status** | Resolve after successes | 1 |
+| **Status** | Confirmation retry (minutes) | 2 |
+| **Status** | Follow-up while open (minutes) | 5 |
+| **SSL** | Expiry window (days) | 14 |
+| **Broken links** | Minimum broken links | 5 |
+| **Broken links** | Failures to open incident | 1 |
+| **Performance** | Minimum score | 50 |
+| **Performance** | Max response (ms) | 4000 |
+| **Performance** | Failures to open incident | 2 |
+| **DNS** | Hard failures only | On |
+
+For full threshold behavior, see [Problem thresholds](/guide/checks#problem-thresholds).
+
+### DNS expected records
+
+For DNS issue detection, enter expected records **one per line**:
+
+```
+A 203.0.113.1
+CNAME example.hosting.com
+TXT v=spf1 include:_spf.example.com ~all
+```
+
+Supported types: `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`.
+
+SitePulse opens an issue when a configured record is missing or changed. Use **Hard failures only** to limit issues to DNS lookup failures instead of record mismatches.
+
+### Broken links and crawlers
+
+If broken-link checks return many `503` responses, the target site may be blocking crawlers. Add `SitepulseBot` to the site's `robots.txt` allowlist.
+
+Broken-link **ignore paths** are configured at the site level (not on this page). See [Managing sites](/guide/sites#site-specific-overrides).
+
+## Related guides
+
+<CardGroup cols={2}>
+  <Card title="Using check tools" icon="magnifying-glass" href="/guide/checks">
+    Manual checks, reading results, and threshold details
+  </Card>
+  <Card title="Managing issues" icon="triangle-exclamation" href="/guide/issues">
+    Incident triage after thresholds are breached
+  </Card>
+  <Card title="Notifications" icon="bell" href="/guide/notifications">
+    Where alerts are sent when issues open or resolve
+  </Card>
+  <Card title="Managing sites" icon="globe" href="/guide/sites">
+    Per-site cadence, threshold, and snooze overrides
+  </Card>
+</CardGroup>
