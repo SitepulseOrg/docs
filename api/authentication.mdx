@@ -99,7 +99,8 @@ Each token carries one or more scopes. Routes declare the minimum scope required
 
 | Scope | Description |
 |-------|-------------|
-| `teams:read` | Read teams and plan limits |
+| `teams:read` | Read teams, plan limits, and team monitoring defaults |
+| `teams:write` | Update team monitoring defaults (cadence, thresholds, escalation) |
 | `sites:read` | Read sites and site monitoring data |
 | `sites:write` | Create and update sites |
 | `sites:delete` | Delete sites |
@@ -126,6 +127,15 @@ Different use cases require different scope combinations:
     ```
 
     Perfect for dashboards and monitoring displays.
+  </Accordion>
+
+  <Accordion title="Configure team monitoring">
+    Add `teams:write` to read team monitoring settings:
+
+    ```
+    teams:read
+    teams:write
+    ```
   </Accordion>
 
   <Accordion title="Deploy / provision sites">

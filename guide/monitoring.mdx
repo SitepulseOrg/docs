@@ -1,6 +1,6 @@
 ---
 title: "Monitoring settings"
-description: "Configure automatic check cadence, issue thresholds, quiet time, and team defaults"
+description: "Configure automatic check cadence, issue thresholds, escalation, quiet time, and team defaults"
 ---
 
 The **Monitoring** page in the sidebar controls how SitePulse runs automatic checks and when monitoring problems open issues for your team. Admins and owners can edit these settings; members can view them.
@@ -16,7 +16,7 @@ The Monitoring page has two independent forms:
 | Section | What it controls | Save button |
 |---------|------------------|-------------|
 | **Monitoring settings** | Per-tool automatic check cadence and team status-check header | Save monitoring settings |
-| **Issue settings** | Enabled issue tools, quiet time, and problem thresholds | Save issue settings |
+| **Issue settings** | Enabled issue tools, quiet time, escalation, and problem thresholds | Save issue settings |
 
 Changes to one section do not affect the other until you save that section.
 
@@ -60,6 +60,8 @@ See [Notifications](/guide/notifications#quiet-time) for how quiet time interact
 
 Issue settings define when automatic monitoring **opens** or **resolves** issues and sends notifications. Configure defaults here; override per site when needed.
 
+Each check tool has its own **collapsible** section on the Monitoring page. Use the section headers to expand or collapse Status, SSL, Performance, Broken Links, and DNS rules. The page sidebar includes an **Escalation** anchor that jumps to follow-up notification settings.
+
 ### Enabled issue tools
 
 Each check tool has an **Enabled** / **Disabled** toggle. When disabled, automatic checks for that tool still run and save results, but they do not open or resolve issues.
@@ -79,12 +81,42 @@ New teams inherit these defaults (from SitePulse configuration):
 | **SSL** | Expiry window (days) | 14 |
 | **Broken links** | Minimum broken links | 5 |
 | **Broken links** | Failures to open incident | 1 |
+| **Broken links** | Ignore external links | Off |
+| **Broken links** | Ignore redirects | Off |
 | **Performance** | Minimum score | 50 |
-| **Performance** | Max response (ms) | 4000 |
+| **Performance** | Max TTFB (ms) | 4000 |
+| **Performance** | Max load time (seconds) | Not set |
 | **Performance** | Failures to open incident | 2 |
 | **DNS** | Hard failures only | On |
+| **DNS** | Monitored record types | A, AAAA, CNAME, MX, NS, TXT |
+| **Escalation** | Enabled | Off |
 
 For full threshold behavior, see [Problem thresholds](/guide/checks#problem-thresholds).
+
+### Status failure threshold
+
+For status checks, choose how many consecutive failures are required before SitePulse opens an issue:
+
+| Preset | Failures to open |
+|--------|------------------|
+| **Instant** | 1 |
+| **Conservative** | 3 |
+| **Aggressive** | 1 |
+| **Custom** | Any value you enter |
+
+The preset sets **Failures to open**. Other status fields (successes to resolve, confirmation retry, incident follow-up) stay independent.
+
+### Performance thresholds
+
+Performance issue rules use three separate breach checks:
+
+| Setting | Description |
+|---------|-------------|
+| **Minimum score** | Lowest acceptable Lighthouse performance score (1–100) |
+| **Max TTFB (ms)** | Slowest acceptable time to first byte in milliseconds |
+| **Max load time (seconds)** | Slowest acceptable Time to Interactive (TTI), measured in seconds |
+
+A performance check breaches when **any** configured limit is exceeded. Leave **Max load time** empty to skip load-time evaluation.
 
 ### DNS expected records
 
@@ -98,13 +130,41 @@ TXT v=spf1 include:_spf.example.com ~all
 
 Supported types: `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`.
 
-SitePulse opens an issue when a configured record is missing or changed. Use **Hard failures only** to limit issues to DNS lookup failures instead of record mismatches.
+Select which record types to **monitor for changes** with the checkboxes under DNS issue rules. Only selected types are compared against expected records and stored on the first DNS check.
+
+SitePulse opens a DNS issue when:
+
+- A DNS lookup **hard fails**, or
+- **Hard failures only** is off and a monitored expected record is missing or changed
+
+When **Hard failures only** is on, SitePulse ignores expected-record mismatches and opens issues only for lookup failures.
 
 ### Broken links and crawlers
 
 If broken-link checks return many `503` responses, the target site may be blocking crawlers. Add `SitepulseBot` to the site's `robots.txt` allowlist.
 
-Broken-link **ignore paths** are configured at the site level (not on this page). See [Managing sites](/guide/sites#site-specific-overrides).
+Team-level broken-link filters on this page:
+
+| Setting | Description |
+|---------|-------------|
+| **Ignore external links** | Exclude links whose host differs from the monitored site |
+| **Ignore redirects** | Exclude links that return `301`, `302`, or `303` |
+| **Ignore paths** | URL path patterns excluded from the crawl (one per line; supports wildcards such as `/wp-admin/*`) |
+
+Sites can still override **ignore paths** on the [site edit page](/guide/sites#site-specific-overrides).
+
+### Escalation
+
+Escalation sends **follow-up reminders** while an issue stays open or acknowledged. Reminders use the same destinations as **Issue detected** notifications (email, Slack, Teams, webhooks, in-app).
+
+| Setting | Description |
+|---------|-------------|
+| **Enabled** | Turn escalation on or off for the team |
+| **Intervals** | When to re-notify after an issue opens: 15 minutes, 30 minutes, 1 hour, 6 hours, or daily |
+
+Escalation does not open new issues. It re-sends alerts on the schedule you choose until the issue is resolved or no longer active. Quiet time suppresses escalation reminders the same way it suppresses other outbound alerts.
+
+See [Notifications](/guide/notifications#issue-escalation) for how escalation interacts with notification configurations.
 
 ## Related guides
 
@@ -116,7 +176,7 @@ Broken-link **ignore paths** are configured at the site level (not on this page)
     Incident triage after thresholds are breached
   </Card>
   <Card title="Notifications" icon="bell" href="/guide/notifications">
-    Where alerts are sent when issues open or resolve
+    Where alerts are sent when issues open, escalate, or resolve
   </Card>
   <Card title="Managing sites" icon="globe" href="/guide/sites">
     Per-site cadence, threshold, and snooze overrides

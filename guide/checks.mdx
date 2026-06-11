@@ -96,7 +96,7 @@ Configure team defaults under **Monitoring**. Use a site-specific override only 
   <Accordion title="Status thresholds">
     Status thresholds control uptime incidents.
 
-    - **Failures to open**: How many failed automatic status checks are required before SitePulse opens an issue.
+    - **Failure threshold preset**: Choose **Instant** (1 failure), **Conservative** (3 failures), **Aggressive** (1 failure), or **Custom** to enter your own failures-to-open value.
     - **Successes to resolve**: How many successful automatic status checks are required before SitePulse marks the issue recovered.
     - **Confirmation retry**: How soon SitePulse reruns a failed status check before opening an issue.
     - **Incident follow-up**: How often SitePulse checks an active uptime incident until it recovers.
@@ -111,7 +111,8 @@ Configure team defaults under **Monitoring**. Use a site-specific override only 
   <Accordion title="DNS thresholds">
     DNS thresholds control record-change and DNS-health issues.
 
-    - **Hard failures only**: Open DNS issues only for failures that prevent DNS from resolving.
+    - **Hard failures only**: When enabled, open DNS issues only for lookup failures. When disabled, SitePulse also opens issues when monitored expected records are missing or changed.
+    - **Monitored record types**: Choose which record types (`A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`) to watch for changes.
     - **Expected records**: Define records that should exist, one per line, such as `A`, `AAAA`, `CNAME`, `MX`, `NS`, or `TXT`.
 
     Use expected records when you want SitePulse to catch missing or changed DNS entries, not just DNS lookup failures.
@@ -121,18 +122,21 @@ Configure team defaults under **Monitoring**. Use a site-specific override only 
 
     - **Minimum broken links**: How many broken URLs must be found before the result counts as a breach.
     - **Consecutive breaches to open**: How many breached automatic crawls are required before SitePulse opens an issue.
-    - **Ignore paths** (site override): URL paths excluded from the crawl (for example `/admin`). Configure on the [site edit page](/guide/sites#site-specific-overrides).
+    - **Ignore external links**: Exclude links hosted outside the monitored site's domain.
+    - **Ignore redirects**: Exclude links that return redirect status codes (`301`, `302`, `303`).
+    - **Ignore paths**: URL path patterns excluded from the crawl (for example `/admin` or `/wp-admin/*`). Set team defaults on [Monitoring](/guide/monitoring#broken-links-and-crawlers); override per site on the [site edit page](/guide/sites#site-specific-overrides).
 
     Use consecutive breaches to avoid alerts for a single transient link failure.
   </Accordion>
   <Accordion title="Performance thresholds">
     Performance thresholds control slow-site and poor-score issues.
 
-    - **Minimum score**: The lowest acceptable performance score.
-    - **Maximum response time**: The slowest acceptable response time in milliseconds.
+    - **Minimum score**: The lowest acceptable Lighthouse performance score.
+    - **Max TTFB (ms)**: The slowest acceptable time to first byte in milliseconds.
+    - **Max load time (seconds)**: The slowest acceptable Time to Interactive (TTI) in seconds. Leave empty to disable load-time checks.
     - **Consecutive breaches to open**: How many breached automatic performance checks are required before SitePulse opens an issue.
 
-    A performance check can breach because the score is too low, the response is too slow, or both.
+    A performance check breaches when the score is too low, TTFB is too slow, load time is too slow, or any combination of those limits.
   </Accordion>
 </AccordionGroup>
 

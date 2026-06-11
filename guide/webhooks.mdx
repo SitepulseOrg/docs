@@ -26,7 +26,7 @@ Admins and owners manage webhook destinations under **Notifications** in the sid
   </Step>
   <Step title="Choose events">
     Select one or both:
-    - **Issue detected** — fires when a new issue opens or a resolved issue reopens
+    - **Issue detected** — fires when a new issue opens or a resolved issue reopens (also receives [escalation](/guide/monitoring#escalation) follow-ups when enabled)
     - **Issue resolved** — fires when automatic monitoring confirms recovery
   </Step>
   <Step title="Choose tool scope">
@@ -47,20 +47,20 @@ Admins and owners manage webhook destinations under **Notifications** in the sid
 | **Channel** | All | `webhook`, `slack`, `slack_app`, or `microsoft_teams` |
 | **Destination** | URL channels | Public HTTP(S) webhook URL |
 | **HTTP method** | `webhook` only | `post` or `get` |
-| **Events** | All | `open` (Issue detected) and/or `resolve` (Issue resolved) |
+| **Events** | All | `open` (Issue detected) and/or `resolve` (Issue resolved). Escalation deliveries use `escalate` and match configurations subscribed to Issue detected. |
 | **Tool scope** | All | All tools, or a subset of enabled check tools |
 | **Enabled** | All | Toggle delivery without deleting the configuration |
 
 A configuration delivers an alert only when **all** of the following are true:
 
 1. The configuration is **enabled**
-2. The issue transition matches a subscribed **event** (`open` or `resolve`)
+2. The issue transition matches a subscribed **event** (`open`, `resolve`, or `escalate` via an Issue detected subscription)
 3. The issue's check tool is in scope (all tools, or listed in the configuration)
 4. The team is **not** in **quiet time**
 5. The destination URL passes SitePulse's outbound safety checks
 
 <Note>
-  Acknowledging or refreshing an issue does not send webhook alerts. Only **open** (including reopen) and **resolve** transitions trigger delivery.
+  Acknowledging or refreshing an issue does not send webhook alerts. **Open** (including reopen), **resolve**, and **escalate** transitions can trigger delivery when subscribed.
 </Note>
 
 ## Delivery behavior
@@ -106,7 +106,7 @@ All HTTP webhook deliveries include channel-specific headers where applicable:
 
 | Header | Test delivery | Issue delivery | Value |
 |--------|---------------|----------------|-------|
-| `X-SitePulse-Event` | `notification.test` | `issue.opened` or `issue.recovered` | Event name |
+| `X-SitePulse-Event` | `notification.test` | `issue.opened`, `issue.recovered`, or `issue.escalated` | Event name |
 | `X-SitePulse-Delivery` | `test` | `issue-lifecycle` | Delivery type |
 
 The `X-SitePulse-Event` header mirrors the `event` field in the JSON body (for POST) or query payload (for GET).
@@ -118,8 +118,9 @@ The `X-SitePulse-Event` header mirrors the `event` field in the JSON body (for P
 | Issue detected | `open` | `issue.opened` | New issue opens |
 | Issue detected | `open` (from reopen) | `issue.opened` | Previously resolved issue fails again |
 | Issue resolved | `resolve` | `issue.recovered` | Automatic monitoring confirms recovery |
+| Issue escalation | `escalate` | `issue.escalated` | Follow-up reminder while issue stays open or acknowledged |
 
-The `transition` field in the payload reflects the internal transition (`open` or `resolve`), not `reopen`.
+The `transition` field in the payload reflects the internal transition (`open`, `resolve`, or `escalate`), not `reopen`.
 
 ## Production payload
 
@@ -157,8 +158,8 @@ Generic **Webhook** channel deliveries use this JSON shape on POST:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `event` | string | `issue.opened` or `issue.recovered` |
-| `transition` | string | `open` or `resolve` |
+| `event` | string | `issue.opened`, `issue.recovered`, or `issue.escalated` |
+| `transition` | string | `open`, `resolve`, or `escalate` |
 | `occurred_at` | string | ISO 8601 timestamp when the alert was generated |
 | `team.id` | integer | Team id |
 | `team.name` | string | Team display name |

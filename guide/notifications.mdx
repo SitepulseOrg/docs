@@ -38,10 +38,19 @@ When automatic monitoring opens an issue or marks one resolved, SitePulse sends 
 |-------|---------------|
 | **Issue detected** | A new issue opens, or a previously resolved issue reopens |
 | **Issue resolved** | Automatic checks confirm the underlying problem has cleared |
+| **Issue escalation** | A follow-up reminder while an open or acknowledged issue has not recovered (see below) |
 
 <Note>
   Exact trigger rules are defined in your team's monitoring settings (thresholds, confirmation retries, follow-up timing). See [Managing issues](/guide/issues) for how issues relate to notifications.
 </Note>
+
+### Issue escalation
+
+When [escalation](/guide/monitoring#escalation) is enabled on the Monitoring page, SitePulse schedules follow-up reminders at the intervals you select (15 minutes through daily).
+
+Escalation reminders are delivered to notification configurations subscribed to **Issue detected**. No separate channel setup is required.
+
+Reminders stop when the issue is resolved or is no longer in an active state (`open` or `acknowledged`). Quiet time suppresses escalation the same way it suppresses initial issue alerts.
 
 ### Manual check notifications
 

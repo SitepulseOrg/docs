@@ -51,6 +51,118 @@ Show one team by numeric id.
 
 **Response `200`:** Team resource
 
+### GET /teams/\{team\}/monitoring
+
+Read team monitoring defaults: automatic check cadences, status-check header, issue settings, cadence presets, and UI helper metadata.
+
+**Scope:** `teams:read`  
+**Team permission:** `view` team
+
+**Response `200`:**
+
+```json
+{
+  "data": {
+    "automatic_check_cadences": { "status": 5, "ssl": 1440 },
+    "status_check_header": null,
+    "issue_settings": { /* normalized issue settings */ },
+    "cadence_presets": [{ "minutes": 5, "label": "5 minutes", "disabled": false }],
+    "minimum_check_cadence_minutes": 5,
+    "allowed_tools": [{ "value": "status", "label": "Status", "minimum_check_cadence_minutes": 5 }],
+    "failure_threshold_presets": [{ "key": "instant", "label": "Instant", "failures_to_open": 1 }],
+    "escalation_interval_presets": [{ "key": "15m", "label": "15 minutes", "minutes": 15 }],
+    "dns_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
+  }
+}
+```
+
+See [Team monitoring resource](/api/resources#team-monitoring) for field details.
+
+### PATCH /teams/\{team\}/monitoring
+
+Update team monitoring defaults. Mirrors the dashboard **Monitoring** page issue settings and cadence form.
+
+**Scope:** `teams:write`  
+**Team permission:** `updateMonitoring` (admins and owners)  
+**Response `200`:** Same shape as `GET /teams/{team}/monitoring`
+
+**Body:**
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `automatic_check_cadences` | yes | Map of tool value → cadence preset in minutes |
+| `status_check_header` | no | `{ "name", "value" }` default status header |
+| `enabled_tools` | no | Tools that can open issues |
+| `quiet_time` | no | `{ "enabled", "starts_at", "ends_at" }` in `H:i` format |
+| `status.*` | no | Status issue thresholds |
+| `ssl.*` | no | SSL issue thresholds |
+| `links.*` | no | Broken-link thresholds and filters |
+| `performance.*` | no | Performance thresholds |
+| `dns.hard_failures_only` | no | Hard-failures-only toggle |
+| `dns.monitored_record_types` | no | Record types to watch for changes |
+| `escalation.*` | no | Follow-up notification schedule |
+
+Issue-setting fields match [Site `settings.issues`](/api/endpoints#settingsissues-fields) with the same names at the top level (not nested under `settings.issues`).
+
+<Warning>
+  `automatic_check_cadences` must include the full cadence map for all configured tools. Partial maps are not merged.
+</Warning>
+
+<Note>
+  DNS **expected records** are not writable through this endpoint. Use the dashboard or per-site `settings.issues.dns.expected_records` on `PATCH /sites/{site}`.
+</Note>
+
+**Example:**
+
+```json
+{
+  "automatic_check_cadences": {
+    "status": 60,
+    "ssl": 1440,
+    "dns": 1440,
+    "broken-links": 1440,
+    "performance": 60
+  },
+  "enabled_tools": ["status", "broken-links"],
+  "quiet_time": {
+    "enabled": false,
+    "starts_at": "22:00",
+    "ends_at": "07:00"
+  },
+  "status": {
+    "failures_to_open": 1,
+    "successes_to_resolve": 1,
+    "confirmation_retry_minutes": 2,
+    "incident_follow_up_minutes": 5
+  },
+  "links": {
+    "min_broken_count": 4,
+    "consecutive_breaches_to_open": 1,
+    "ignore_paths": ["/wp-admin/*"],
+    "ignore_external_links": true,
+    "ignore_redirects": true
+  },
+  "performance": {
+    "min_score": 60,
+    "max_ttfb_ms": 3000,
+    "max_load_time_seconds": 5,
+    "consecutive_breaches_to_open": 2
+  },
+  "dns": {
+    "hard_failures_only": true,
+    "monitored_record_types": ["A", "TXT"]
+  },
+  "escalation": {
+    "enabled": true,
+    "intervals": [60]
+  }
+}
+```
+
+<Note>
+  Updating cadences resyncs automatic schedules for all team sites.
+</Note>
+
 ## Sites
 
 Team-scoped site management uses numeric `{team}` id. Individual site routes use `{site}` uuid.
@@ -180,12 +292,19 @@ All fields are optional. Omitted fields inherit team defaults.
 | `ssl.expiry_days` | integer | min 1 | Days before expiry to alert |
 | `links.min_broken_count` | integer | min 1 | Broken URLs to breach |
 | `links.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches to open |
-| `links.ignore_paths` | string[] | max 255 chars each | Crawl exclusion paths |
+| `links.ignore_paths` | string[] | max 255 chars each | Crawl exclusion path patterns |
+| `links.ignore_external_links` | boolean | — | Exclude links outside the site host |
+| `links.ignore_redirects` | boolean | — | Exclude redirect responses (`301`–`303`) |
 | `performance.min_score` | integer | 1–100 | Minimum score |
-| `performance.max_response_time_ms` | integer | min 1 | Max response time (ms) |
+| `performance.max_response_time_ms` | integer | min 1 | Legacy max response time (ms); falls back to `max_ttfb_ms` |
+| `performance.max_ttfb_ms` | integer | min 1 | Max time to first byte (ms) |
+| `performance.max_load_time_seconds` | integer | min 1 | Max Time to Interactive (seconds) |
 | `performance.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches to open |
 | `dns.hard_failures_only` | boolean | — | Hard failures only |
+| `dns.monitored_record_types` | string[] | `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT` | Record types to monitor for changes |
 | `dns.expected_records` | object | — | Expected DNS records by type |
+| `escalation.enabled` | boolean | — | Re-notify on open issues |
+| `escalation.intervals` | integer[] | `15`, `30`, `60`, `360`, `1440` | Minutes after open to send reminders |
 
 **Example:**
 
@@ -355,6 +474,8 @@ Quick reference table:
 | `GET` | `/me` | `teams:read` |
 | `GET` | `/teams` | `teams:read` |
 | `GET` | `/teams/{team}` | `teams:read` |
+| `GET` | `/teams/{team}/monitoring` | `teams:read` |
+| `PATCH` | `/teams/{team}/monitoring` | `teams:write` |
 | `GET` | `/teams/{team}/sites` | `sites:read` |
 | `POST` | `/teams/{team}/sites` | `sites:write` |
 | `POST` | `/teams/{team}/sites/bulk` | `sites:write` |

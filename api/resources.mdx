@@ -82,6 +82,72 @@ Returned on `GET /me` and nested on some issue responses.
 }
 ```
 
+## Team monitoring
+
+Returned by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `automatic_check_cadences` | object | Map of tool value → interval in minutes |
+| `status_check_header` | object \| null | Optional `{ "name", "value" }` header for status checks |
+| `issue_settings` | object | Normalized team issue settings (same shape as [site issue settings](#issue-settings-object)) |
+| `cadence_presets` | array | Available cadence options with `minutes`, `label`, and `disabled` (plan-gated) |
+| `minimum_check_cadence_minutes` | integer \| null | Fastest cadence allowed by the team's plan |
+| `allowed_tools` | array | Tools the team can configure, with per-tool cadence floors |
+| `failure_threshold_presets` | array | Status failures-to-open presets (`instant`, `conservative`, `aggressive`) |
+| `escalation_interval_presets` | array | Escalation reminder options (`15m` through `daily`) |
+| `dns_record_types` | string[] | Supported DNS record types for `monitored_record_types` |
+
+### Example
+
+```json
+{
+  "automatic_check_cadences": {
+    "status": 5,
+    "ssl": 1440,
+    "dns": 1440,
+    "broken-links": 1440,
+    "performance": 60
+  },
+  "status_check_header": null,
+  "issue_settings": {
+    "enabled_tools": ["status", "ssl", "dns", "broken-links", "performance"],
+    "quiet_time": { "enabled": false, "starts_at": null, "ends_at": null },
+    "status": {
+      "failures_to_open": 2,
+      "successes_to_resolve": 1,
+      "confirmation_retry_minutes": 2,
+      "incident_follow_up_minutes": 5
+    },
+    "links": {
+      "ignore_external_links": false,
+      "ignore_redirects": false,
+      "ignore_paths": []
+    },
+    "performance": {
+      "max_ttfb_ms": 4000,
+      "max_load_time_seconds": null
+    },
+    "dns": {
+      "hard_failures_only": true,
+      "monitored_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
+    },
+    "escalation": {
+      "enabled": false,
+      "intervals": []
+    }
+  },
+  "minimum_check_cadence_minutes": 5,
+  "failure_threshold_presets": [
+    { "key": "instant", "label": "Instant", "failures_to_open": 1 }
+  ],
+  "escalation_interval_presets": [
+    { "key": "15m", "label": "15 minutes", "minutes": 15 }
+  ],
+  "dns_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
+}
+```
+
 ## Site
 
 | Field | Type | Description |
@@ -141,12 +207,19 @@ Returned as `issue_settings` on Site resources. When `null`, the site inherits t
 | `ssl.expiry_days` | integer | Days before expiry to open SSL warning issue |
 | `links.min_broken_count` | integer | Minimum broken URLs to breach threshold |
 | `links.consecutive_breaches_to_open` | integer | Consecutive breached crawls before opening issue |
-| `links.ignore_paths` | string[] | URL paths excluded from broken-link crawls |
+| `links.ignore_paths` | string[] | URL path patterns excluded from broken-link crawls |
+| `links.ignore_external_links` | boolean | Exclude links outside the monitored site host |
+| `links.ignore_redirects` | boolean | Exclude redirect responses from broken-link counts |
 | `performance.min_score` | integer | Minimum acceptable score (1–100) |
-| `performance.max_response_time_ms` | integer | Maximum response time in milliseconds |
+| `performance.max_response_time_ms` | integer | Legacy max response time (ms); normalized with `max_ttfb_ms` |
+| `performance.max_ttfb_ms` | integer | Maximum time to first byte in milliseconds |
+| `performance.max_load_time_seconds` | integer \| null | Maximum Time to Interactive in seconds |
 | `performance.consecutive_breaches_to_open` | integer | Consecutive breached checks before opening issue |
-| `dns.hard_failures_only` | boolean | Only open DNS issues on lookup failures |
+| `dns.hard_failures_only` | boolean | Only open DNS issues on lookup failures when `true` |
+| `dns.monitored_record_types` | string[] | DNS record types to watch for changes |
 | `dns.expected_records` | object | Map of record type → array of expected values |
+| `escalation.enabled` | boolean | Send follow-up reminders for open issues |
+| `escalation.intervals` | integer[] | Reminder schedule in minutes (`15`, `30`, `60`, `360`, `1440`) |
 
 ### Example
 

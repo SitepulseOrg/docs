@@ -126,7 +126,7 @@ Users with permission can edit:
 | Problem threshold overrides | Override team [issue settings](/guide/monitoring#issue-settings) |
 | Enabled issue tools | Disable issue opening for specific check tools on this site |
 | Issue snooze | Pause issue opening until a date/time |
-| Broken-link ignore paths | Paths excluded from broken-link crawls |
+| Broken-link ignore paths | Paths excluded from broken-link crawls (overrides team default from [Monitoring](/guide/monitoring#broken-links-and-crawlers)) |
 | DNS expected records | Per-site expected DNS records (overrides team default) |
 
 <Warning>
@@ -154,7 +154,7 @@ Most sites inherit [team monitoring defaults](/guide/monitoring). Use site-speci
     Set **Snooze until** on the site edit page to pause issue opening for selected tools until a datetime passes. Outbound notifications for new issues are suppressed during snooze; checks still run.
   </Accordion>
   <Accordion title="Broken-link ignore paths">
-    Enter comma-separated URL paths (for example `/admin`, `/api/internal`) that the broken-link crawler should skip. Useful for admin areas or dynamic URL spaces that should not affect incident detection.
+    Enter comma-separated URL path patterns (for example `/admin`, `/api/internal`, `/wp-admin/*`) that the broken-link crawler should skip on this site. Useful for admin areas or dynamic URL spaces that should not affect incident detection. Team-wide ignore paths, external-link filtering, and redirect filtering are configured under [Monitoring](/guide/monitoring#broken-links-and-crawlers).
   </Accordion>
   <Accordion title="DNS expected records">
     Define per-site expected DNS records when they differ from the team default. Use the same one-record-per-line format as [Monitoring](/guide/monitoring#dns-expected-records): `A 203.0.113.1`, `CNAME host.example.com`, etc.

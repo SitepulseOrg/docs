@@ -133,6 +133,102 @@
               }
             },
             {
+              "name": "monitoring",
+              "item": [
+                {
+                  "name": "[GET] api/v1/teams/{team}/monitoring",
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/teams/:team/monitoring",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "teams",
+                        ":team",
+                        "monitoring"
+                      ],
+                      "variable": []
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "name": "[PATCH] api/v1/teams/{team}/monitoring",
+                  "request": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/api/v1/teams/:team/monitoring",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "api",
+                        "v1",
+                        "teams",
+                        ":team",
+                        "monitoring"
+                      ],
+                      "variable": []
+                    },
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"automatic_check_cadences\": {\n        \"status\": 60,\n        \"ssl\": 1440,\n        \"dns\": 1440,\n        \"broken-links\": 1440,\n        \"performance\": 60\n    },\n    \"enabled_tools\": [\n        \"status\",\n        \"broken-links\"\n    ],\n    \"quiet_time\": {\n        \"enabled\": false,\n        \"starts_at\": \"22:00\",\n        \"ends_at\": \"07:00\"\n    },\n    \"status\": {\n        \"failures_to_open\": 1,\n        \"successes_to_resolve\": 1,\n        \"confirmation_retry_minutes\": 2,\n        \"incident_follow_up_minutes\": 5\n    },\n    \"links\": {\n        \"min_broken_count\": 4,\n        \"consecutive_breaches_to_open\": 1,\n        \"ignore_paths\": [\n            \"/wp-admin/*\"\n        ],\n        \"ignore_external_links\": true,\n        \"ignore_redirects\": true\n    },\n    \"performance\": {\n        \"min_score\": 60,\n        \"max_ttfb_ms\": 3000,\n        \"max_load_time_seconds\": 5,\n        \"consecutive_breaches_to_open\": 2\n    },\n    \"dns\": {\n        \"hard_failures_only\": true,\n        \"monitored_record_types\": [\n            \"A\",\n            \"TXT\"\n        ]\n    },\n    \"escalation\": {\n        \"enabled\": true,\n        \"intervals\": [\n            60\n        ]\n    }\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{auth_token}}"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "sites",
               "item": [
                 {
