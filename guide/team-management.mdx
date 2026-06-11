@@ -6,7 +6,7 @@ description: "Team setup, members, invitations, billing, notifications, and secu
 Teams allow you to collaborate with others and share monitoring responsibilities. Each team has its own sites, monitoring settings, billing, and member access controls.
 
 <Info>
-  See also [Account and Preferences](/guide/account-settings) for per-user profile, password, passkeys, and appearance settings.
+  See also [Account and security](/guide/account-settings) for per-user profile, password, passkeys, 2FA, and API tokens.
 </Info>
 
 ## Personal team
@@ -19,15 +19,7 @@ When you register, SitePulse creates a **personal team** for your account. This 
 
 ## Creating or joining a team
 
-New users verify their email before creating or joining a team. After verification, SitePulse sends users without a team to team creation unless they have a pending invitation.
-
-Invited users can join from:
-- The invitation email
-- The invitations page in SitePulse
-
-<Warning>
-  An invitation can only be accepted by the email address it was sent to.
-</Warning>
+New users verify their email before creating or joining a team. After verification, users without a team create one unless they have a pending invitation to accept.
 
 ## Roles
 
@@ -51,61 +43,20 @@ SitePulse uses three practical access levels:
 
 ## Members and invitations
 
-Admins and owners can invite members by email and choose a role. 
+Admins and owners can invite members by email and choose a role.
 
-**Managing invitations:**
-
+- An invitation can only be accepted by the email address it was sent to
 - Pending invitations can be revoked by users with member-management permission
 - Invitees can decline their own invitations
 - When a member's role changes, SitePulse emails that member so they know their access changed
 
-Open **Manage Team → Members** from the team switcher menu to manage members and invitations.
+## Team-scoped settings
 
-## Browsing teams
-
-If you belong to multiple teams:
-
-- Use the **team switcher** in the sidebar header for quick switching
-- Open **Teams** (`/teams`) from the user menu to see all workspaces you can access and switch context from a full list
-
-## Monitoring
-
-Team monitoring settings define automatic check cadence, issue thresholds, and quiet time. Admins and owners configure these under **Monitoring** in the sidebar.
-
-See the [Monitoring settings](/guide/monitoring) guide for cadence presets, default thresholds, enabled issue tools, DNS expected records, and quiet time.
-
-## Notifications
-
-Admins and owners set up notification destinations under **Notifications** in the sidebar. These control where alerts are sent when issues are detected or resolved, and for manual check results.
-
-<Tabs>
-  <Tab title="Email">
-    Add email addresses that receive issue alerts.
-  </Tab>
-  <Tab title="Slack">
-    Connect the SitePulse Slack app and choose a channel, or use a Slack incoming webhook URL.
-  </Tab>
-  <Tab title="Microsoft Teams">
-    Add a Microsoft Teams incoming webhook URL for issue updates.
-  </Tab>
-  <Tab title="Webhook">
-    Add generic webhook URLs (GET or POST) for PagerDuty, custom automation, and other integrations.
-  </Tab>
-</Tabs>
-
-Each notification configuration can subscribe to issue detected and resolved events, target all tools or selected tools only, and be enabled, disabled, tested, edited, or removed at any time.
-
-See the [Notifications](/guide/notifications) guide for full details on channels, events, quiet time, and when alerts fire. For HTTP payload schemas and delivery behavior, see [Webhook notifications](/guide/webhooks).
+Monitoring defaults (cadence, thresholds, escalation, quiet time) and notification destinations are configured per team by admins and owners. See [Monitoring settings](/guide/monitoring) and [Notifications](/guide/notifications).
 
 ## Billing
 
-Billing is managed by the team owner under **Manage Team → Billing**. The billing page shows:
-
-- Current plan and available plans
-- Plan limits (sites, members, cadence)
-- Payment method details
-- Invoice history
-- Checkout and Stripe billing portal (when available)
+Billing is managed by the team owner through Stripe (checkout and billing portal), covering plan selection, payment methods, and invoice history.
 
 ### Plans
 
@@ -130,32 +81,8 @@ SitePulse offers three pricing tiers. All plans include all five check tools.
 
 ## Security
 
-Teams can require two-factor authentication (2FA) for all members. Owners and admins configure this under **Manage Team → General** in the Security section.
+Teams can require two-factor authentication (2FA) for all members. When the requirement is enabled, members who have not set up 2FA are prompted to do so and cannot access team-scoped areas until they complete setup.
 
-<Steps>
-  <Step title="Open Manage Team">
-    Use the team switcher menu and select **Manage Team**.
-  </Step>
-  <Step title="Enable 2FA requirement">
-    Toggle **Require two-factor authentication** in the Security section.
-  </Step>
-  <Step title="Team members enable 2FA">
-    Once enabled, all team members are prompted to set up 2FA before accessing team-scoped dashboard areas.
-  </Step>
-</Steps>
+## Team context
 
-<Warning>
-  Users who haven't enabled 2FA will not be able to access team areas until they complete setup.
-</Warning>
-
-## Switching teams
-
-If you belong to multiple teams:
-
-1. Use the **team switcher** in the sidebar header (visible when you have more than one team)
-2. Select a different team to change your "current team" context
-3. Sites, monitoring settings, and billing are always scoped to the current team
-
-<Tip>
-  You can leave a team from the switcher menu (owner removal or self-removal rules apply per policy).
-</Tip>
+Sites, monitoring settings, notifications, and billing are always scoped to your **current team**. Switching teams changes that context for the rest of the session. You can leave a team yourself (owner removal and self-removal rules apply).

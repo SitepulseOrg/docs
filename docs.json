@@ -20,7 +20,6 @@
       {
         "group": "User Guide",
         "pages": [
-          "guide/dashboard",
           "guide/sites",
           "guide/checks",
           "guide/monitoring",

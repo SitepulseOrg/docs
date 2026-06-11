@@ -1,150 +1,35 @@
 ---
-title: "Account and Preferences"
-description: "Manage your personal profile, security, and appearance preferences"
+title: "Account and security"
+description: "Personal profile, passwords, passkeys, two-factor authentication, and API tokens"
 ---
 
-These settings are per-user (not per-team). Team-wide settings are managed separately under [Team Management](/guide/team-management).
+These settings are per-user, not per-team. Team-wide settings (monitoring, notifications, billing, 2FA enforcement) are managed by admins and owners — see [Teams](/guide/team-management).
 
 ## Profile
 
-Update the information that identifies you across SitePulse:
+Your name, login email, and avatar identify you across SitePulse, including in team notes on sites. Changing your email may require re-verification.
 
-<AccordionGroup>
-  <Accordion title="Name and email">
-    Change your display name or login email. Changing email may require re-verification depending on your setup.
-  </Accordion>
-  <Accordion title="Avatar">
-    Upload a new profile image used in:
-    - User menu
-    - Team contexts
-    - Team notes on sites and other objects
-    
-    Changes propagate immediately after save.
-  </Accordion>
-  <Accordion title="Delete account">
-    Permanently remove your user record. This is a destructive action that also removes you from any teams you belong to.
-    
-    <Warning>
-      You will be asked to confirm. This action cannot be undone.
-    </Warning>
-  </Accordion>
-</AccordionGroup>
+Deleting your account permanently removes your user record and removes you from any teams you belong to. This cannot be undone.
 
-**Access:** Dashboard → user menu (bottom of sidebar) → Settings → Profile
+## Password and passkeys
 
-## Password, passkeys, and recovery
+You must know your current password to set a new one. After a successful password change you remain logged in. If you've forgotten your password, request a reset link by email from the login page.
 
-Change your account password at any time. You must know your current password to set a new one.
-
-<Info>
-  After a successful password change you remain logged in.
-</Info>
-
-**Forgot password:** From the login page, use **Forgot your password?** to receive a reset link by email.
-
-You can also register **passkeys** on the Password settings page for passwordless sign-in. Passkeys use your device's biometrics or security key and work alongside your password. The login page offers **Use Passkey** when your browser supports WebAuthn.
-
-**Access:** Dashboard → user menu → Settings → Password
-
-## Switching teams
-
-If you belong to multiple teams:
-
-<Steps>
-  <Step title="Open team switcher">
-    Use the team switcher in the sidebar header (visible when you have more than one team).
-  </Step>
-  <Step title="Select a team">
-    Selecting a different team changes your "current team" context for the rest of the session.
-  </Step>
-  <Step title="Remember scope">
-    Sites, monitoring settings, and billing are always scoped to the current team.
-  </Step>
-</Steps>
-
-<Tip>
-  You can leave a team from the switcher menu (owner removal or self-removal rules apply per policy).
-</Tip>
-
-## General preferences
-
-### Appearance
-
-Choose your preferred theme:
-
-<Tabs>
-  <Tab title="Light">
-    Light theme for daytime use.
-  </Tab>
-  <Tab title="Dark">
-    Dark theme for reduced eye strain.
-  </Tab>
-  <Tab title="System">
-    Automatically match your operating system's theme preference.
-  </Tab>
-</Tabs>
-
-The choice applies across the entire application UI (dashboard, tools, settings, etc.).
-
-You can also toggle light/dark mode quickly from the **user menu** in the sidebar footer without opening Settings.
+You can also register **passkeys** for passwordless sign-in. Passkeys use your device's biometrics or a security key (WebAuthn) and work alongside your password.
 
 ## Two-factor authentication (2FA)
 
-2FA requirements are controlled at the team level by owners/admins. See your team's security settings for the current requirement.
+2FA is enabled per account using an authenticator app. During setup SitePulse shows a QR code and recovery codes — store the recovery codes securely, as they let you sign in if you lose access to your authenticator.
 
-<AccordionGroup>
-  <Accordion title="When 2FA is required">
-    When a team you belong to enforces 2FA, you must enable it on your account before you can access team-scoped areas.
-  </Accordion>
-  <Accordion title="Setup and management">
-    Enable 2FA from **Settings → Password**. SitePulse shows a QR code and recovery codes during setup. Store recovery codes securely — they let you sign in if you lose access to your authenticator app.
-  </Accordion>
-  <Accordion title="Scope">
-    Once enabled for your account it applies when any enforcing team is active.
-  </Accordion>
-</AccordionGroup>
+2FA **requirements** are controlled at the team level. When any team you belong to enforces 2FA, you must enable it before accessing that team's areas. See [Team security](/guide/team-management#security).
 
 ## API tokens
 
-Create personal access tokens for the [SitePulse API](/api/overview) under **Settings → API tokens**.
+Personal access tokens authenticate requests to the [SitePulse API](/api/overview).
 
-<Steps>
-  <Step title="Create token">
-    Give each token a descriptive name (for example `Production deploy` or `CI uptime`).
-  </Step>
-  <Step title="Select scopes">
-    Select only the [OAuth scopes](/api/authentication#oauth-scopes) the integration needs:
-    - `teams:read` - Read teams and plan limits
-    - `sites:read` / `sites:write` / `sites:delete` - Site management
-    - `checks:read` / `checks:run` / `checks:delete` - Check operations
-    - `issues:read` - Read issues (incident records)
-  </Step>
-  <Step title="Save token">
-    Copy the token when it is created.
-    
-    <Warning>
-      SitePulse cannot show it again after you close the dialog.
-    </Warning>
-  </Step>
-  <Step title="Revoke when done">
-    Revoke tokens you no longer use from the API tokens page.
-  </Step>
-</Steps>
+- Tokens authenticate **as your user** — team membership, role permissions, and subscription status still apply to API requests
+- Each token carries only the [OAuth scopes](/api/authentication#oauth-scopes) you grant it; grant the minimum the integration needs
+- The token value is shown **once** at creation and cannot be retrieved again
+- Revoke tokens you no longer use
 
-<Info>
-  Tokens authenticate as your user. Team membership, role permissions, and subscription status still apply to API requests.
-</Info>
-
-## Related team settings
-
-Some preferences that affect your day-to-day experience are actually team-wide and managed by admins/owners under team management:
-
-| Setting | Location |
-|---------|----------|
-| Monitoring cadences and enabled tools | **Monitoring** (sidebar) |
-| Problem detection thresholds and quiet time | **Monitoring** (sidebar) |
-| Notification destinations | **Notifications** (sidebar) |
-| Team 2FA enforcement | **Manage Team → General** |
-| Billing and member roles | **Manage Team → Billing / Members** |
-
-Your personal settings cover appearance, profile data, password, passkeys, API tokens, and team switching.
+Available scopes include `teams:read`, `teams:write`, `sites:read` / `sites:write` / `sites:delete`, `checks:read` / `checks:run` / `checks:delete`, and `issues:read`. See [Authentication](/api/authentication) for the full scope reference.

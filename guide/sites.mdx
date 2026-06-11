@@ -1,133 +1,61 @@
 ---
-title: "Managing Sites"
-description: "Add, configure, and monitor websites with SitePulse"
+title: "Sites"
+description: "What sites are, their settings, and how per-site overrides interact with team defaults"
 ---
 
-Sites are the websites your team wants SitePulse to monitor. Each site belongs to the current team and can have its own enabled checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
+Sites are the websites your team monitors. Each site belongs to one team and carries its own enabled checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
 
-<Note>
-  Pinned sites appear first on the sites list and power the [dashboard](/guide/dashboard) overview.
-</Note>
+## Creating sites
 
-## Adding a site
+A site needs:
 
-To add a site from the dashboard, enter:
-
-- **Display name** - A friendly name for the site
-- **URL** - The website to monitor
-- **Enabled checks** - Which check tools should be enabled
-- **JavaScript rendering** - Whether broken-link checks should render JavaScript
-
-<Info>
-  The dashboard form requires a display name before you can create the site. API requests can omit `name`; in that case SitePulse generates one from the domain.
-</Info>
-
-Status-check header overrides are configured after creation from the site edit page. Team-wide status headers are configured under **Monitoring** in the sidebar.
+- **URL** — the website to monitor
+- **Display name** — required in the dashboard; API requests can omit `name` and SitePulse generates one from the domain
+- **Enabled checks** — which of the five check tools run for this site
+- **JavaScript rendering** — whether broken-link checks render JavaScript before crawling
 
 SitePulse rejects duplicate sites within the same team and enforces your plan's site and check-tool limits.
 
-After a site is created, SitePulse:
-- Fetches the favicon and screenshot
-- Starts the selected checks
-- Creates automatic schedules for enabled checks
+After creation, SitePulse fetches the favicon and screenshot, runs the selected checks, and creates automatic schedules for the enabled tools.
 
-## Bulk importing sites
+### Bulk import
 
-Bulk import can add several sites at once. You can paste a list of URLs or upload a `.txt`, `.csv`, or `.xlsx` file.
+Multiple sites can be imported at once from a pasted URL list or a `.txt`, `.csv`, or `.xlsx` file (up to 4 MB). Files can include URL and Name columns; without headers, the first column is treated as the URL and the second as the optional name. Duplicate and invalid URLs are reported before any sites are created.
 
-<Steps>
-  <Step title="Prepare your file">
-    Files can include URL and Name columns. If no headers are present, SitePulse treats the first column as the URL and the second as the optional name.
-  </Step>
-  <Step title="Upload">
-    Navigate to the sites list and select **Bulk Import**. Paste URLs or upload your file (`.txt`, `.csv`, or `.xlsx`, up to 4 MB).
-  </Step>
-  <Step title="Review">
-    Bulk import checks for duplicate and invalid URLs before creating the sites.
-  </Step>
-</Steps>
+## Pinning
 
-## Sites list
+Pinned sites sort first on the sites list (newest pins first) and populate the dashboard's pinned-sites overview. Use pinning for production sites or key clients that should stay visible without filtering.
 
-The sites list shows the current team's sites with their latest health signals. Pinned sites appear first, followed by the newest sites.
+## Health states
 
-The list refreshes automatically every **30 seconds** while you keep the page open.
+The sites list can be filtered by health condition. These conditions are derived from each site's **latest** check results:
 
-### Search
-
-Use the search field to filter sites by **display name** or **URL**. Search runs client-side on the loaded site list.
-
-### Health filters
-
-Use the filter dropdown to focus on sites matching a health condition:
-
-| Filter | Shows sites where… |
-|--------|-------------------|
-| **All Sites** | No filter applied |
-| **Sites Down** | Latest status check reports the site as unavailable |
+| Condition | Meaning |
+|-----------|---------|
+| **Down** | Latest status check reports the site as unavailable |
 | **Invalid SSL** | Latest SSL check reports an invalid certificate |
-| **DNS Issues** | Latest DNS check has a hard failure or expected-record mismatch |
-| **Broken Links** | Latest broken-link check found one or more broken URLs |
-| **Poor Performance** | Latest performance check breaches configured thresholds |
-| **No Status Check** | No status check result exists yet |
-| **No SSL Check** | No SSL check result exists yet |
-| **No DNS Check** | No DNS check result exists yet |
-| **No Link Check** | No broken-link check result exists yet |
-| **No Performance Check** | No performance check result exists yet |
+| **DNS issues** | Latest DNS check has a hard failure or expected-record mismatch |
+| **Broken links** | Latest broken-link check found one or more broken URLs |
+| **Poor performance** | Latest performance check breaches configured thresholds |
+| **No check yet** | No result exists yet for that tool |
 
-Filter selection is reflected in the page URL so you can bookmark or share a filtered view.
-
-### Bulk actions
-
-From the sites list you can also:
-
-- **Bulk pin or unpin** selected sites
-- **Bulk delete** selected sites (removes schedules, checks, and issues)
-- **Bulk import** multiple sites at once
-
-<Tip>
-  Use pinning for important sites that should stay near the top of the list.
-</Tip>
-
-## Site detail page
-
-The site detail page shows:
-
-- Site name, URL, screenshot, favicon, and notes
-- Latest status, SSL, DNS, broken-link, and performance checks
-- Uptime reports (today / 30 / 90 days)
-- Performance trend data
-- Manual check history with links to full tool results
-
-<CardGroup cols={1}>
-  <Card title="Run Check dropdown" icon="play">
-    The site header includes a **Run Check** dropdown that lets you immediately trigger any enabled tool for this site. It deep-links into the manual diagnostics tool with the site pre-selected.
-  </Card>
-</CardGroup>
-
-This page is the main place to review how one site is doing. From here you can also jump straight into editing or visiting the live site.
-
-The site detail page polls for updates every **30 seconds** while you keep it open, so latest checks and reports refresh without a manual reload.
-
-## Editing a site
-
-Users with permission can edit:
+## Site settings
 
 | Setting | Description |
 |---------|-------------|
 | Name | Display name |
 | URL | Monitored URL |
 | Notes | Team notes |
-| Pin state | Whether pinned on sites list |
+| Pin state | Whether pinned |
 | JavaScript rendering | For broken-link checks |
-| Enabled checks | Which tools are enabled |
-| Status-check header | Override header |
-| Check cadence | Override team default |
-| Problem threshold overrides | Override team [issue settings](/guide/monitoring#issue-settings) |
+| Enabled checks | Which tools run for this site |
+| Status-check header | Overrides the team default header |
+| Check cadence | Overrides team default cadence per tool |
+| Problem threshold overrides | Override team [issue rules](/guide/monitoring#issue-settings) |
 | Enabled issue tools | Disable issue opening for specific check tools on this site |
 | Issue snooze | Pause issue opening until a date/time |
-| Broken-link ignore paths | Paths excluded from broken-link crawls (overrides team default from [Monitoring](/guide/monitoring#broken-links-and-crawlers)) |
-| DNS expected records | Per-site expected DNS records (overrides team default) |
+| Broken-link ignore paths | Paths excluded from broken-link crawls (overrides the [team default](/guide/monitoring#broken-link-thresholds-and-filters)) |
+| DNS expected records | Per-site expected DNS records for change detection |
 
 <Warning>
   Changing enabled checks or cadence settings updates the site's automatic monitoring schedule.
@@ -135,43 +63,39 @@ Users with permission can edit:
 
 ## Site-specific overrides
 
-Most sites inherit [team monitoring defaults](/guide/monitoring). Use site-specific overrides on the site edit page only when one site needs different behavior.
+Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides only when one site needs different behavior.
 
 <AccordionGroup>
-  <Accordion title="Different status-check header">
-    A site needs a different status-check header from the team default.
+  <Accordion title="Status-check header">
+    Send a different HTTP header with status checks for this site — for example, a site behind authentication that other team sites don't need.
   </Accordion>
-  <Accordion title="Different check frequency">
-    A site should check one or more tools more or less often than the team default cadence.
+  <Accordion title="Check cadence">
+    Check one or more tools more or less often than the team default.
   </Accordion>
-  <Accordion title="Different problem thresholds">
+  <Accordion title="Problem thresholds">
     Override status, SSL, broken-link, performance, or DNS thresholds for this site only.
   </Accordion>
   <Accordion title="Enabled issue tools">
-    Turn off issue opening for specific tools while still running automatic checks. For example, monitor performance without opening performance issues.
+    Turn off issue opening for specific tools while still running automatic checks — for example, monitor performance for trends without opening performance incidents.
   </Accordion>
   <Accordion title="Issue snooze">
-    Set **Snooze until** on the site edit page to pause issue opening for selected tools until a datetime passes. Outbound notifications for new issues are suppressed during snooze; checks still run.
+    Pause issue opening for selected tools until a datetime passes. Outbound notifications for new issues are suppressed during snooze; checks still run.
   </Accordion>
   <Accordion title="Broken-link ignore paths">
-    Enter comma-separated URL path patterns (for example `/admin`, `/api/internal`, `/wp-admin/*`) that the broken-link crawler should skip on this site. Useful for admin areas or dynamic URL spaces that should not affect incident detection. Team-wide ignore paths, external-link filtering, and redirect filtering are configured under [Monitoring](/guide/monitoring#broken-links-and-crawlers).
+    URL path patterns the broken-link crawler skips on this site (for example `/admin`, `/api/internal`, `/wp-admin/*`). Useful for admin areas or dynamic URL spaces that should not affect incident detection.
   </Accordion>
   <Accordion title="DNS expected records">
-    Define per-site expected DNS records when they differ from the team default. Use the same one-record-per-line format as [Monitoring](/guide/monitoring#dns-expected-records): `A 203.0.113.1`, `CNAME host.example.com`, etc.
+    Explicit expected DNS records by type and value (for example `A` → `203.0.113.1`). When unset, SitePulse uses the first DNS check as the baseline for [record change monitoring](/guide/monitoring#dns-record-monitoring).
   </Accordion>
   <Accordion title="JavaScript rendering">
-    A JavaScript-heavy site needs JS rendering for broken-link checks. Leave off for server-rendered sites (WordPress, Ghost, plain HTML).
+    Enable for JavaScript-heavy sites so broken-link checks see the rendered page. Leave off for server-rendered sites (WordPress, Ghost, plain HTML).
   </Accordion>
 </AccordionGroup>
 
 ## Deleting a site
 
-Deleting a site removes it from the team's active monitoring. SitePulse also removes the site's:
-
-- Automatic schedules
-- Check history
-- Issues
+Deleting a site removes its automatic schedules, check history, and issues along with the site itself.
 
 <Warning>
-  Use deletion when the team no longer needs to monitor that website. This action cannot be undone.
+  Deletion cannot be undone.
 </Warning>

@@ -21,17 +21,17 @@ SitePulse opens an issue when an automatic check meets the problem thresholds co
 
 When the underlying problem clears on subsequent automatic checks, SitePulse marks the issue **resolved** and can send recovery notifications.
 
-See [Monitoring settings](/guide/monitoring#issue-settings) and [Problem thresholds](/guide/checks#problem-thresholds) for the full threshold reference.
+See [Monitoring settings](/guide/monitoring#issue-settings) for the full threshold reference.
 
-## Issue statuses
+## Issue lifecycle
 
 | Status | Description |
 |--------|-------------|
 | `open` | Active incident that needs attention |
-| `acknowledged` | Someone on the team has acknowledged the issue |
+| `acknowledged` | Someone on the team is investigating; recorded with the acting user and timestamp |
 | `resolved` | The problem has cleared; kept for history |
 
-Resolved issues can reopen automatically if the same site, tool, and failure type occurs again.
+Issues can be acknowledged and resolved manually, or resolved automatically when checks pass again. Resolved issues reopen automatically if the same site, tool, and failure type occurs again — the `fingerprint` field deduplicates incidents so a recurring problem updates one record instead of creating many.
 
 ## Severities
 
@@ -40,33 +40,6 @@ Resolved issues can reopen automatically if the same site, tool, and failure typ
 | `critical` | Site down, invalid SSL, DNS hard failures |
 | `warning` | Expiring certificates, broken-link thresholds, performance breaches |
 | `info` | Lower-priority signals when configured |
-
-## Using the Issues page
-
-Open **Issues** from the sidebar to see incidents for the current team.
-
-The page supports:
-
-- **Status tabs** — Active (open + acknowledged), Open, Acknowledged, or Resolved
-- **Filters** — Site, check tool, and severity
-- **Sorting** — Summary, site, tool, status, or opened time
-- **Bulk actions** — Acknowledge, resolve, or delete selected issues
-
-<Steps>
-  <Step title="Review active incidents">
-    Start on the **Active** tab to see open and acknowledged issues across the team.
-  </Step>
-  <Step title="Acknowledge when triaged">
-    Acknowledge an issue when someone is investigating. Acknowledgement is recorded with the acting user and timestamp.
-  </Step>
-  <Step title="Resolve or wait for recovery">
-    Resolve an issue manually when appropriate, or let automatic monitoring resolve it when checks pass again.
-  </Step>
-</Steps>
-
-<Tip>
-  The dashboard problem summaries link into relevant sites and tools. Use **Issues** when you need a full incident list with filters and bulk actions.
-</Tip>
 
 ## Notifications and quiet time
 

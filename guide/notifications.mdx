@@ -7,9 +7,7 @@ SitePulse notifies your team when automatic monitoring opens or resolves issues,
 
 ## Notification configurations
 
-Admins and owners configure notification destinations under **Notifications** in the sidebar.
-
-You can add multiple destinations across these channels:
+Notification destinations are managed by admins and owners. A team can have multiple destinations across these channels:
 
 | Channel | Description |
 |---------|-------------|
@@ -19,14 +17,15 @@ You can add multiple destinations across these channels:
 | **Microsoft Teams** | Send to a Microsoft Teams incoming webhook URL |
 | **Webhook** | Generic HTTP endpoint (GET or POST) |
 
-Each configuration can:
+Each configuration:
 
-- Subscribe to **Issue detected** and/or **Issue resolved** events
-- Apply to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
-- Be enabled or disabled independently
-- Be tested directly from the settings screen
+- Subscribes to **Issue detected** and/or **Issue resolved** events
+- Applies to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
+- Can be enabled, disabled, and tested independently
 
-Notification configurations determine **where** alerts go. The conditions for opening issues (thresholds, confirmation retries, follow-up timing) are controlled in **[Monitoring](/guide/monitoring)**.
+Because each configuration is independent, you can route different tools or environments to different destinations.
+
+Notification configurations determine **where** alerts go. The conditions for opening issues (thresholds, confirmation retries, follow-up timing) are controlled by [monitoring settings](/guide/monitoring).
 
 ## When notifications are sent
 
@@ -46,7 +45,7 @@ When automatic monitoring opens an issue or marks one resolved, SitePulse sends 
 
 ### Issue escalation
 
-When [escalation](/guide/monitoring#escalation) is enabled on the Monitoring page, SitePulse schedules follow-up reminders at the intervals you select (15 minutes through daily).
+When [escalation](/guide/monitoring#escalation) is enabled, SitePulse schedules follow-up reminders at the intervals you select (15 minutes through daily).
 
 Escalation reminders are delivered to notification configurations subscribed to **Issue detected**. No separate channel setup is required.
 
@@ -73,47 +72,29 @@ Each email notification typically includes:
 
 ### Slack
 
-**Slack app** — Click **Connect Slack** when creating a configuration, authorize the SitePulse app, and pick a channel. No webhook URL is required.
+**Slack app** — an OAuth connection: authorize the SitePulse app and pick a channel. No webhook URL is required.
 
-**Slack webhook** — Paste a Slack incoming webhook URL if you prefer webhook-based delivery.
+**Slack webhook** — a Slack incoming webhook URL, if you prefer webhook-based delivery.
 
 ### Microsoft Teams
 
-Add a Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams workflow webhooks.
+A Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams workflow webhooks.
 
 ### Generic webhook
 
-Add webhook endpoints to receive HTTP notifications (GET or POST) for issue lifecycle events.
-
-Use webhooks to integrate with PagerDuty, custom automation, or other systems.
+An HTTP endpoint (GET or POST) that receives issue lifecycle events. Use webhooks to integrate with PagerDuty, custom automation, or other systems.
 
 See [Webhook notifications](/guide/webhooks) for configuration fields, payload schemas, headers, delivery behavior, test vs production payloads, and URL requirements.
 
 ### In-app notifications
 
-While using the SitePulse dashboard, issue lifecycle notifications appear in real time and update counts on the dashboard (subject to quiet time and your permissions).
+While using the SitePulse dashboard, issue lifecycle notifications appear in real time (subject to quiet time and your permissions).
 
 ## Quiet time
 
-**Quiet time** (configured in **Monitoring**) suppresses outbound notifications during defined windows.
-
-Use it for:
-
-- Overnight or weekend periods when the team is unavailable
-- Planned maintenance windows
+[Quiet time](/guide/monitoring#quiet-time) suppresses outbound notifications during a daily window. Use it for overnight periods or planned maintenance.
 
 Checks continue to run during quiet time — only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.
-
-## Managing notification configurations
-
-From the Notifications page, admins and owners can:
-
-- Add new destinations for any supported channel
-- Edit existing configurations (channel, events, tools, enabled state)
-- Test a configuration (webhook, Slack webhook, Slack app, and Microsoft Teams channels)
-- Remove configurations that are no longer needed
-
-Each configuration is independent, so you can route different tools or environments to different destinations.
 
 <Card title="Webhook reference" icon="webhook" href="/guide/webhooks">
   Payload format, headers, GET vs POST, retries, and example receiver code

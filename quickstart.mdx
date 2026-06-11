@@ -22,7 +22,7 @@ Before you begin, you need:
     After verifying your email, create a team or accept an invitation if someone has already invited you. Teams allow you to collaborate and share monitoring responsibilities.
   </Step>
   <Step title="Add your first site">
-    From the dashboard, click **Add Site** and provide:
+    Add a site with:
     - **URL** - The website you want to monitor (e.g., `https://example.com`)
     - **Display Name** - A friendly name for the site
     - **Enabled Checks** - Select which monitoring tools to enable (Status, SSL, DNS, Broken Links, Performance)
@@ -30,21 +30,14 @@ Before you begin, you need:
     SitePulse will automatically fetch the site's favicon and screenshot, then start monitoring.
   </Step>
   <Step title="Run a manual check">
-    To get immediate results:
-    1. Navigate to **Manual Diagnostics** in the sidebar
-    2. Select a check tool (Status is fastest)
-    3. Choose your site from the dropdown
-    4. Click **Run check**
-    
-    Results appear immediately for quick checks like Status and DNS.
+    Run a manual check for an immediate result — Status and DNS return quickly. Automatic monitoring starts on its own once checks are enabled.
   </Step>
   <Step title="Configure monitoring and alerts">
-    Use the sidebar to configure:
-    - **Monitoring** — check cadence, enabled tools, problem thresholds, escalation reminders, and quiet time
-    - **Notifications** — email, Slack, Microsoft Teams, and webhook destinations
+    - **[Monitoring](/guide/monitoring)** — check cadence, problem thresholds, escalation reminders, and quiet time
+    - **[Notifications](/guide/notifications)** — email, Slack, Microsoft Teams, and webhook destinations
   </Step>
   <Step title="Review issues">
-    When automatic monitoring detects problems, open **Issues** in the sidebar to acknowledge incidents and track recoveries.
+    When automatic monitoring detects problems, [issues](/guide/issues) track the incident through acknowledgement and recovery.
   </Step>
 </Steps>
 
@@ -55,13 +48,10 @@ Before you begin, you need:
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Dashboard Overview" icon="chart-line" href="/guide/dashboard">
-    Learn how to use the dashboard effectively
+  <Card title="Sites" icon="globe" href="/guide/sites">
+    Site settings and per-site overrides
   </Card>
-  <Card title="Managing Sites" icon="globe" href="/guide/sites">
-    Add, edit, and organize your monitored sites
-  </Card>
-  <Card title="Understanding Checks" icon="magnifying-glass" href="/guide/checks">
+  <Card title="Check tools" icon="magnifying-glass" href="/guide/checks">
     Learn about the five monitoring tools
   </Card>
   <Card title="Monitoring settings" icon="activity" href="/guide/monitoring">

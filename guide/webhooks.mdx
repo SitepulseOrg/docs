@@ -9,47 +9,18 @@ SitePulse can deliver issue lifecycle alerts to URLs you control. This guide cov
   Email and in-app notifications use separate delivery paths. See [Notifications](/guide/notifications) for the full channel overview.
 </Info>
 
-## Create a webhook configuration
-
-Admins and owners manage webhook destinations under **Notifications** in the sidebar.
-
-<Steps>
-  <Step title="Add a configuration">
-    Click **Add configuration** and choose a channel:
-    - **Webhook** — your own HTTP endpoint
-    - **Slack webhook** — Slack incoming webhook URL
-    - **Microsoft Teams** — Teams workflow incoming webhook URL
-    - **Slack** — OAuth app connection (no URL required; SitePulse stores the webhook URL after you connect)
-  </Step>
-  <Step title="Set the destination">
-    For URL-based channels, paste a public `http://` or `https://` endpoint (max 2,048 characters). For the Slack app, click **Connect Slack** and complete authorization in Slack.
-  </Step>
-  <Step title="Choose events">
-    Select one or both:
-    - **Issue detected** — fires when a new issue opens or a resolved issue reopens (also receives [escalation](/guide/monitoring#escalation) follow-ups when enabled)
-    - **Issue resolved** — fires when automatic monitoring confirms recovery
-  </Step>
-  <Step title="Choose tool scope">
-    Apply the configuration to **all checks** or only **specific tools** (Status, SSL, DNS, Broken Links, Performance).
-  </Step>
-  <Step title="Choose HTTP method (Webhook channel only)">
-    Generic webhook configurations support **POST** (default) or **GET**. Slack webhook, Microsoft Teams, and the Slack app always use POST.
-  </Step>
-  <Step title="Test and save">
-    Use **Test** to send a sample payload before saving. Enable the configuration when you are ready to receive production alerts.
-  </Step>
-</Steps>
-
 ## Configuration fields
 
 | Field | Applies to | Description |
 |-------|------------|-------------|
-| **Channel** | All | `webhook`, `slack`, `slack_app`, or `microsoft_teams` |
-| **Destination** | URL channels | Public HTTP(S) webhook URL |
-| **HTTP method** | `webhook` only | `post` or `get` |
-| **Events** | All | `open` (Issue detected) and/or `resolve` (Issue resolved). Escalation deliveries use `escalate` and match configurations subscribed to Issue detected. |
+| **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; SitePulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
+| **Destination** | URL channels | Public `http://` or `https://` webhook URL, max 2,048 characters |
+| **HTTP method** | `webhook` only | `post` (default) or `get`. Slack, Slack app, and Teams always use POST. |
+| **Events** | All | `open` (Issue detected — new issues and reopens, plus [escalation](/guide/monitoring#escalation) follow-ups) and/or `resolve` (Issue resolved — automatic monitoring confirms recovery) |
 | **Tool scope** | All | All tools, or a subset of enabled check tools |
 | **Enabled** | All | Toggle delivery without deleting the configuration |
+
+Configurations can be tested with a sample payload before and after saving (see [Test payload](#test-payload)).
 
 A configuration delivers an alert only when **all** of the following are true:
 
@@ -291,20 +262,9 @@ Use this table when building idempotent handlers for the generic **Webhook** cha
 
 Route SitePulse alerts to PagerDuty using a generic webhook and a small translation layer.
 
-<Steps>
-  <Step title="Create a SitePulse webhook">
-    Under **Notifications**, add a **Webhook** configuration:
-    - Method: **POST**
-    - Events: **Issue detected** and **Issue resolved**
-    - Destination: your PagerDuty integration endpoint or middleware URL
-  </Step>
-  <Step title="Translate events">
-    Map SitePulse events to PagerDuty `trigger` and `resolve` actions using `X-SitePulse-Event` or `event` in the body.
-  </Step>
-  <Step title="Use a stable dedup key">
-    Use `issue.fingerprint` combined with `site.uuid` as PagerDuty `dedup_key` so reopen and recovery events update the same incident.
-  </Step>
-</Steps>
+1. Create a **Webhook** configuration: method **POST**, events **Issue detected** and **Issue resolved**, destination set to your middleware URL.
+2. Map SitePulse events to PagerDuty `trigger` and `resolve` actions using `X-SitePulse-Event` or `event` in the body.
+3. Use `issue.fingerprint` combined with `site.uuid` as the PagerDuty `dedup_key` so reopen and recovery events update the same incident.
 
 **Example middleware** (forwards to PagerDuty Events API v2):
 
@@ -347,5 +307,5 @@ Store `PAGERDUTY_ROUTING_KEY` in your middleware environment, not in SitePulse.
 ## Related guides
 
 - [Notifications](/guide/notifications) — all channels, quiet time, and manual check alerts
-- [Managing issues](/guide/issues) — issue statuses and dashboard triage
+- [Managing issues](/guide/issues) — issue lifecycle, severities, and notifications
 - [Issues API](/api/endpoints#issues) — programmatic issue access

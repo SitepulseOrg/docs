@@ -3,68 +3,35 @@ title: "Monitoring settings"
 description: "Configure automatic check cadence, issue thresholds, escalation, quiet time, and team defaults"
 ---
 
-The **Monitoring** page in the sidebar controls how SitePulse runs automatic checks and when monitoring problems open issues for your team. Admins and owners can edit these settings; members can view them.
+Team monitoring settings control how often SitePulse runs automatic checks and when monitoring problems open issues. Admins and owners can edit these settings; members can view them.
 
 <Info>
   Individual [sites](/guide/sites) can override cadence, thresholds, and other issue settings. Team defaults apply when a site has no override.
 </Info>
 
-## Two save sections
-
-The Monitoring page has two independent forms:
-
-| Section | What it controls | Save button |
-|---------|------------------|-------------|
-| **Monitoring settings** | Per-tool automatic check cadence and team status-check header | Save monitoring settings |
-| **Issue settings** | Enabled issue tools, quiet time, escalation, and problem thresholds | Save issue settings |
-
-Changes to one section do not affect the other until you save that section.
-
 ## Automatic check cadence
 
-For each enabled check tool, choose how often SitePulse runs **automatic** checks:
+Each check tool (Status, SSL, DNS, Broken Links, Performance) has its own cadence — how often SitePulse runs **automatic** checks across the team's sites.
 
-- Status
-- SSL
-- DNS
-- Broken Links
-- Performance
+Cadence presets range from every minute to every week. Your [plan](/guide/team-management#plans) sets the **fastest** cadence allowed: Starter 30 minutes, Growth 5 minutes, Agency 1 minute.
 
-Cadence presets range from every minute to every week. Your [plan](/guide/team-management#plans) sets the **fastest** cadence allowed (Starter: 30 minutes, Growth: 5 minutes, Agency: 1 minute). Presets faster than your plan minimum are disabled in the dropdown.
+When a site's enabled checks or cadence overrides change, SitePulse resyncs that site's automatic schedules.
 
-When you change a site's enabled checks or cadence overrides, SitePulse resyncs that site's automatic schedules.
+## Issue rules {#issue-settings}
 
-## Status check header
+Issue rules define when automatic monitoring **opens** or **resolves** issues and sends notifications. Team defaults apply to every site unless a site overrides them.
 
-Set a default HTTP header for **status** checks across the team. Use this when monitored sites require authentication or a custom header to respond correctly.
+### Status check header
+
+A default HTTP header sent with every status check across the team. Use this when monitored sites require authentication or a custom header to respond correctly.
 
 Format: header **name** and **value** (for example `Authorization` and a bearer token).
 
-Sites can override this header on the [site edit page](/guide/sites#editing-a-site).
-
-## Quiet time
-
-Quiet time suppresses **outbound** notifications (email, Slack, Teams, webhooks, in-app alerts) during a daily window.
-
-| Setting | Description |
-|---------|-------------|
-| **Enabled** | Turn quiet time on or off |
-| **From** | Start time (team timezone) |
-| **Until** | End time (team timezone) |
-
-Checks continue to run during quiet time. Issues can still open, acknowledge, and resolve — only alerts are suppressed.
-
-See [Notifications](/guide/notifications#quiet-time) for how quiet time interacts with each channel.
-
-## Issue settings
-
-Issue settings define when automatic monitoring **opens** or **resolves** issues and sends notifications. Configure defaults here; override per site when needed.
-
-Each check tool has its own **collapsible** section on the Monitoring page. Use the section headers to expand or collapse Status, SSL, Performance, Broken Links, and DNS rules. The page sidebar includes an **Escalation** anchor that jumps to follow-up notification settings.
+Sites can [override this header](/guide/sites#site-specific-overrides) individually.
 
 ### Enabled issue tools
 
-Each check tool has an **Enabled** / **Disabled** toggle. When disabled, automatic checks for that tool still run and save results, but they do not open or resolve issues.
+Issue opening can be enabled or disabled per check tool. When disabled, automatic checks for that tool still run and save results, but they do not open or resolve issues.
 
 Use this to monitor a tool without generating incidents (for example, run performance checks for trends only).
 
@@ -80,31 +47,33 @@ New teams inherit these defaults (from SitePulse configuration):
 | **Status** | Follow-up while open (minutes) | 5 |
 | **SSL** | Expiry window (days) | 14 |
 | **Broken links** | Minimum broken links | 5 |
-| **Broken links** | Failures to open incident | 1 |
+| **Broken links** | Consecutive breaches to open | 1 |
 | **Broken links** | Ignore external links | Off |
 | **Broken links** | Ignore redirects | Off |
 | **Performance** | Minimum score | 50 |
 | **Performance** | Max TTFB (ms) | 4000 |
 | **Performance** | Max load time (seconds) | Not set |
-| **Performance** | Failures to open incident | 2 |
+| **Performance** | Consecutive breaches to open | 2 |
 | **DNS** | Hard failures only | On |
 | **DNS** | Monitored record types | A, AAAA, CNAME, MX, NS, TXT |
 | **Escalation** | Enabled | Off |
 
-For full threshold behavior, see [Problem thresholds](/guide/checks#problem-thresholds).
+### Status thresholds
 
-### Status failure threshold
+Status rules control when uptime incidents open and resolve:
 
-For status checks, choose how many consecutive failures are required before SitePulse opens an issue:
+| Setting | Meaning |
+|---------|---------|
+| **Failures to open** | Consecutive failed status checks required before an issue opens |
+| **Confirmation retry (minutes)** | How soon SitePulse reruns a failed check to confirm the failure before opening an issue |
+| **Successes to resolve** | Consecutive successful checks required before the issue is marked recovered |
+| **Follow-up while open (minutes)** | How often SitePulse rechecks an active uptime incident until it recovers |
 
-| Preset | Failures to open |
-|--------|------------------|
-| **Instant** | 1 |
-| **Conservative** | 3 |
-| **Aggressive** | 1 |
-| **Custom** | Any value you enter |
+Presets set the first two values together — **Instant** (1 failure, 1-minute retry), **Conservative** (3 failures), **Aggressive** (1 failure, 2-minute retry) — or set custom values independently.
 
-The preset sets **Failures to open**. Other status fields (successes to resolve, confirmation retry, incident follow-up) stay independent.
+### SSL thresholds
+
+The **expiry window (days)** controls how many days before certificate expiry SitePulse opens an SSL issue. SitePulse also opens an issue when a certificate is invalid, missing, or cannot be verified, regardless of the expiry window.
 
 ### Performance thresholds
 
@@ -118,59 +87,57 @@ Performance issue rules use three separate breach checks:
 
 A performance check breaches when **any** configured limit is exceeded. Leave **Max load time** empty to skip load-time evaluation.
 
-### DNS expected records
+### DNS record monitoring
 
-For DNS issue detection, enter expected records **one per line**:
+| Setting | Description |
+|---------|-------------|
+| **Hard failures only** | Open incidents only when DNS lookups fail with a hard error |
+| **Monitored record types** | Which record types (`A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`) are compared for changes on each check |
 
-```
-A 203.0.113.1
-CNAME example.hosting.com
-TXT v=spf1 include:_spf.example.com ~all
-```
-
-Supported types: `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`.
-
-Select which record types to **monitor for changes** with the checkboxes under DNS issue rules. Only selected types are compared against expected records and stored on the first DNS check.
+SitePulse stores a baseline from each site's first DNS check. To define explicit expected values instead of the first-check baseline, set [DNS expected records per site](/guide/sites#site-specific-overrides).
 
 SitePulse opens a DNS issue when:
 
 - A DNS lookup **hard fails**, or
-- **Hard failures only** is off and a monitored expected record is missing or changed
+- **Hard failures only** is off and a monitored record type is missing or changed from the site's expected values
 
-When **Hard failures only** is on, SitePulse ignores expected-record mismatches and opens issues only for lookup failures.
+### Broken-link thresholds and filters
 
-### Broken links and crawlers
+| Setting | Description |
+|---------|-------------|
+| **Minimum broken links** | How many broken URLs a crawl must find before it counts as a breach |
+| **Consecutive breaches to open** | How many breached crawls in a row are required before an issue opens |
+| **Ignore external links** | Exclude links whose host differs from the monitored site |
+| **Ignore redirects** | Exclude links that return `301`, `302`, or `303` |
+| **Ignore paths** | URL path patterns excluded from the crawl; supports wildcards such as `/wp-admin/*` |
+
+Sites can [override ignore paths](/guide/sites#site-specific-overrides) individually.
 
 If broken-link checks return many `503` responses, the target site may be blocking crawlers. Add `SitepulseBot` to the site's `robots.txt` allowlist.
 
-Team-level broken-link filters on this page:
-
-| Setting | Description |
-|---------|-------------|
-| **Ignore external links** | Exclude links whose host differs from the monitored site |
-| **Ignore redirects** | Exclude links that return `301`, `302`, or `303` |
-| **Ignore paths** | URL path patterns excluded from the crawl (one per line; supports wildcards such as `/wp-admin/*`) |
-
-Sites can still override **ignore paths** on the [site edit page](/guide/sites#site-specific-overrides).
-
-### Escalation
+## Escalation
 
 Escalation sends **follow-up reminders** while an issue stays open or acknowledged. Reminders use the same destinations as **Issue detected** notifications (email, Slack, Teams, webhooks, in-app).
 
-| Setting | Description |
-|---------|-------------|
-| **Enabled** | Turn escalation on or off for the team |
-| **Intervals** | When to re-notify after an issue opens: 15 minutes, 30 minutes, 1 hour, 6 hours, or daily |
+Choose one or more intervals: 15 minutes, 30 minutes, 1 hour, 6 hours, or daily after the issue opens. Escalation is off by default.
 
 Escalation does not open new issues. It re-sends alerts on the schedule you choose until the issue is resolved or no longer active. Quiet time suppresses escalation reminders the same way it suppresses other outbound alerts.
 
 See [Notifications](/guide/notifications#issue-escalation) for how escalation interacts with notification configurations.
 
+## Quiet time
+
+Quiet time suppresses **outbound** notifications (email, Slack, Teams, webhooks, in-app alerts) during a daily window defined by a start and end time in the team's timezone.
+
+Checks continue to run during quiet time. Issues can still open, acknowledge, and resolve — only alerts are suppressed.
+
+See [Notifications](/guide/notifications#quiet-time) for how quiet time interacts with each channel.
+
 ## Related guides
 
 <CardGroup cols={2}>
-  <Card title="Using check tools" icon="magnifying-glass" href="/guide/checks">
-    Manual checks, reading results, and threshold details
+  <Card title="Check tools" icon="magnifying-glass" href="/guide/checks">
+    What the five tools measure and how to read results
   </Card>
   <Card title="Managing issues" icon="triangle-exclamation" href="/guide/issues">
     Incident triage after thresholds are breached
