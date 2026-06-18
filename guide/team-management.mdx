@@ -21,6 +21,10 @@ When you register, SitePulse creates a **personal team** for your account. This 
 
 New users verify their email before creating or joining a team. After verification, users without a team create one unless they have a pending invitation to accept.
 
+Open **Teams** to switch workspaces, review team owners, see member and site counts, create another team, or open pending invitations.
+
+When you create a team, you set the team name and can upload a team avatar. The new team becomes available as a separate workspace with its own sites, checks, issues, monitoring settings, notifications, and billing.
+
 ## Roles
 
 SitePulse uses three practical access levels:
@@ -33,7 +37,7 @@ SitePulse uses three practical access levels:
     Manage team settings, members, monitoring, notifications, sites, checks, and issues.
   </Card>
   <Card title="Member" icon="user">
-    Work with sites, checks, issues, and notifications without managing team administration or billing.
+    View team data, manage sites, view checks, and triage issues without managing team administration or billing.
   </Card>
 </CardGroup>
 
@@ -41,14 +45,19 @@ SitePulse uses three practical access levels:
   **Owners** are the only users who can manage billing. Team deletion is owner-only.
 </Note>
 
+Members do not manage team settings, members, notifications, monitoring defaults, billing, or team security. Manual check access depends on the user's role permissions and plan limits.
+
 ## Members and invitations
 
 Admins and owners can invite members by email and choose a role.
 
 - An invitation can only be accepted by the email address it was sent to
+- Pending invitations count toward the team's seat limit
 - Pending invitations can be revoked by users with member-management permission
 - Invitees can decline their own invitations
 - When a member's role changes, SitePulse emails that member so they know their access changed
+
+The **Members** page has separate tabs for current members and pending invitations. Admins and owners can invite a member, edit a member's role, remove a member, or cancel an invitation. Non-owner members can leave a team themselves when policy allows it.
 
 ## Team-scoped settings
 
@@ -56,32 +65,28 @@ Monitoring defaults (cadence, thresholds, escalation, quiet time) and notificati
 
 ## Billing
 
-Billing is managed by the team owner through Stripe (checkout and billing portal), covering plan selection, payment methods, and invoice history.
+Billing is managed by the team owner through Stripe (checkout and billing portal), covering plan selection, payment methods, plan limits, and invoice history.
 
 ### Plans
 
 SitePulse offers three pricing tiers. All plans include all five check tools.
 
-| Plan | Monthly | Yearly | Sites | Seats | Min cadence | History retention | Priority queue |
-| :--- | :------ | :----- | :---- | :---- | :---------- | :---------------- | :------------- |
-| **Starter** | £10 | £100 | 5 | 3 | 30 minutes | 30 days | No |
-| **Growth** | £25 | £250 | 25 | 10 | 5 minutes | 90 days | Yes |
-| **Agency** | £50 | £500 | 100 | 25 | 1 minute | 365 days | Yes |
-
-<AccordionGroup>
-  <Accordion title="What plan limits affect">
-    Plan limits control:
-    - Number of sites you can monitor
-    - Number of team members
-    - Fastest allowed automatic monitoring cadence
-    - How long check history is retained
-    - Whether checks use the priority queue (Growth and Agency)
-  </Accordion>
-</AccordionGroup>
+See [Billing and plans](/guide/billing) for current prices, usage limits, manual-check quotas, invoices, and Stripe portal behavior.
 
 ## Security
 
-Teams can require two-factor authentication (2FA) for all members. When the requirement is enabled, members who have not set up 2FA are prompted to do so and cannot access team-scoped areas until they complete setup.
+Admins and owners can require two-factor authentication (2FA) for all members from the team edit page. When the requirement is enabled, members who have not set up 2FA are prompted to do so and cannot access team-scoped areas until they complete setup.
+
+## Danger zone
+
+Team danger-zone actions are permanent.
+
+| Action | Who can use it | Effect |
+|--------|----------------|--------|
+| **Leave team** | Non-owner members when allowed | Removes you from the team. You lose access until invited again. |
+| **Delete team** | Owner only, non-personal teams only | Deletes the team, removes members, cancels pending invitations, and deletes related sites, checks, and issues. |
+
+Your personal team cannot be deleted while it is your active workspace.
 
 ## Team context
 

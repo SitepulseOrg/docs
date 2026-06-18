@@ -20,6 +20,8 @@
       {
         "group": "User Guide",
         "pages": [
+          "guide/authentication",
+          "guide/dashboard",
           "guide/sites",
           "guide/checks",
           "guide/monitoring",
@@ -27,6 +29,7 @@
           "guide/notifications",
           "guide/webhooks",
           "guide/team-management",
+          "guide/billing",
           "guide/account-settings"
         ]
       },
@@ -35,6 +38,7 @@
         "pages": [
           "api/overview",
           "api/authentication",
+          "api/mcp",
           "api/requests-responses",
           "api/resources",
           "api/endpoints",

@@ -1,0 +1,63 @@
+---
+title: "Billing and plans"
+description: "Manage plan selection, Stripe billing, invoices, and plan limits"
+---
+
+Billing is team-scoped. Each team has its own subscription, usage limits, payment method, and invoice history.
+
+<Note>
+  Only the team owner can manage billing.
+</Note>
+
+## Billing page
+
+Open **Teams -> Manage current team -> Billing** to review the current plan, usage, payment method, invoices, and available upgrades or downgrades.
+
+From this page, owners can:
+
+- Choose monthly or yearly pricing
+- Start checkout for a plan
+- Switch plans or billing period
+- Open the Stripe billing portal
+- Download invoice history when invoices are available
+
+## Plans
+
+All plans include Status, SSL, DNS, Broken Links, and Performance checks.
+
+| Plan | Monthly | Yearly | Sites | Seats | Manual checks / month | Fastest cadence | History retention | Priority queue |
+|------|---------|--------|-------|-------|-----------------------|-----------------|-------------------|----------------|
+| **Starter** | £10 | £100 | 5 | 3 | 50 | 30 minutes | 30 days | No |
+| **Growth** | £25 | £250 | 25 | 10 | 250 | 5 minutes | 90 days | Yes |
+| **Agency** | £50 | £500 | 100 | 25 | 1000 | 1 minute | 365 days | Yes |
+
+<Info>
+  Broken-link and performance checks have an additional fastest cadence floor of 12 hours. If your plan allows checks every 1 or 5 minutes, those faster intervals apply to tools such as Status, SSL, and DNS.
+</Info>
+
+## Usage limits
+
+Plan limits affect:
+
+- Number of sites on the team
+- Number of seats, including pending invitations
+- Monthly manual check runs
+- Fastest automatic check cadence
+- Check history retention
+- Whether queued checks use priority processing
+
+When a limit is reached, SitePulse disables or rejects the action that would exceed it. For example, you cannot add a site after the site limit is full, invite another member after the seat limit is full, or run manual checks after the monthly manual-check quota is used.
+
+## Subscription access
+
+Team-scoped dashboard and API areas require active plan access when subscription enforcement is enabled. If a subscription is inactive, team-scoped API requests return `402` and dashboard access is limited until billing is resolved.
+
+## Invoices and payment method
+
+The billing page shows the current payment method and recent invoices when Stripe returns them. Use **Manage in Stripe** to update payment details, cancel, or handle other billing portal actions.
+
+## Related guides
+
+- [Managing teams](/guide/team-management)
+- [Monitoring settings](/guide/monitoring)
+- [API authentication](/api/authentication#team-access-and-billing)

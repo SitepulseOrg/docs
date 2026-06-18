@@ -9,6 +9,8 @@ SitePulse v1 uses [Laravel Passport](https://laravel.com/docs/passport) OAuth2 p
 
 Create and revoke tokens in the dashboard under **Settings → API tokens**.
 
+For AI clients, use **Settings -> MCP** instead. MCP supports browser OAuth for compatible clients and a scoped token fallback for clients that need bearer-token auth. See [MCP integrations](/api/mcp).
+
 ### Request headers
 
 Send the token on every request:
@@ -85,7 +87,7 @@ $headers[] = 'Content-Type: application/json';
 
 ### Token lifetime
 
-Token expiration is configured when the token is created. Expired or revoked tokens return `401 Unauthorized`.
+Personal access tokens expire six months after they are created. Expired or revoked tokens return `401 Unauthorized`.
 
 ## Email verification
 
@@ -198,9 +200,9 @@ Authentication proves **who** is calling. Team routes also enforce:
 
 ## What v1 does not support
 
-The public v1 API documented here is limited to personal access tokens created in the dashboard. The following are not part of this guide:
+The public v1 API documented here is limited to personal access tokens created in the dashboard. MCP has its own remote server and install flow. The following are not part of the v1 API guide:
 
-- Third-party OAuth authorization code flows (may be added later)
+- Third-party OAuth authorization code flows for the JSON API
 - Client credentials / machine-only tokens for customers
 - Anonymous or unauthenticated endpoints
 

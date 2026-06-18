@@ -1,0 +1,157 @@
+---
+title: "MCP integrations"
+description: "Connect SitePulse to Cursor, VS Code, Claude, Codex, and other MCP clients"
+---
+
+SitePulse includes a remote Model Context Protocol (MCP) server for AI clients. Use it to inspect teams, sites, checks, reports, and issues from your SitePulse account.
+
+## Server URL
+
+Use this remote MCP server URL:
+
+```text
+https://app.sitepulse.dev/mcp/sitepulse
+```
+
+If you use a self-hosted SitePulse instance, replace `app.sitepulse.dev` with your installation hostname.
+
+## What MCP can do
+
+The SitePulse MCP server can:
+
+- List your teams and discover `team_id` values
+- List and inspect monitored sites
+- Read latest checks and detailed check results
+- Read active and historical issues
+- Read uptime and performance reports
+- Queue a manual check for an enabled tool
+
+<Info>
+  Start with `sitepulse.list_teams`. Most other tools need a `team_id`, `site_uuid`, `check_uuid`, or `issue_uuid` returned by another MCP call.
+</Info>
+
+## Connect a client
+
+Open **Settings -> MCP** in the SitePulse dashboard. The page shows install options and ready-to-copy config for each supported client.
+
+<AccordionGroup>
+  <Accordion title="Cursor">
+    Copy the generated `mcp.json` from **Settings -> MCP**.
+
+    In Cursor, open **Settings -> Tools & MCP**, then add a custom MCP server and paste the config. Cursor uses `mcp-remote`, so Node.js must be available on your machine.
+  </Accordion>
+
+  <Accordion title="VS Code">
+    Click **Add to VS Code** from **Settings -> MCP**, or copy the generated `mcp.json` if you prefer manual setup.
+
+    This requires a VS Code MCP extension that supports remote MCP servers.
+  </Accordion>
+
+  <Accordion title="Claude">
+    In Claude Desktop or claude.ai, add a custom connector and paste the SitePulse MCP server URL.
+
+    Claude Desktop can also use the generated `claude_desktop_config.json` snippet with `mcp-remote`.
+  </Accordion>
+
+  <Accordion title="Codex">
+    Run:
+
+    ```bash
+    codex mcp add sitepulse --url https://app.sitepulse.dev/mcp/sitepulse
+    codex mcp login sitepulse
+    ```
+
+    Complete the browser OAuth flow, then start a new Codex thread so the tools are loaded.
+  </Accordion>
+
+  <Accordion title="Other MCP clients">
+    Use the server URL if your client supports remote HTTP MCP servers with OAuth.
+
+    If the client reads `mcp.json`, copy the generic config from **Settings -> MCP**.
+  </Accordion>
+</AccordionGroup>
+
+## Authentication
+
+OAuth is the preferred connection method. When your MCP client starts sign-in, SitePulse asks you to authorize the client in your browser.
+
+The MCP connection acts as your SitePulse user. Team membership, role permissions, email verification, and active subscription access still apply.
+
+## Token fallback
+
+Some MCP clients do not support OAuth reliably. For those clients, create a token config from **Settings -> MCP**.
+
+<Steps>
+  <Step title="Create a token">
+    Click **Create MCP token**. SitePulse shows the token once.
+  </Step>
+  <Step title="Store the token">
+    Store it in an environment variable named `SITEPULSE_MCP_TOKEN`.
+  </Step>
+  <Step title="Use the fallback config">
+    Copy the generated token config for your client. For Codex, use the `config.toml` snippet or run the command shown in the dashboard.
+  </Step>
+</Steps>
+
+<Warning>
+  MCP tokens act as your user. Store them like API tokens and revoke them when an integration is no longer used.
+</Warning>
+
+## MCP token scopes
+
+MCP token fallback grants these scopes:
+
+| Scope | Description |
+|-------|-------------|
+| `teams:read` | Read teams and team summaries |
+| `sites:read` | Read sites, monitoring settings, and reports |
+| `checks:read` | Read check runs and results |
+| `issues:read` | Read issues |
+| `checks:run` | Queue manual check runs |
+
+## Tools
+
+| Tool | Description |
+|------|-------------|
+| `sitepulse.list_teams` | Lists teams you can access. Call this first. |
+| `sitepulse.list_sites` | Lists sites for a team with latest-check summaries. |
+| `sitepulse.get_site` | Gets one site with monitoring settings, latest checks, and active issues. |
+| `sitepulse.list_checks` | Lists recent checks for a site. |
+| `sitepulse.get_check` | Gets one normalized check result. |
+| `sitepulse.list_issues` | Lists active or historical issues. |
+| `sitepulse.get_issue` | Gets issue detail with related site and check context. |
+| `sitepulse.run_check` | Queues one manual check for a site. |
+| `sitepulse.get_uptime_report` | Gets uptime report data for today, 30 days, or 90 days. |
+| `sitepulse.get_performance_report` | Gets performance report data for today, 30 days, or 90 days. |
+
+<Note>
+  `sitepulse.run_check` only works for tools enabled on the site. It also respects plan limits, manual-check quotas, and rate limits.
+</Note>
+
+## Resources and prompts
+
+The server also exposes resources for team summaries, site summaries, latest site checks, issue details, and check-tool docs.
+
+Prompt templates help AI clients analyze site health, triage team issues, explain check failures, and recommend monitoring settings.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Tools do not appear">
+    Restart your MCP client after adding SitePulse. Some clients only load tools when a new window, chat, or thread starts.
+  </Accordion>
+
+  <Accordion title="OAuth fails">
+    Try the token fallback from **Settings -> MCP**. Cursor, Claude Desktop, and similar desktop clients can usually connect through `mcp-remote`.
+  </Accordion>
+
+  <Accordion title="Permission errors">
+    Confirm that your SitePulse account belongs to the team, your email is verified, your team has active plan access, and your role can view or run the requested item.
+  </Accordion>
+</AccordionGroup>
+
+## Related docs
+
+- [Authentication](/api/authentication)
+- [API overview](/api/overview)
+- [Account and security](/guide/account-settings)

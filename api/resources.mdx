@@ -13,6 +13,7 @@ Returned on `GET /me` and nested on some issue responses.
 |-------|------|-------------|
 | `id` | integer | User id |
 | `name` | string | Display name |
+| `role` | string \| null | User role/title from profile settings |
 | `email` | string | Email address |
 | `email_verified_at` | string \| null | ISO 8601 when verified |
 
@@ -22,6 +23,7 @@ Returned on `GET /me` and nested on some issue responses.
 {
   "id": 1,
   "name": "John Doe",
+  "role": "Engineering lead",
   "email": "john@example.com",
   "email_verified_at": "2026-05-28T10:00:00+00:00"
 }
@@ -48,6 +50,7 @@ Returned on `GET /me` and nested on some issue responses.
 | `plan` | string | Plan key (`starter`, `growth`, `agency`) |
 | `sites` | object | `{ "used", "limit", "remaining" }` style summary |
 | `seats` | object | Seat usage; may include `members`, `pending_invitations` |
+| `manual_checks` | object | Monthly manual-check usage summary |
 | `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools available to the team |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
 | `history_retention_days` | integer \| null | How long check history is kept |
@@ -70,6 +73,11 @@ Returned on `GET /me` and nested on some issue responses.
       "limit": 25,
       "remaining": 13
     },
+    "manual_checks": {
+      "used": 42,
+      "limit": 250,
+      "remaining": 208
+    },
     "enabled_checks": {
       "allowed": ["status", "ssl", "dns", "broken-links", "performance"]
     },
@@ -84,13 +92,11 @@ Returned on `GET /me` and nested on some issue responses.
 
 ## Team monitoring
 
-Returned by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
+Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `automatic_check_cadences` | object | Map of tool value → interval in minutes |
-| `status_check_header` | object \| null | Optional `{ "name", "value" }` header for status checks |
-| `issue_settings` | object | Normalized team issue settings (same shape as [site issue settings](#issue-settings-object)) |
+| `settings` | object | Normalized monitoring settings: `tools`, `quiet_time`, and `escalation` |
 | `cadence_presets` | array | Available cadence options with `minutes`, `label`, and `disabled` (plan-gated) |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest cadence allowed by the team's plan |
 | `allowed_tools` | array | Tools the team can configure, with per-tool cadence floors |
@@ -102,40 +108,52 @@ Returned by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
 
 ```json
 {
-  "automatic_check_cadences": {
-    "status": 5,
-    "ssl": 1440,
-    "dns": 1440,
-    "broken-links": 1440,
-    "performance": 60
-  },
-  "status_check_header": null,
-  "issue_settings": {
-    "enabled_tools": ["status", "ssl", "dns", "broken-links", "performance"],
-    "quiet_time": { "enabled": false, "starts_at": null, "ends_at": null },
-    "status": {
-      "failures_to_open": 2,
-      "successes_to_resolve": 1,
-      "confirmation_retry_minutes": 2,
-      "incident_follow_up_minutes": 5
+  "settings": {
+    "tools": {
+      "status": {
+        "enabled": true,
+        "cadence_minutes": 5,
+        "settings": {
+          "header": { "name": null, "value": null },
+          "failures_to_open": 2,
+          "successes_to_resolve": 1,
+          "confirmation_retry_minutes": 2,
+          "incident_follow_up_minutes": 5
+        }
+      },
+      "ssl": {
+        "enabled": true,
+        "cadence_minutes": 1440,
+        "settings": { "expiry_days": 14 }
+      },
+      "dns": {
+        "enabled": true,
+        "cadence_minutes": 1440,
+        "settings": {
+          "hard_failures_only": true,
+          "monitored_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
+        }
+      },
+      "broken-links": {
+        "enabled": true,
+        "cadence_minutes": 1440,
+        "settings": {
+          "min_broken_count": 5,
+          "ignore_paths": []
+        }
+      },
+      "performance": {
+        "enabled": true,
+        "cadence_minutes": 1440,
+        "settings": {
+          "url": null,
+          "min_score": 50,
+          "max_ttfb_ms": 4000
+        }
+      }
     },
-    "links": {
-      "ignore_external_links": false,
-      "ignore_redirects": false,
-      "ignore_paths": []
-    },
-    "performance": {
-      "max_ttfb_ms": 4000,
-      "max_load_time_seconds": null
-    },
-    "dns": {
-      "hard_failures_only": true,
-      "monitored_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
-    },
-    "escalation": {
-      "enabled": false,
-      "intervals": []
-    }
+    "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
+    "escalation": { "enabled": false, "intervals": [] }
   },
   "minimum_check_cadence_minutes": 5,
   "failure_threshold_presets": [
@@ -162,7 +180,7 @@ Returned by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
 | `is_pinned` | boolean | Pinned on sites list |
 | `enabled_checks` | string[] | Enabled tool values |
 | `monitoring` | object | See monitoring object below |
-| `issue_settings` | object \| null | Per-site issue settings (inherits team defaults when null) |
+| `issue_settings` | object | Resolved issue settings for the site |
 | `latest_checks` | object | Latest check per tool, when loaded |
 | `reports` | object | Absolute URLs to report endpoints |
 | `created_at` | string | ISO 8601 |
@@ -172,8 +190,7 @@ Returned by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}/monitoring`.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `automatic_check_cadences` | object | Map of tool value → interval in minutes |
-| `status_check_header` | object \| null | Optional `{ "name", "value" }` header for status checks |
+| `settings` | object | Resolved site monitoring settings. Same shape as team `settings`, plus `snoozed_until` when set. |
 
 ### Latest checks object
 
@@ -190,10 +207,10 @@ These are fully qualified route URLs for the report endpoints on this site.
 
 ### Issue settings object
 
-Returned as `issue_settings` on Site resources. When `null`, the site inherits team defaults.
+Returned as `issue_settings` on Site resources. The response is resolved for the site, so it includes team defaults plus any per-site overrides.
 
 <Note>
-  PATCH requests use `settings.issues` in the request body. The response returns the normalized shape as `issue_settings`.
+  PATCH requests use `monitoring_settings` in the request body. The response returns the normalized issue shape as `issue_settings`.
 </Note>
 
 | Field | Type | Description |
@@ -205,19 +222,27 @@ Returned as `issue_settings` on Site resources. When `null`, the site inherits t
 | `status.confirmation_retry_minutes` | integer | Minutes before confirmation retry (1–5) |
 | `status.incident_follow_up_minutes` | integer | Minutes between incident follow-up checks (1–60) |
 | `ssl.expiry_days` | integer | Days before expiry to open SSL warning issue |
+| `ssl.failures_to_open` | integer | Failed SSL checks before opening an issue |
+| `ssl.confirmation_retry_minutes` | integer | Minutes before SSL confirmation retry (1–5) |
 | `links.min_broken_count` | integer | Minimum broken URLs to breach threshold |
 | `links.consecutive_breaches_to_open` | integer | Consecutive breached crawls before opening issue |
 | `links.ignore_paths` | string[] | URL path patterns excluded from broken-link crawls |
 | `links.ignore_external_links` | boolean | Exclude links outside the monitored site host |
 | `links.ignore_redirects` | boolean | Exclude redirect responses from broken-link counts |
+| `performance.url` | string \| null | Page URL audited instead of the site root |
 | `performance.min_score` | integer | Minimum acceptable score (1–100) |
 | `performance.max_response_time_ms` | integer | Legacy max response time (ms); normalized with `max_ttfb_ms` |
 | `performance.max_ttfb_ms` | integer | Maximum time to first byte in milliseconds |
 | `performance.max_load_time_seconds` | integer \| null | Maximum Time to Interactive in seconds |
 | `performance.consecutive_breaches_to_open` | integer | Consecutive breached checks before opening issue |
 | `dns.hard_failures_only` | boolean | Only open DNS issues on lookup failures when `true` |
+| `dns.failures_to_open` | integer | Failed DNS checks before opening an issue |
+| `dns.confirmation_retry_minutes` | integer | Minutes before DNS confirmation retry (1–5) |
 | `dns.monitored_record_types` | string[] | DNS record types to watch for changes |
 | `dns.expected_records` | object | Map of record type → array of expected values |
+| `quiet_time.enabled` | boolean | Suppress outbound issue alerts during a daily window |
+| `quiet_time.starts_at` | string | Quiet time start in `H:i` format |
+| `quiet_time.ends_at` | string | Quiet time end in `H:i` format |
 | `escalation.enabled` | boolean | Send follow-up reminders for open issues |
 | `escalation.intervals` | integer[] | Reminder schedule in minutes (`15`, `30`, `60`, `360`, `1440`) |
 
@@ -235,14 +260,58 @@ Returned as `issue_settings` on Site resources. When `null`, the site inherits t
   "is_pinned": true,
   "enabled_checks": ["status", "ssl", "performance"],
   "monitoring": {
-    "automatic_check_cadences": {
-      "status": 5,
-      "ssl": 1440,
-      "performance": 60
-    },
-    "status_check_header": null
+    "settings": {
+      "tools": {
+        "status": {
+          "enabled": true,
+          "cadence_minutes": 5,
+          "settings": {
+            "header": { "name": null, "value": null }
+          }
+        },
+        "ssl": {
+          "enabled": true,
+          "cadence_minutes": 1440,
+          "settings": { "expiry_days": 14 }
+        },
+        "performance": {
+          "enabled": true,
+          "cadence_minutes": 1440,
+          "settings": {
+            "url": null,
+            "min_score": 50,
+            "max_ttfb_ms": 4000
+          }
+        }
+      },
+      "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
+      "escalation": { "enabled": false, "intervals": [] },
+      "snoozed_until": null
+    }
   },
-  "issue_settings": null,
+  "issue_settings": {
+    "enabled_tools": ["status", "ssl", "performance"],
+    "snoozed_until": null,
+    "status": {
+      "failures_to_open": 2,
+      "successes_to_resolve": 1,
+      "confirmation_retry_minutes": 2,
+      "incident_follow_up_minutes": 5
+    },
+    "ssl": {
+      "expiry_days": 14,
+      "failures_to_open": 1,
+      "confirmation_retry_minutes": 2
+    },
+    "performance": {
+      "url": null,
+      "min_score": 50,
+      "max_response_time_ms": 4000,
+      "max_ttfb_ms": 4000
+    },
+    "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
+    "escalation": { "enabled": false, "intervals": [] }
+  },
   "reports": {
     "uptime": "https://app.sitepulse.dev/api/v1/sites/9d4e2c8f.../reports/uptime",
     "performance": "https://app.sitepulse.dev/api/v1/sites/9d4e2c8f.../reports/performance"

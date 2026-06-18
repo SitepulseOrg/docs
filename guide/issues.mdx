@@ -33,6 +33,35 @@ See [Monitoring settings](/guide/monitoring#issue-settings) for the full thresho
 
 Issues can be acknowledged and resolved manually, or resolved automatically when checks pass again. Resolved issues reopen automatically if the same site, tool, and failure type occurs again — the `fingerprint` field deduplicates incidents so a recurring problem updates one record instead of creating many.
 
+## Issues page
+
+Use **Issues** to filter, sort, and act on incidents for the current team.
+
+Available filters:
+
+- **Status** — Active, Open, Acknowledged, or Resolved
+- **Site** — one site or all sites
+- **Tool** — Status, SSL, DNS, Broken Links, Performance, or all tools
+- **Severity** — Critical, Warning, Info, or all severities
+
+You can sort by summary, site, tool, status, or opened date. Issue summaries link to the related check result when SitePulse has one.
+
+## Actions
+
+Select one or more issues to use bulk actions.
+
+| Action | Available when | Effect |
+|--------|----------------|--------|
+| **Acknowledge** | Selected open issues can be acknowledged | Marks them as acknowledged and records who acted |
+| **Resolve** | Selected active issues can be resolved | Marks them as resolved manually |
+| **Delete** | Selected issues can be deleted | Removes the incident record from the dashboard |
+
+Single-row actions follow the same rules. Manual resolution does not stop future automatic checks; if the same failure happens again, SitePulse can reopen or create an issue according to the normal evaluation rules.
+
+<Note>
+  Broken-link entries appear on the Issues page only after the site breaches its broken-link issue rule. A latest broken-link check with one failed URL may show on the Sites page without opening an issue if it is below your threshold.
+</Note>
+
 ## Severities
 
 | Severity | Typical use |

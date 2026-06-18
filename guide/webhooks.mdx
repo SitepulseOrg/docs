@@ -3,7 +3,7 @@ title: "Webhook notifications"
 description: "Configure HTTP webhooks for issue alerts, payload format, delivery behavior, and testing"
 ---
 
-SitePulse can deliver issue lifecycle alerts to URLs you control. This guide covers webhook-style channels: the generic **Webhook** channel, **Slack webhook**, **Microsoft Teams**, and the connected **Slack** app (which posts to a Slack incoming webhook under the hood).
+SitePulse can deliver issue lifecycle alerts to URLs you control. This guide covers webhook-style channels: the generic **Webhook** channel, **Slack webhook**, **Microsoft Teams**, connected **Slack**, and connected **Discord**.
 
 <Info>
   Email and in-app notifications use separate delivery paths. See [Notifications](/guide/notifications) for the full channel overview.
@@ -13,7 +13,7 @@ SitePulse can deliver issue lifecycle alerts to URLs you control. This guide cov
 
 | Field | Applies to | Description |
 |-------|------------|-------------|
-| **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; SitePulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
+| **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; SitePulse stores the webhook URL after you connect), `discord` (OAuth connection; SitePulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
 | **Destination** | URL channels | Public `http://` or `https://` webhook URL, max 2,048 characters |
 | **HTTP method** | `webhook` only | `post` (default) or `get`. Slack, Slack app, and Teams always use POST. |
 | **Events** | All | `open` (Issue detected — new issues and reopens, plus [escalation](/guide/monitoring#escalation) follow-ups) and/or `resolve` (Issue resolved — automatic monitoring confirms recovery) |
@@ -62,6 +62,8 @@ SitePulse sends `Content-Type: application/json` with `Accept: application/json`
 **Generic webhook** — raw issue lifecycle JSON (see [Production payload](#production-payload) below).
 
 **Slack webhook / Slack app** — Slack [Block Kit](https://api.slack.com/block-kit) message JSON with `text` and `blocks` fields.
+
+**Discord** — Discord webhook JSON with `content` and `embeds` fields.
 
 **Microsoft Teams** — Office 365 Connector [MessageCard](https://learn.microsoft.com/en-us/outlook/actionable-messages/message-card-reference) JSON.
 
@@ -191,6 +193,15 @@ Titles:
 - Issue detected: `SitePulse detected an issue: {site name}`
 - Issue resolved: `SitePulse recovered: {site name}`
 
+### Discord
+
+Production Discord messages are POSTed as JSON with:
+
+- `content` — short summary line
+- `embeds` — formatted fields for site, tool, severity, status, and a link to the issue
+
+Discord uses red embeds for detected issues and green embeds for recoveries.
+
 ### Microsoft Teams
 
 Production Teams messages are POSTed as MessageCard JSON with:
@@ -252,10 +263,11 @@ Use this table when building idempotent handlers for the generic **Webhook** cha
 |---------------------|----------------|--------------|------------------|
 | `notification.test` | `notification.test` | — | Verify connectivity only |
 | `issue.opened` | `issue.opened` | `open` | Page on-call, open ticket, post to chat |
+| `issue.escalated` | `issue.escalated` | `escalate` | Send a reminder for an active issue |
 | `issue.recovered` | `issue.recovered` | `resolve` | Resolve ticket, notify recovery |
 
 <Note>
-  Slack, Slack webhook, and Microsoft Teams channels receive **formatted** payloads (Block Kit or MessageCard), not the raw issue JSON above. Use the generic Webhook channel for custom integrations.
+  Slack, Slack webhook, Discord, and Microsoft Teams channels receive **formatted** payloads, not the raw issue JSON above. Use the generic Webhook channel for custom integrations.
 </Note>
 
 ### PagerDuty (Events API v2)

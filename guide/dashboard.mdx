@@ -1,0 +1,60 @@
+---
+title: "Dashboard"
+description: "Use the dashboard to scan site health, pinned sites, notifications, and manual check shortcuts"
+---
+
+The dashboard is the health overview for your current team. It combines recent check data, active issues, pinned sites, and quick actions.
+
+## Health overview
+
+At the top of the dashboard, SitePulse summarizes:
+
+- **Total sites monitored**
+- **Uptime this month**
+- **Checks run today**
+- **Open issues**
+
+Use these cards to spot whether the current team is healthy before opening individual sites.
+
+## Attention sections
+
+When SitePulse detects problems, the dashboard groups affected sites by latest check state:
+
+| Section | Meaning |
+|---------|---------|
+| **Down sites** | Latest status check says the site is unavailable |
+| **SSL issues** | Latest SSL check reports an invalid or risky certificate |
+| **DNS issues** | Latest DNS check reports a hard failure or expected-record mismatch |
+| **Broken links** | Latest broken-link check found failing URLs |
+| **Low performance** | Latest performance check breaches configured thresholds |
+
+Each section links to the filtered [Sites](/guide/sites#health-states) view. You can collapse sections you do not need to inspect right now.
+
+## Pinned sites
+
+Pinned sites appear in a dedicated dashboard area with uptime context. Pin important production sites, customer sites, or launch-critical URLs so they stay visible without filtering.
+
+Manage pinning from the [Sites](/guide/sites#pinning) list or an individual site.
+
+## Quick actions
+
+The dashboard provides shortcuts to:
+
+- Add a site
+- Configure team monitoring
+- Configure notifications
+- View issues
+- Run common manual checks
+
+Manual check shortcuts respect the current team's plan, enabled tools, and monthly manual-check limit.
+
+## Notification setup reminder
+
+If a team has no notification destinations and you can manage notifications, SitePulse can show a reminder on the dashboard. Use it to open **Notifications**, then add email, Slack, Discord, Microsoft Teams, or webhook destinations.
+
+You can dismiss the reminder for the current team.
+
+## Current team context
+
+Dashboard data always belongs to your current team. Switch teams from **Teams** or the team selector before interpreting health totals, issue counts, billing usage, or notification settings.
+

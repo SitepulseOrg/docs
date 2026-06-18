@@ -31,9 +31,24 @@ SitePulse includes five check tools for monitoring website health. Checks run ag
 
 **Automatic checks** run on the cadence set in [team monitoring settings](/guide/monitoring) (or a site's cadence override). Automatic results are evaluated against your problem thresholds — when a check repeatedly fails or crosses a threshold, SitePulse opens an [issue](/guide/issues) and notifies the configured destinations. When the problem later clears, the issue resolves and recovery notifications are sent.
 
+Manual check access depends on the current team, your role permissions, the site's enabled tools, and the team's monthly manual-check limit. If a tool is not included in the team plan, disabled on the site, or the quota is exhausted, SitePulse disables the run action.
+
 <Note>
-  Performance is the only tool that accepts an optional **path**, so you can check a specific page (for example `/pricing`) instead of the site's root URL.
+  Performance is the only tool that allows you to choose a **page URL** to check a specific page (for example `https://example.com/pricing`) instead of the site's root URL.
 </Note>
+
+## Running manual checks
+
+You can run manual checks from:
+
+- A site's **Run Check** menu
+- The dashboard quick actions
+- A tool page under **Dashboard -> Tools**
+- The v1 API or MCP server, when the token has permission
+
+The tool page lets you choose a site from the current team. For Performance, you can also choose a page URL on the same domain. SitePulse rejects URLs that do not belong to the selected site.
+
+Long-running checks may first show as `pending`. Poll or revisit the check result until it reaches a terminal state.
 
 ### Check deep links
 
@@ -89,3 +104,15 @@ Common causes include DNS failures, connection timeouts, TLS connection errors, 
 | `completed` | Finished successfully |
 | `failed` | Finished with error |
 | `skipped` | Not run due to configuration |
+
+## Run reasons
+
+Automatic status checks can include a run reason:
+
+| Run reason | Meaning |
+|------------|---------|
+| `scheduled` | Normal automatic cadence run |
+| `confirmation_retry` | Follow-up run used to confirm an apparent outage before opening an issue |
+| `incident_follow_up` | Follow-up run while a status issue remains active |
+
+Manual checks usually have `run_reason: null`.

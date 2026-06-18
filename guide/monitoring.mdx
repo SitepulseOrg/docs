@@ -13,7 +13,9 @@ Team monitoring settings control how often SitePulse runs automatic checks and w
 
 Each check tool (Status, SSL, DNS, Broken Links, Performance) has its own cadence — how often SitePulse runs **automatic** checks across the team's sites.
 
-Cadence presets range from every minute to every week. Your [plan](/guide/team-management#plans) sets the **fastest** cadence allowed: Starter 30 minutes, Growth 5 minutes, Agency 1 minute.
+Cadence presets range from every minute to every week. Your [plan](/guide/billing#plans) sets the **fastest** cadence allowed: Starter 30 minutes, Growth 5 minutes, Agency 1 minute.
+
+Broken-link and performance checks have an additional 12-hour minimum cadence floor because they are more expensive to run. SitePulse disables cadence options that are faster than your plan or the tool-specific floor.
 
 When a site's enabled checks or cadence overrides change, SitePulse resyncs that site's automatic schedules.
 
@@ -82,10 +84,13 @@ Performance issue rules use three separate breach checks:
 | Setting | Description |
 |---------|-------------|
 | **Minimum score** | Lowest acceptable Lighthouse performance score (1–100) |
+| **Page URL** | Optional URL on the same domain to monitor instead of the site root |
 | **Max TTFB (ms)** | Slowest acceptable time to first byte in milliseconds |
 | **Max load time (seconds)** | Slowest acceptable Time to Interactive (TTI), measured in seconds |
 
 A performance check breaches when **any** configured limit is exceeded. Leave **Max load time** empty to skip load-time evaluation.
+
+The performance page URL must belong to the monitored site's domain. Set it per site when one route, such as a pricing or checkout page, matters more than the homepage.
 
 ### DNS record monitoring
 

@@ -3,17 +3,25 @@ title: "Account and security"
 description: "Personal profile, passwords, passkeys, two-factor authentication, and API tokens"
 ---
 
-These settings are per-user, not per-team. Team-wide settings (monitoring, notifications, billing, 2FA enforcement) are managed by admins and owners — see [Teams](/guide/team-management).
+These settings are per-user, not per-team. Team-wide settings (monitoring, notifications, billing, 2FA enforcement) are managed by admins and owners. See [Managing teams](/guide/team-management).
 
 ## Profile
 
-Your name, login email, and avatar identify you across SitePulse, including in team notes on sites. Changing your email may require re-verification.
+Your name, role, login email, and profile photo identify you across SitePulse, including in team areas and member lists.
 
-Deleting your account permanently removes your user record and removes you from any teams you belong to. This cannot be undone.
+Changing your email may require re-verification before you can access verified-only areas again. Profile photos must be image files up to 1 MB.
+
+## Current team
+
+Your current team controls which sites, issues, monitoring settings, notifications, and billing data you see. Switch teams from **Teams** or the team selector.
+
+SitePulse stores the current team for the session and uses it for dashboard and API policy checks.
 
 ## Password and passkeys
 
-You must know your current password to set a new one. After a successful password change you remain logged in. If you've forgotten your password, request a reset link by email from the login page.
+You must know your current password to set a new one. If your account was created with social sign-in and has no password, you can set one from **Settings -> Password**. After a successful password change you remain logged in.
+
+If you've forgotten your password, request a reset link by email from the login page.
 
 You can also register **passkeys** for passwordless sign-in. Passkeys use your device's biometrics or a security key (WebAuthn) and work alongside your password.
 
@@ -27,9 +35,25 @@ You can also register **passkeys** for passwordless sign-in. Passkeys use your d
 
 Personal access tokens authenticate requests to the [SitePulse API](/api/overview).
 
+- Give each token a descriptive name
+- Select one or more scopes before creating it
 - Tokens authenticate **as your user** — team membership, role permissions, and subscription status still apply to API requests
 - Each token carries only the [OAuth scopes](/api/authentication#oauth-scopes) you grant it; grant the minimum the integration needs
 - The token value is shown **once** at creation and cannot be retrieved again
+- Tokens expire six months after creation
+- The token list shows active token names, scopes, creation dates, and expiration dates
 - Revoke tokens you no longer use
 
 Available scopes include `teams:read`, `teams:write`, `sites:read` / `sites:write` / `sites:delete`, `checks:read` / `checks:run` / `checks:delete`, and `issues:read`. See [Authentication](/api/authentication) for the full scope reference.
+
+## MCP integrations
+
+Use **Settings -> MCP** to connect AI clients such as Cursor, VS Code, Claude, Codex, and other MCP-compatible tools.
+
+OAuth is preferred when your client supports it. If OAuth is unavailable, create an MCP token and store it as `SITEPULSE_MCP_TOKEN`. See [MCP integrations](/api/mcp) for setup steps and available tools.
+
+## Delete your account
+
+Open **Settings -> Danger zone** to delete your account. SitePulse shows the teams, sites, and checks affected before you confirm.
+
+Deleting your account permanently removes your user record and removes you from teams you belong to. Teams you own, along with their sites, checks, issues, and invitations, may also be removed as part of the deletion impact. This cannot be undone.

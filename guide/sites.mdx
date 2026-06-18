@@ -5,6 +5,14 @@ description: "What sites are, their settings, and how per-site overrides interac
 
 Sites are the websites your team monitors. Each site belongs to one team and carries its own enabled checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
 
+## Sites list
+
+The **Sites** page lists every site for the current team. Use it to search, filter, inspect latest check state, and take bulk actions.
+
+You can search by site name or URL. The health filter can show all sites, sites with a specific problem, or sites missing a latest result for a tool.
+
+The table supports sorting by site name, URL, and pinned status. It also polls periodically so latest check indicators stay fresh.
+
 ## Creating sites
 
 A site needs:
@@ -22,9 +30,25 @@ After creation, SitePulse fetches the favicon and screenshot, runs the selected 
 
 Multiple sites can be imported at once from a pasted URL list or a `.txt`, `.csv`, or `.xlsx` file (up to 4 MB). Files can include URL and Name columns; without headers, the first column is treated as the URL and the second as the optional name. Duplicate and invalid URLs are reported before any sites are created.
 
+Text import accepts one URL per line. File import accepts a header row with `URL` and optional `Name` columns, or two columns in that order with no header.
+
 ## Pinning
 
 Pinned sites sort first on the sites list (newest pins first) and populate the dashboard's pinned-sites overview. Use pinning for production sites or key clients that should stay visible without filtering.
+
+From the sites table, select one or more sites to pin or unpin them in bulk. You can also pin or unpin a single site from its row actions.
+
+## Bulk actions
+
+Select sites from the table to act on several at once.
+
+| Action | Effect |
+|--------|--------|
+| **Pin** | Adds selected sites to the dashboard pinned-sites area |
+| **Unpin** | Removes selected sites from the pinned-sites area |
+| **Delete** | Deletes selected sites and their schedules, checks, and issues |
+
+Bulk deletion asks for confirmation before it runs.
 
 ## Health states
 
@@ -38,6 +62,33 @@ The sites list can be filtered by health condition. These conditions are derived
 | **Broken links** | Latest broken-link check found one or more broken URLs |
 | **Poor performance** | Latest performance check breaches configured thresholds |
 | **No check yet** | No result exists yet for that tool |
+
+## Site detail
+
+Open a site to see:
+
+- The site screenshot, favicon, URL, and notes
+- Latest Status, SSL, DNS, Performance, and Broken Links indicators
+- Uptime stats for today, 30 days, and 90 days
+- A response-time chart
+- DNS provider and record summaries
+- Recent check history
+- Buttons to **Run Check**, **Edit**, or **Visit** the site
+
+The **Run Check** menu queues manual checks for enabled tools. Manual checks respect role permissions, plan tool access, and the current team's monthly manual-check limit.
+
+### Check history
+
+The previous-checks list can be filtered by source (**All**, **Manual**, **Automatic**) and by tool. Use this to separate on-demand troubleshooting from scheduled monitoring.
+
+Open an individual check result for detailed tool output. Manual check results can be deleted by users with check-delete permission. Automatic checks are retained according to the team's plan and cannot be deleted manually.
+
+### Reports
+
+Each site exposes uptime and performance report data. The dashboard shows report summaries, and the API exposes report endpoints for integrations:
+
+- `GET /api/v1/sites/{site}/reports/uptime`
+- `GET /api/v1/sites/{site}/reports/performance`
 
 ## Site settings
 
@@ -56,6 +107,7 @@ The sites list can be filtered by health condition. These conditions are derived
 | Issue snooze | Pause issue opening until a date/time |
 | Broken-link ignore paths | Paths excluded from broken-link crawls (overrides the [team default](/guide/monitoring#broken-link-thresholds-and-filters)) |
 | DNS expected records | Per-site expected DNS records for change detection |
+| Performance page URL | Optional page on the same domain used for performance monitoring |
 
 <Warning>
   Changing enabled checks or cadence settings updates the site's automatic monitoring schedule.
@@ -74,6 +126,9 @@ Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides 
   </Accordion>
   <Accordion title="Problem thresholds">
     Override status, SSL, broken-link, performance, or DNS thresholds for this site only.
+  </Accordion>
+  <Accordion title="Performance page URL">
+    Monitor a specific page, such as `https://example.com/pricing`, instead of the site's root URL. The URL must belong to the same domain as the site.
   </Accordion>
   <Accordion title="Enabled issue tools">
     Turn off issue opening for specific tools while still running automatic checks — for example, monitor performance for trends without opening performance incidents.

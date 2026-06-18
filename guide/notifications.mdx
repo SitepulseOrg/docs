@@ -3,7 +3,7 @@ title: "Notifications"
 description: "Configure alerts for monitoring issues via email, Slack, Microsoft Teams, webhooks, and in-app notifications"
 ---
 
-SitePulse notifies your team when automatic monitoring opens or resolves issues, and when manual checks complete or fail in the background.
+SitePulse notifies your team when automatic monitoring opens, escalates, or resolves issues, and when manual checks complete or fail in the background.
 
 ## Notification configurations
 
@@ -13,6 +13,7 @@ Notification destinations are managed by admins and owners. A team can have mult
 |---------|-------------|
 | **Email** | Send alerts to one or more email addresses |
 | **Slack** | Connect the SitePulse Slack app and choose a channel |
+| **Discord** | Connect Discord and choose a channel |
 | **Slack webhook** | Send to a Slack incoming webhook URL |
 | **Microsoft Teams** | Send to a Microsoft Teams incoming webhook URL |
 | **Webhook** | Generic HTTP endpoint (GET or POST) |
@@ -76,6 +77,10 @@ Each email notification typically includes:
 
 **Slack webhook** — a Slack incoming webhook URL, if you prefer webhook-based delivery.
 
+### Discord
+
+Authorize the SitePulse Discord integration and choose a channel. SitePulse stores the incoming webhook returned by Discord and formats issue alerts as Discord embeds.
+
 ### Microsoft Teams
 
 A Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams workflow webhooks.
@@ -85,6 +90,10 @@ A Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams wor
 An HTTP endpoint (GET or POST) that receives issue lifecycle events. Use webhooks to integrate with PagerDuty, custom automation, or other systems.
 
 See [Webhook notifications](/guide/webhooks) for configuration fields, payload schemas, headers, delivery behavior, test vs production payloads, and URL requirements.
+
+### Testing destinations
+
+HTTP-backed destinations can be tested from the notification configuration. Test delivery verifies connectivity and formatting, but it sends a test payload, not a real issue payload.
 
 ### In-app notifications
 

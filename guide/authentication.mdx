@@ -1,0 +1,54 @@
+---
+title: "Sign in and onboarding"
+description: "Create an account, sign in, verify your email, accept invitations, and handle identity checks"
+---
+
+SitePulse requires a verified user account before you can access team workspaces, sites, checks, issues, and settings.
+
+## Create an account
+
+Sign up with your name, email address, and password. When social sign-in is enabled for the installation, you can also sign up with **Google** or **GitHub**.
+
+After registration, verify your email address from the email SitePulse sends you. You cannot access team-scoped dashboard areas or the public API until your email is verified.
+
+## Join from an invitation
+
+Team invitations are tied to the invited email address.
+
+If you open an invitation link before you have an account, SitePulse sends you through registration and locks the email field to the invited address. If you already have an account, sign in with the invited email, verify it if needed, then accept the invitation.
+
+You can review pending invitations from **Teams -> Invitations** or from the user menu. Each invitation shows the team, role, owner, site count, and member count. You can **Accept** or **Decline** it.
+
+## Sign in
+
+Use your email address first, then enter your password. You can choose **Remember me** on trusted devices.
+
+When available, you can also sign in with:
+
+- **Passkey** — passwordless WebAuthn sign-in from a registered device or security key
+- **Google** or **GitHub** — social sign-in when configured for your SitePulse installation
+
+If your account has two-factor authentication enabled, SitePulse asks for a six-digit authenticator-app code after password or social sign-in.
+
+## Reset your password
+
+Use **Forgot password?** from the login page. SitePulse emails a reset link to your account email address.
+
+If your account was created through social sign-in and has no password yet, use the reset flow to set one.
+
+## Confirm your identity
+
+Some sensitive actions require a fresh identity confirmation. Depending on your account setup, you can confirm with:
+
+- Your current password
+- A registered passkey
+- A linked Google or GitHub account
+
+SitePulse uses this before secure actions such as passkey management, two-factor settings, or other protected account changes.
+
+## Team 2FA requirements
+
+A team owner or admin can require two-factor authentication for that team. When your current team enforces 2FA, you must enable it on your account before accessing that team's dashboard areas.
+
+See [Account and security](/guide/account-settings#two-factor-authentication-2fa) for setup details.
+
