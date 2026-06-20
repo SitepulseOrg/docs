@@ -38,7 +38,6 @@
         "pages": [
           "api/overview",
           "api/authentication",
-          "api/mcp",
           "api/requests-responses",
           "api/resources",
           "api/endpoints",
@@ -74,7 +73,6 @@
       "chatgpt",
       "claude",
       "perplexity",
-      "mcp",
       "cursor",
       "vscode"
     ]
