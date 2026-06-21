@@ -13,16 +13,20 @@ Search by name or URL, and use the health filter to narrow down to sites with a 
 
 ## Creating sites
 
-A site needs:
+Adding a site only takes a URL — everything else is optional:
 
-- **URL** — the website to monitor
-- **Display name** — required in the dashboard; API requests can omit `name` and SitePulse generates one from the domain
-- **Enabled checks** — which of the five check tools run for this site
-- **JavaScript rendering** — whether broken-link checks render JavaScript before crawling
+- **Website URL** — the site you want to monitor (the only required field)
+- **Site name** — a display name; leave it blank and use **Auto-generate** to name it from the domain
+- **Notes** — anything you want to remember about the site (client details, goals, and so on)
+- **JavaScript rendering** — turn this on for sites built with React, Vue, Next.js, and similar so broken-link checks crawl the fully rendered page; leave it off for server-rendered sites like WordPress, Ghost, or plain HTML
 
-You can't add the same site to a team twice, and your plan sets how many sites (and which check tools) you can use.
+<Note>
+  You don't choose which checks run when you create a site — a new site **inherits your [team monitoring settings](/guide/monitoring)** automatically. To turn individual tools on or off or change how often they run for one site, edit it afterward (see [Site-specific overrides](#site-specific-overrides)).
+</Note>
 
-As soon as you add a site, SitePulse grabs its favicon and screenshot, runs the checks you enabled, and starts monitoring them on a regular schedule.
+You can't add the same site to a team twice, and your plan sets how many sites you can monitor.
+
+As soon as you add a site, SitePulse grabs its favicon and screenshot, runs its first checks, and starts monitoring on a regular schedule.
 
 ### Bulk import
 
