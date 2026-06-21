@@ -236,7 +236,7 @@ The same nested shape is used for team monitoring updates and per-site overrides
 | `quiet_time.starts_at` | string | `H:i` | Quiet time start |
 | `quiet_time.ends_at` | string | `H:i`, different from start | Quiet time end |
 | `escalation.enabled` | boolean | team only | Send reminders for active issues |
-| `escalation.intervals` | integer[] | `15`, `30`, `60`, `360`, `1440` | Reminder schedule in minutes |
+| `escalation.intervals` | integer[] | `0`, `15`, `30`, `60`, `360`, `1440` | Reminder schedule in minutes (`0` sends immediately) |
 | `snoozed_until` | string \| null | per-site only | Pause issue opening for one site until this datetime |
 
 ## Sites

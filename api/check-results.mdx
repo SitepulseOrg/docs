@@ -18,8 +18,8 @@ HTTP reachability check (`type: "status"`).
 | `response_time` | float | Total time in milliseconds |
 | `redirected` | boolean | Whether redirects occurred |
 | `redirect_count` | integer | Number of redirects |
-| `redirects` | string[] | Redirect chain (optional) |
-| `error` | string | Present on connection/validation failure |
+| `redirects` | string[] | Redirect chain; present only when redirects occurred |
+| `error` | string | Connection or validation failure message. Present only when the request could not complete (`code` is `0`) — an HTTP error status such as 500 is a completed request and has no `error`. |
 
 ### Example (up)
 
@@ -35,7 +35,9 @@ HTTP reachability check (`type: "status"`).
 }
 ```
 
-### Example (down)
+### Example (down — HTTP error status)
+
+A 5xx response still completes, so there is no `error` field — only `up: false` and the status `code`.
 
 ```json
 {
@@ -45,8 +47,24 @@ HTTP reachability check (`type: "status"`).
   "effective_url": "https://example.com",
   "response_time": 523.12,
   "redirected": false,
+  "redirect_count": 0
+}
+```
+
+### Example (down — connection failure)
+
+When the request cannot complete, `code` is `0` and `error` describes the failure.
+
+```json
+{
+  "up": false,
+  "code": 0,
+  "url": "https://example.com",
+  "effective_url": "https://example.com",
+  "response_time": 2003.41,
+  "redirected": false,
   "redirect_count": 0,
-  "error": "Internal Server Error"
+  "error": "cURL error 28: Operation timed out after 5000 milliseconds"
 }
 ```
 
@@ -57,33 +75,65 @@ TLS certificate inspection on port 443 (`type: "ssl"`).
 | Field | Type | Description |
 |-------|------|-------------|
 | `domain` | string | Domain checked |
-| `ip` | string | Resolved IPv4 |
-| `is_valid` | boolean | Certificate not expired |
-| `issuer` | string | CA name |
-| `issued_to` | string | Certificate CN |
-| `valid_from` | string | Start datetime |
-| `valid_to` | string | End datetime |
-| `days_left` | integer | Days until expiry |
+| `ip` | string | Resolved IP address |
+| `is_valid` | boolean | `true` only when the certificate is current, matches the hostname, and chains to a trusted root |
+| `failure_type` | string \| null | Why validation failed: `expired`, `hostname_mismatch`, `untrusted_chain`, `no_certificate`, or `connection_failed`; `null` when valid |
+| `failure_message` | string \| null | Human-readable failure reason; `null` when valid |
+| `issuer` | string | Issuing CA organization |
+| `issued_to` | string | Certificate common name (CN) |
+| `valid_from` | string \| null | Start datetime; `null` when no certificate was read |
+| `valid_to` | string \| null | Expiry datetime; `null` when no certificate was read |
+| `days_left` | integer | Days until expiry (`0` when no certificate) |
 | `subject` | string | Subject CN |
-| `serial_number` | string | Serial |
+| `serial_number` | string | Certificate serial number |
 | `fingerprint` | string | Certificate hash |
-| `info` | object | Raw OpenSSL parse output |
+| `verified` | boolean | Whether the chain verified against the system trust store |
+| `info` | object \| null | Raw OpenSSL parse output (`null` when no certificate) |
 
-### Example
+<Note>
+  `valid_from` and `valid_to` are certificate datetimes in `YYYY-MM-DD HH:MM:SS` form (no timezone offset), unlike the ISO 8601 timestamps on resource objects.
+</Note>
+
+### Example (valid)
 
 ```json
 {
   "domain": "example.com",
   "ip": "93.184.216.34",
   "is_valid": true,
+  "failure_type": null,
+  "failure_message": null,
   "issuer": "Let's Encrypt",
   "issued_to": "example.com",
-  "valid_from": "2026-04-01T00:00:00+00:00",
-  "valid_to": "2026-07-01T00:00:00+00:00",
+  "valid_from": "2026-04-01 00:00:00",
+  "valid_to": "2026-07-01 00:00:00",
   "days_left": 35,
-  "subject": "CN=example.com",
-  "serial_number": "ABC123...",
-  "fingerprint": "SHA256:...",
+  "subject": "example.com",
+  "serial_number": "03A1B2C3D4E5F6...",
+  "fingerprint": "a1b2c3d4",
+  "verified": true,
+  "info": { /* Raw OpenSSL data */ }
+}
+```
+
+### Example (expired)
+
+```json
+{
+  "domain": "example.com",
+  "ip": "93.184.216.34",
+  "is_valid": false,
+  "failure_type": "expired",
+  "failure_message": "The SSL certificate has expired.",
+  "issuer": "Let's Encrypt",
+  "issued_to": "example.com",
+  "valid_from": "2025-12-08 00:00:00",
+  "valid_to": "2026-03-08 00:00:00",
+  "days_left": -81,
+  "subject": "example.com",
+  "serial_number": "03A1B2C3D4E5F6...",
+  "fingerprint": "a1b2c3d4",
+  "verified": true,
   "info": { /* Raw OpenSSL data */ }
 }
 ```
@@ -95,6 +145,7 @@ DNS records via Cloudflare DoH (`type: "dns"`).
 | Field | Type | Description |
 |-------|------|-------------|
 | `records` | object | Keys: record types (`A`, `AAAA`, `MX`, ...) with record arrays |
+| `resolver_observations` | object | Per-resolver lookup results used to detect inconsistencies between DNS resolvers |
 | `is_cloudflare` | boolean | Domain uses Cloudflare DNS/proxy |
 | `ip_enrichment` | object | Public IP enrichment keyed by IP address |
 | `hosting_provider` | object \| null | Detected hosting provider from enriched IP data |
@@ -170,15 +221,21 @@ Site crawl for failing links (`type: "broken-links"`).
 | `found` | integer | Count of broken links |
 | `crawled` | integer | Pages crawled |
 | `urls` | array | Broken URL details |
+| `crawl` | object | Crawl metadata (finish reason, limits, duration, JS rendering) |
 
 ### URL object
 
-Each item in the `urls` array includes:
+Each item in the `urls` array contains exactly:
 
-- `url` - The broken link URL
-- `status` - HTTP status code
-- `source` - Page where the link was found
-- Additional context
+| Field | Type | Description |
+|-------|------|-------------|
+| `url` | string | The broken link URL |
+| `source` | string | Page where the link was found |
+| `status` | integer | HTTP status code returned for the link |
+
+<Note>
+  Only links whose status is **not** `200`, `301`, `302`, or `303` are counted as broken.
+</Note>
 
 ### Example
 
@@ -265,7 +322,7 @@ Lighthouse-based performance audit (`type: "performance"`).
 When `status` is `failed`, the check may include an `error` field which can be:
 
 - A simple error string
-- A structured object (for example `{ "message": "...", "data": "..." }`)
+- A structured object with `message`, `code`, and `data` keys
 
 Use `error` together with `result` to diagnose failures.
 
@@ -274,12 +331,13 @@ Use `error` together with `result` to diagnose failures.
 ```json
 {
   "uuid": "...",
-  "type": "status",
+  "type": "ssl",
   "status": "failed",
   "result": null,
   "error": {
-    "message": "Connection timeout",
-    "data": "Failed to connect after 30 seconds"
+    "message": "Error fetching site SSL details",
+    "code": 0,
+    "data": "Connection timed out after 10 seconds"
   },
   "completed_at": "2026-05-28T14:30:00+00:00"
 }

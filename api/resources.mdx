@@ -48,9 +48,9 @@ Returned on `GET /me` and nested on some issue responses.
 | Field | Type | Description |
 |-------|------|-------------|
 | `plan` | string | Plan key (`starter`, `growth`, `agency`) |
-| `sites` | object | `{ "used", "limit", "remaining" }` style summary |
-| `seats` | object | Seat usage; may include `members`, `pending_invitations` |
-| `manual_checks` | object | Monthly manual-check usage summary |
+| `sites` | object | `{ "used", "limit", "remaining" }` summary (`limit`/`remaining` are `null` when unlimited) |
+| `seats` | object | Seat usage: `members`, `pending_invitations`, plus `used`, `limit`, `remaining` |
+| `manual_checks` | object | Monthly manual-check `{ "used", "limit", "remaining" }` summary |
 | `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools available to the team |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
 | `history_retention_days` | integer \| null | How long check history is kept |
@@ -72,6 +72,13 @@ Returned on `GET /me` and nested on some issue responses.
       "used": 12,
       "limit": 25,
       "remaining": 13
+    },
+    "seats": {
+      "members": 5,
+      "pending_invitations": 1,
+      "used": 6,
+      "limit": 10,
+      "remaining": 4
     },
     "manual_checks": {
       "used": 42,
@@ -100,8 +107,8 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
 | `cadence_presets` | array | Available cadence options with `minutes`, `label`, and `disabled` (plan-gated) |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest cadence allowed by the team's plan |
 | `allowed_tools` | array | Tools the team can configure, with per-tool cadence floors |
-| `failure_threshold_presets` | array | Status failures-to-open presets (`instant`, `conservative`, `aggressive`) |
-| `escalation_interval_presets` | array | Escalation reminder options (`15m` through `daily`) |
+| `failure_threshold_presets` | array | Status failures-to-open presets (`instant`, `aggressive`, `conservative`) |
+| `escalation_interval_presets` | array | Escalation reminder options (`immediately`, `15m` through `daily`) |
 | `dns_record_types` | string[] | Supported DNS record types for `monitored_record_types` |
 
 ### Example
@@ -244,7 +251,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
 | `quiet_time.starts_at` | string | Quiet time start in `H:i` format |
 | `quiet_time.ends_at` | string | Quiet time end in `H:i` format |
 | `escalation.enabled` | boolean | Send follow-up reminders for open issues |
-| `escalation.intervals` | integer[] | Reminder schedule in minutes (`15`, `30`, `60`, `360`, `1440`) |
+| `escalation.intervals` | integer[] | Reminder schedule in minutes (`0` = immediately, `15`, `30`, `60`, `360`, `1440`) |
 
 ### Example
 
@@ -434,18 +441,30 @@ Returned by `GET /sites/{site}/reports/uptime`.
       {
         "date": "2026-05-28T00:00:00+00:00",
         "uptime_percentage": 99.5,
+        "response_time": 142,
         "total_checks": 288,
         "up_checks": 287
       }
     ],
-    "total_uptime_percentage": 99.2
+    "total_uptime_percentage": 99.2,
+    "average_response_time": 168
   }
 }
 ```
 
+| Field | Type | Description |
+|-------|------|-------------|
+| `days[].date` | string | Day start (ISO 8601) |
+| `days[].uptime_percentage` | float \| null | Percentage of up checks; `null` on days with no checks |
+| `days[].response_time` | integer \| null | Slowest response time that day in ms; `null` when no checks |
+| `days[].total_checks` | integer | Status checks recorded that day |
+| `days[].up_checks` | integer | Checks that returned up |
+| `total_uptime_percentage` | float \| null | Overall up percentage across the range |
+| `average_response_time` | integer \| null | Average daily response time in ms across the range |
+
 <Info>
   - Based on **automatic** completed `status` checks
-  - Days without checks have `uptime_percentage: null` and `total_checks: 0`
+  - Days without checks have `uptime_percentage: null`, `response_time: null`, and `total_checks: 0`
   - Default range: 90 days; override with `?days=` (max 365)
 </Info>
 
@@ -465,16 +484,29 @@ Returned by `GET /sites/{site}/reports/performance`.
         "total_checks": 24
       }
     ],
-    "total_performance_score": 85.1,
-    "total_response_time": 450,
-    "total_speed": 3.4,
+    "average_performance_score": 85.1,
+    "average_response_time": 450,
+    "average_speed": 3.4,
     "total_checks": 720
   }
 }
 ```
 
+| Field | Type | Description |
+|-------|------|-------------|
+| `days[].date` | string | Day start (ISO 8601) |
+| `days[].performance_score` | float \| null | Average Lighthouse score that day; `null` when no checks |
+| `days[].response_time` | integer \| null | Average response time that day in ms |
+| `days[].speed` | float \| null | Average Speed Index that day in seconds |
+| `days[].total_checks` | integer | Performance checks recorded that day |
+| `average_performance_score` | float \| null | Average score across the range |
+| `average_response_time` | integer \| null | Average response time across the range (ms) |
+| `average_speed` | float \| null | Average Speed Index across the range (seconds) |
+| `total_checks` | integer | Total performance checks across the range |
+
 <Info>
   - Based on **automatic** completed `performance` checks
+  - Days without checks have `null` metrics and `total_checks: 0`
   - Default range: 30 days; override with `?days=` (max 365)
 </Info>
 

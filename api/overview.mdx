@@ -44,8 +44,8 @@ Replace `app.sitepulse.dev` with your SitePulse installation hostname if using a
 Import a ready-made collection to explore the API without writing requests by hand.
 
 <CardGroup cols={2}>
-  <Card title="v1 collection" icon="download" href="/postman/SitePulse-v1.postman_collection.json">
-    Public `/api/v1` endpoints only (recommended)
+  <Card title="API collection" icon="download" href="/postman/SitePulse-v1.postman_collection.json">
+    Every public `/api/v1` endpoint
   </Card>
   <Card title="Environment" icon="sliders" href="/postman/SitePulse.postman_environment.json">
     `base_url` and `auth_token` variables
@@ -54,18 +54,19 @@ Import a ready-made collection to explore the API without writing requests by ha
 
 <AccordionGroup>
   <Accordion title="Import and configure">
-    1. In Postman, click **Import** and upload [SitePulse-v1.postman_collection.json](/postman/SitePulse-v1.postman_collection.json) and [SitePulse.postman_environment.json](/postman/SitePulse.postman_environment.json).
-    2. Select the **SitePulse Production** environment.
-    3. Set `auth_token` to your [personal access token](/guide/account-settings#api-tokens). Leave `base_url` as `https://app.sitepulse.dev` unless you use a self-hosted instance.
-    4. Send **GET** `api/v1/me` to confirm authentication, then **GET** `api/v1/teams` to find your team id for team-scoped requests.
+    1. In Postman, click **Import** and upload [SitePulse-v1.postman_collection.json](/postman/SitePulse-v1.postman_collection.json).
+    2. Set `auth_token` to your [personal access token](/guide/account-settings#api-tokens). You can set it on the collection's **Variables** tab, or import [SitePulse.postman_environment.json](/postman/SitePulse.postman_environment.json) and set it there. Leave `base_url` as `https://app.sitepulse.dev` unless you use a self-hosted instance.
+    3. Every request inherits **Bearer** auth from the collection, so there is nothing else to configure per request.
+    4. Send **Get current user and teams** (`GET /api/v1/me`) to confirm authentication, then **List teams** (`GET /api/v1/teams`) to find your team id for team-scoped requests.
   </Accordion>
   <Accordion title="Path variables">
-    Requests use Postman path variables such as `:team`, `:site`, `:check`, and `:issue`. Replace them in the request URL or in the **Params** tab before sending. UUIDs from create/list responses work for site, check, and issue paths.
-  </Accordion>
-  <Accordion title="Full export (internal routes)">
-    The generator also produces a [full collection](/postman/SitePulse.postman_collection.json) that includes non-versioned `/api/` routes used by the web dashboard. Those routes are **not** part of the public v1 contract—use the **v1** folder only for integrations.
+    Requests use Postman path variables such as `:team`, `:site`, `:check`, and `:issue`. Each is pre-defined with a description on the request's **Params** tab — fill in the value there before sending. Use the numeric team id from **List teams**, and the UUIDs returned by create/list responses for site, check, and issue paths.
   </Accordion>
 </AccordionGroup>
+
+<Note>
+  The collection covers every public `/api/v1` endpoint.
+</Note>
 
 ## Quick start
 
@@ -247,6 +248,8 @@ Import a ready-made collection to explore the API without writing requests by ha
   </Step>
   
   <Step title="Create a site and run a check">
+    Only `url` is required. New sites inherit the team's monitoring defaults; to enable specific tools or set cadences at creation, send a [`monitoring_settings`](/api/endpoints#monitoring-settings-fields) object.
+
     <CodeGroup>
 
     ```bash cURL
@@ -257,7 +260,7 @@ Import a ready-made collection to explore the API without writing requests by ha
       -H "Authorization: Bearer YOUR_TOKEN" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
-      -d '{"url":"https://example.com","name":"Example","settings":{"enabled_checks":["status"]}}' \
+      -d '{"url":"https://example.com","name":"Example"}' \
       "https://app.sitepulse.dev/api/v1/teams/${TEAM_ID}/sites"
 
     # Run a status check (returns 202 with pending check records)
@@ -293,7 +296,6 @@ Import a ready-made collection to explore the API without writing requests by ha
         body: JSON.stringify({
           url: 'https://example.com',
           name: 'Example',
-          settings: { enabled_checks: ['status'] },
         }),
       }
     );
@@ -336,7 +338,6 @@ Import a ready-made collection to explore the API without writing requests by ha
         json={
             'url': 'https://example.com',
             'name': 'Example',
-            'settings': {'enabled_checks': ['status']},
         },
     ).json()
 
@@ -364,7 +365,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     teamID := 1
 
     // Create a site
-    siteBody := strings.NewReader(`{"url":"https://example.com","name":"Example","settings":{"enabled_checks":["status"]}}`)
+    siteBody := strings.NewReader(`{"url":"https://example.com","name":"Example"}`)
     siteReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://app.sitepulse.dev/api/v1/teams/%d/sites", teamID), siteBody)
     for key, value := range headers {
         siteReq.Header.Set(key, value)
@@ -412,7 +413,6 @@ Import a ready-made collection to explore the API without writing requests by ha
     site_request.body = {
       url: 'https://example.com',
       name: 'Example',
-      settings: { enabled_checks: ['status'] },
     }.to_json
 
     site_response = Net::HTTP.start(site_uri.hostname, site_uri.port, use_ssl: true) do |http|
@@ -460,7 +460,6 @@ Import a ready-made collection to explore the API without writing requests by ha
         CURLOPT_POSTFIELDS => json_encode([
             'url' => 'https://example.com',
             'name' => 'Example',
-            'settings' => ['enabled_checks' => ['status']],
         ]),
         CURLOPT_RETURNTRANSFER => true,
     ]);
@@ -500,7 +499,7 @@ Import a ready-made collection to explore the API without writing requests by ha
 Only `/api/v1` is documented here. Breaking changes will ship under a new version prefix.
 
 <Warning>
-  Non-versioned routes under `/api/` (dashboard tools, legacy check data) are for the web app and are not part of the public v1 contract.
+  Build integrations only against the documented `/api/v1` endpoints so a future version prefix doesn't break your code.
 </Warning>
 
 ## Requirements

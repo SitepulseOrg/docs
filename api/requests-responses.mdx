@@ -69,11 +69,15 @@ Collections use Laravel's paginator format:
 
 ## Timestamps
 
-All datetime fields are ISO 8601 strings in UTC:
+Datetime fields on resource objects (such as `created_at`, `updated_at`, `opened_at`, and `resolved_at`) are ISO 8601 strings in UTC:
 
 ```
 2026-05-28T14:32:10+00:00
 ```
+
+<Note>
+  Datetime values *inside* check `result` payloads can use tool-specific formats. For example, SSL `valid_from` / `valid_to` are returned as `YYYY-MM-DD HH:MM:SS` without a timezone offset. See [Check results](/api/check-results).
+</Note>
 
 ## Identifiers
 
