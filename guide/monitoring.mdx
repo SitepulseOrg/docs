@@ -3,7 +3,7 @@ title: "Monitoring settings"
 description: "Configure automatic check cadence, issue thresholds, escalation, quiet time, and team defaults"
 ---
 
-Team monitoring settings control how often SitePulse runs automatic checks and when monitoring problems open issues. Admins and owners can edit these settings; members can view them.
+Monitoring settings are where you decide how often SitePulse checks your sites and what counts as a problem worth flagging. Owners and admins can change them; members can see them.
 
 <Info>
   Individual [sites](/guide/sites) can override cadence, thresholds, and other issue settings. Team defaults apply when a site has no override.
@@ -13,15 +13,15 @@ Team monitoring settings control how often SitePulse runs automatic checks and w
 
 Each check tool (Status, SSL, DNS, Broken Links, Performance) has its own cadence — how often SitePulse runs **automatic** checks across the team's sites.
 
-Cadence presets range from every minute to every week. Your [plan](/guide/billing#plans) sets the **fastest** cadence allowed: Starter 30 minutes, Growth 5 minutes, Agency 1 minute.
+Presets range from every minute to every week. Your [plan](/guide/billing#plans) sets the **fastest** you can go: 30 minutes on Starter, 5 minutes on Growth, 1 minute on Agency.
 
-Broken-link and performance checks have an additional 12-hour minimum cadence floor because they are more expensive to run. SitePulse disables cadence options that are faster than your plan or the tool-specific floor.
+Broken-link and performance checks are heavier, so the fastest they'll run is every 12 hours regardless of plan. Any interval that's too fast for your plan or for one of these tools simply won't be selectable.
 
-When a site's enabled checks or cadence overrides change, SitePulse resyncs that site's automatic schedules.
+Change a site's checks or cadence and its schedule updates straight away — no need to do anything else.
 
 ## Issue rules {#issue-settings}
 
-Issue rules define when automatic monitoring **opens** or **resolves** issues and sends notifications. Team defaults apply to every site unless a site overrides them.
+Issue rules are what turn a failing check into an alert. They decide when SitePulse **opens** an issue, when it considers the problem **resolved**, and when notifications go out. Your team defaults apply everywhere unless a site sets its own.
 
 ### Status check header
 
@@ -39,7 +39,7 @@ Use this to monitor a tool without generating incidents (for example, run perfor
 
 ### Default thresholds
 
-New teams inherit these defaults (from SitePulse configuration):
+Every new team starts with these defaults — adjust any of them to taste:
 
 | Tool | Setting | Default |
 |------|---------|---------|

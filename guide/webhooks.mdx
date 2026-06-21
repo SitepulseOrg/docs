@@ -36,21 +36,19 @@ A configuration delivers an alert only when **all** of the following are true:
 
 ## Delivery behavior
 
-Webhook alerts are sent asynchronously after the issue transition commits to the database.
+Alerts are sent moments after an issue opens or resolves — usually within a few seconds, not instantly.
 
-| Behavior | Detail |
-|----------|--------|
-| **Timing** | Queued job; not synchronous with the check that opened the issue |
-| **Quiet time** | Suppresses all outbound issue alerts (webhooks, email, in-app) |
-| **Connect timeout** | 5 seconds |
-| **Total timeout** | 10 seconds |
-| **Retries** | Up to 3 attempts at 200ms, 500ms, and 1000ms intervals |
-| **Redirects** | Disabled |
-| **Response handling** | Non-2xx responses are logged; monitoring and issue state are unaffected |
-| **Failures** | Exceptions are logged and swallowed — they do not roll back the issue |
+| Behavior | What to expect |
+|----------|----------------|
+| **Timing** | Sent shortly after an issue opens or resolves |
+| **Quiet time** | Pauses all alerts (webhooks, email, in-app) while it's active |
+| **Slow endpoints** | SitePulse waits up to 10 seconds for a response before treating the attempt as failed, so your endpoint should reply quickly |
+| **Retries** | If your endpoint is unreachable or returns a server error, SitePulse retries for a few minutes before giving up |
+| **Redirects** | Not followed — point the webhook at its final URL |
+| **Failed deliveries** | A failed webhook never affects your monitoring or issue history |
 
 <Warning>
-  SitePulse does not retry failed webhooks beyond the short HTTP retry window. Build idempotent handlers and do not rely on webhooks as the only record of an incident.
+  Because SitePulse retries, you may occasionally receive the same alert more than once. Make your handler **idempotent** — for example, skip an alert you've already processed by checking `issue.id` and `transition`. Treat the SitePulse dashboard as the definitive record of incidents, not your webhook log.
 </Warning>
 
 ## Request format

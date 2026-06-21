@@ -3,11 +3,11 @@ title: "Notifications"
 description: "Configure alerts for monitoring issues via email, Slack, Microsoft Teams, webhooks, and in-app notifications"
 ---
 
-SitePulse notifies your team when automatic monitoring opens, escalates, or resolves issues, and when manual checks complete or fail in the background.
+SitePulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears — plus when a background manual check finishes or fails.
 
-## Notification configurations
+## Where alerts go
 
-Notification destinations are managed by admins and owners. A team can have multiple destinations across these channels:
+Owners and admins choose where alerts are sent. You can set up as many destinations as you like, across any of these channels:
 
 | Channel | Description |
 |---------|-------------|
@@ -24,9 +24,9 @@ Each configuration:
 - Applies to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
 - Can be enabled, disabled, and tested independently
 
-Because each configuration is independent, you can route different tools or environments to different destinations.
+Because each one stands on its own, you can send different tools or environments to different places — say, critical outages to a paged on-call channel and everything else to email.
 
-Notification configurations determine **where** alerts go. The conditions for opening issues (thresholds, confirmation retries, follow-up timing) are controlled by [monitoring settings](/guide/monitoring).
+These settings decide **where** alerts go. **When** an issue opens in the first place is up to your [monitoring settings](/guide/monitoring).
 
 ## When notifications are sent
 
@@ -87,13 +87,13 @@ A Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams wor
 
 ### Generic webhook
 
-An HTTP endpoint (GET or POST) that receives issue lifecycle events. Use webhooks to integrate with PagerDuty, custom automation, or other systems.
+A URL of your own that SitePulse calls whenever an issue opens, escalates, or resolves. This is the route for wiring SitePulse into PagerDuty, your own automation, or anything else.
 
-See [Webhook notifications](/guide/webhooks) for configuration fields, payload schemas, headers, delivery behavior, test vs production payloads, and URL requirements.
+If you're setting one up, the [Webhook notifications](/guide/webhooks) guide has everything a developer needs — the data SitePulse sends, headers, GET vs POST, and example handler code.
 
-### Testing destinations
+### Testing a destination
 
-HTTP-backed destinations can be tested from the notification configuration. Test delivery verifies connectivity and formatting, but it sends a test payload, not a real issue payload.
+Any webhook-based destination has a **Test** button. It sends a sample message so you can confirm alerts actually arrive and look right — it's a connectivity check, not a real issue alert.
 
 ### In-app notifications
 
@@ -106,5 +106,5 @@ While using the SitePulse dashboard, issue lifecycle notifications appear in rea
 Checks continue to run during quiet time — only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.
 
 <Card title="Webhook reference" icon="webhook" href="/guide/webhooks">
-  Payload format, headers, GET vs POST, retries, and example receiver code
+  For developers: the data SitePulse sends, headers, GET vs POST, retries, and example handler code
 </Card>

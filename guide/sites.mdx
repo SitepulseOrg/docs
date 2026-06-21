@@ -3,15 +3,13 @@ title: "Sites"
 description: "What sites are, their settings, and how per-site overrides interact with team defaults"
 ---
 
-Sites are the websites your team monitors. Each site belongs to one team and carries its own enabled checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
+Sites are the websites your team keeps an eye on. Each site lives in one team and has its own checks, monitoring settings, notes, screenshot, favicon, check history, and reports.
 
 ## Sites list
 
-The **Sites** page lists every site for the current team. Use it to search, filter, inspect latest check state, and take bulk actions.
+The **Sites** page shows every site in your current team. Search, filter, see how each one is doing at a glance, and act on several at once.
 
-You can search by site name or URL. The health filter can show all sites, sites with a specific problem, or sites missing a latest result for a tool.
-
-The table supports sorting by site name, URL, and pinned status. It also polls periodically so latest check indicators stay fresh.
+Search by name or URL, and use the health filter to narrow down to sites with a particular problem (or sites you haven't checked yet). Sort by name, URL, or pinned status. The list refreshes on its own, so the status indicators stay current while you're looking.
 
 ## Creating sites
 
@@ -22,9 +20,9 @@ A site needs:
 - **Enabled checks** — which of the five check tools run for this site
 - **JavaScript rendering** — whether broken-link checks render JavaScript before crawling
 
-SitePulse rejects duplicate sites within the same team and enforces your plan's site and check-tool limits.
+You can't add the same site to a team twice, and your plan sets how many sites (and which check tools) you can use.
 
-After creation, SitePulse fetches the favicon and screenshot, runs the selected checks, and creates automatic schedules for the enabled tools.
+As soon as you add a site, SitePulse grabs its favicon and screenshot, runs the checks you enabled, and starts monitoring them on a regular schedule.
 
 ### Bulk import
 
@@ -34,9 +32,9 @@ Text import accepts one URL per line. File import accepts a header row with `URL
 
 ## Pinning
 
-Pinned sites sort first on the sites list (newest pins first) and populate the dashboard's pinned-sites overview. Use pinning for production sites or key clients that should stay visible without filtering.
+Pinned sites jump to the top of the list (newest pins first) and get their own spot on the dashboard. Pin the sites you care about most — production, key clients — so they're always one glance away.
 
-From the sites table, select one or more sites to pin or unpin them in bulk. You can also pin or unpin a single site from its row actions.
+Pin or unpin a single site from its row, or select several and do it in bulk.
 
 ## Bulk actions
 
@@ -52,7 +50,7 @@ Bulk deletion asks for confirmation before it runs.
 
 ## Health states
 
-The sites list can be filtered by health condition. These conditions are derived from each site's **latest** check results:
+You can filter the list by health, based on each site's **most recent** check results:
 
 | Condition | Meaning |
 |-----------|---------|
@@ -75,17 +73,17 @@ Open a site to see:
 - Recent check history
 - Buttons to **Run Check**, **Edit**, or **Visit** the site
 
-The **Run Check** menu queues manual checks for enabled tools. Manual checks respect role permissions, plan tool access, and the current team's monthly manual-check limit.
+Use **Run Check** to check a site right now instead of waiting for the next scheduled run. What you can run depends on your role, your plan's tools, and how many manual checks your team has left this month.
 
 ### Check history
 
-The previous-checks list can be filtered by source (**All**, **Manual**, **Automatic**) and by tool. Use this to separate on-demand troubleshooting from scheduled monitoring.
+Filter past checks by source (**All**, **Manual**, **Automatic**) and by tool — handy for separating your on-demand troubleshooting from the routine scheduled monitoring.
 
-Open an individual check result for detailed tool output. Manual check results can be deleted by users with check-delete permission. Automatic checks are retained according to the team's plan and cannot be deleted manually.
+Open any result to see the full detail. You can delete your own manual results (with the right permission); automatic results are kept for as long as your plan allows and can't be deleted by hand.
 
 ### Reports
 
-Each site exposes uptime and performance report data. The dashboard shows report summaries, and the API exposes report endpoints for integrations:
+Every site keeps uptime and performance reports. You'll see summaries in the dashboard, and you can pull the same data into your own tools through the API:
 
 - `GET /api/v1/sites/{site}/reports/uptime`
 - `GET /api/v1/sites/{site}/reports/performance`

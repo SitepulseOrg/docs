@@ -3,7 +3,7 @@ title: "Billing and plans"
 description: "Manage plan selection, Stripe billing, invoices, and plan limits"
 ---
 
-Billing is team-scoped. Each team has its own subscription, usage limits, payment method, and invoice history.
+Billing works per team — each one has its own plan, limits, payment method, and invoices, so you can bill a client team separately from your own.
 
 <Note>
   Only the team owner can manage billing.
@@ -46,11 +46,11 @@ Plan limits affect:
 - Check history retention
 - Whether queued checks use priority processing
 
-When a limit is reached, SitePulse disables or rejects the action that would exceed it. For example, you cannot add a site after the site limit is full, invite another member after the seat limit is full, or run manual checks after the monthly manual-check quota is used.
+Once you hit a limit, the action that would go over it is simply unavailable — you can't add a site when you're at your site limit, invite someone when seats are full, or run more manual checks once you've used this month's quota. Upgrading lifts the limit straight away.
 
-## Subscription access
+## When billing lapses
 
-Team-scoped dashboard and API areas require active plan access when subscription enforcement is enabled. If a subscription is inactive, team-scoped API requests return `402` and dashboard access is limited until billing is resolved.
+If a team's plan becomes inactive, its features pause until billing is sorted out: the dashboard switches to a limited, read-only view, and API requests for that team are turned away (with a `402 Payment Required`, if you're calling the API). Sorting out payment restores access right away.
 
 ## Invoices and payment method
 

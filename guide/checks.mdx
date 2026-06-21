@@ -3,7 +3,7 @@ title: "Check tools"
 description: "What the five check tools measure, how manual and automatic checks differ, and how to read results"
 ---
 
-SitePulse includes five check tools for monitoring website health. Checks run against [sites](/guide/sites) that your team has added. All tools are available on every plan.
+SitePulse watches your sites with five different checks, each looking at a different part of website health. They run against the [sites](/guide/sites) your team has added, and every plan includes all five.
 
 ## The five tools
 
@@ -27,11 +27,11 @@ SitePulse includes five check tools for monitoring website health. Checks run ag
 
 ## Manual vs automatic checks
 
-**Manual checks** run on demand for an immediate result. Status and DNS checks usually return quickly; SSL, broken-links, and performance checks can take longer and may finish in the background, in which case SitePulse sends the team a completion or failure notification. Manual results are saved to the site's check history but **never open or resolve issues**.
+**Manual checks** run when you ask for them, for an answer right now. Status and DNS usually come back in seconds; SSL, broken links, and performance can take longer and may finish in the background — when they do, SitePulse lets your team know whether it succeeded or failed. Manual checks are saved to the site's history, but they **never open or resolve issues**.
 
-**Automatic checks** run on the cadence set in [team monitoring settings](/guide/monitoring) (or a site's cadence override). Automatic results are evaluated against your problem thresholds — when a check repeatedly fails or crosses a threshold, SitePulse opens an [issue](/guide/issues) and notifies the configured destinations. When the problem later clears, the issue resolves and recovery notifications are sent.
+**Automatic checks** run on their own schedule, set in [team monitoring settings](/guide/monitoring) (or overridden per site). These are the ones that watch for trouble: when a site keeps failing or crosses one of your thresholds, SitePulse opens an [issue](/guide/issues) and alerts the people you've chosen. When things recover, the issue closes itself and a recovery alert goes out.
 
-Manual check access depends on the current team, your role permissions, the site's enabled tools, and the team's monthly manual-check limit. If a tool is not included in the team plan, disabled on the site, or the quota is exhausted, SitePulse disables the run action.
+Whether you can run a manual check comes down to your role, your plan's tools, whether the tool is enabled on the site, and how many manual checks your team has left this month. If any of those don't line up, the run button is greyed out.
 
 <Note>
   Performance is the only tool that allows you to choose a **page URL** to check a specific page (for example `https://example.com/pricing`) instead of the site's root URL.
@@ -46,25 +46,25 @@ You can run manual checks from:
 - A tool page under **Dashboard -> Tools**
 - The v1 API, when the token has permission
 
-The tool page lets you choose a site from the current team. For Performance, you can also choose a page URL on the same domain. SitePulse rejects URLs that do not belong to the selected site.
+On the tool page, pick a site from your team. For Performance, you can also point the check at a specific page — it just has to be on the same domain as the site.
 
-Long-running checks may first show as `pending`. Poll or revisit the check result until it reaches a terminal state.
+Some checks take a little longer and show as **pending** at first. Check back in a moment and the result will be there.
 
-### Check deep links
+### Linking straight to a check
 
-SitePulse provides a redirect URL for linking directly to a check result:
+If you have a check's ID (from the API or a webhook), this link opens it directly:
 
 ```
 https://app.sitepulse.dev/dashboard/check-link/{check-uuid}
 ```
 
-This redirects to the check detail on the site page. Use it in custom integrations or internal runbooks when you have a check UUID from the API or webhook context.
+It jumps to the check detail on the site page — handy for runbooks or integrations that want to deep-link to a result.
 
 ## Problem thresholds
 
-Problem thresholds decide when automatic monitoring opens an issue — for example, how many consecutive status failures count as an outage, or how many days before SSL expiry to warn.
+Thresholds are how you tell SitePulse what "a problem" means — for example, how many failed status checks in a row count as an outage, or how many days before a certificate expires you want a heads-up.
 
-Thresholds are documented per tool in [Monitoring settings](/guide/monitoring#issue-settings). Defaults apply team-wide; individual sites can [override them](/guide/sites#site-specific-overrides).
+You'll find every threshold explained per tool in [Monitoring settings](/guide/monitoring#issue-settings). Your defaults apply to the whole team, and any single site can [use its own](/guide/sites#site-specific-overrides).
 
 ## Reading results
 
@@ -88,12 +88,12 @@ Thresholds are documented per tool in [Monitoring settings](/guide/monitoring#is
 
 ### HTTP status code 0
 
-Status code `0` means SitePulse did not receive an HTTP response from the target site. It is not a real HTTP status code.
+A status of `0` isn't a real HTTP code — it's SitePulse's way of saying it couldn't get any response from your site at all.
 
-Common causes include DNS failures, connection timeouts, TLS connection errors, refused connections, or a target URL that SitePulse blocks for safety.
+This usually points to a connection problem rather than the site itself returning an error: a DNS failure, a connection that timed out or was refused, a TLS handshake that didn't complete, or a URL that SitePulse won't connect to for safety reasons.
 
 <Info>
-  For target-site HTTP checks, SitePulse first uses the normal network resolver. If that attempt fails because the connection cannot be established, SitePulse retries over IPv4. This helps when a domain publishes both IPv4 and IPv6 addresses but IPv6 is unreachable from the SitePulse worker.
+  If the first connection attempt can't be established, SitePulse automatically tries again over IPv4. This catches the common case where a domain advertises an IPv6 address that isn't actually reachable.
 </Info>
 
 ## Check status values

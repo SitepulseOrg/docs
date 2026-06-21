@@ -3,7 +3,7 @@ title: "Managing Issues"
 description: "Track, acknowledge, and resolve monitoring incidents across your team"
 ---
 
-Issues are team-scoped incident records created when **automatic** monitoring crosses your configured thresholds. They group repeated failures for the same site and check tool so you can triage problems without an alert for every individual check.
+An issue is SitePulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together — so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
 
 <Info>
   Manual checks save results to check history and can send completion notifications, but they do not open or resolve issues.
@@ -31,7 +31,7 @@ See [Monitoring settings](/guide/monitoring#issue-settings) for the full thresho
 | `acknowledged` | Someone on the team is investigating; recorded with the acting user and timestamp |
 | `resolved` | The problem has cleared; kept for history |
 
-Issues can be acknowledged and resolved manually, or resolved automatically when checks pass again. Resolved issues reopen automatically if the same site, tool, and failure type occurs again — the `fingerprint` field deduplicates incidents so a recurring problem updates one record instead of creating many.
+You can acknowledge and resolve issues yourself, or let SitePulse resolve them automatically once checks start passing again. If the same problem comes back — same site, same tool, same kind of failure — SitePulse reopens the original issue instead of creating a new one, so a recurring fault stays as a single thread of history rather than cluttering your list.
 
 ## Issues page
 

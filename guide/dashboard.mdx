@@ -3,22 +3,22 @@ title: "Dashboard"
 description: "Use the dashboard to scan site health, pinned sites, notifications, and manual check shortcuts"
 ---
 
-The dashboard is the health overview for your current team. It combines recent check data, active issues, pinned sites, and quick actions.
+The dashboard is your team's health at a glance — recent check results, anything that needs attention, your pinned sites, and shortcuts to common actions, all on one page.
 
 ## Health overview
 
-At the top of the dashboard, SitePulse summarizes:
+The cards at the top give you the quick read on how your team is doing:
 
 - **Total sites monitored**
 - **Uptime this month**
 - **Checks run today**
 - **Open issues**
 
-Use these cards to spot whether the current team is healthy before opening individual sites.
+Glance at these before diving into individual sites — if everything's green, you're done.
 
 ## Attention sections
 
-When SitePulse detects problems, the dashboard groups affected sites by latest check state:
+When something's wrong, the dashboard groups the affected sites so you can jump straight to what's broken:
 
 | Section | Meaning |
 |---------|---------|
@@ -28,33 +28,31 @@ When SitePulse detects problems, the dashboard groups affected sites by latest c
 | **Broken links** | Latest broken-link check found failing URLs |
 | **Low performance** | Latest performance check breaches configured thresholds |
 
-Each section links to the filtered [Sites](/guide/sites#health-states) view. You can collapse sections you do not need to inspect right now.
+Each section takes you straight to the matching [Sites](/guide/sites#health-states) view, and you can collapse any section you don't need right now.
 
 ## Pinned sites
 
-Pinned sites appear in a dedicated dashboard area with uptime context. Pin important production sites, customer sites, or launch-critical URLs so they stay visible without filtering.
+Pin your most important sites — production, key clients, a launch you're watching — and they get their own spot on the dashboard with uptime context, so you never have to go searching for them.
 
-Manage pinning from the [Sites](/guide/sites#pinning) list or an individual site.
+Pin or unpin from the [Sites](/guide/sites#pinning) list or from an individual site.
 
 ## Quick actions
 
-The dashboard provides shortcuts to:
+Shortcuts for the things you do most:
 
 - Add a site
-- Configure team monitoring
-- Configure notifications
+- Set up team monitoring
+- Set up notifications
 - View issues
-- Run common manual checks
+- Run a quick manual check
 
-Manual check shortcuts respect the current team's plan, enabled tools, and monthly manual-check limit.
+Your plan, enabled tools, and remaining monthly manual checks decide which check shortcuts are available.
 
 ## Notification setup reminder
 
-If a team has no notification destinations and you can manage notifications, SitePulse can show a reminder on the dashboard. Use it to open **Notifications**, then add email, Slack, Discord, Microsoft Teams, or webhook destinations.
+If your team hasn't set up anywhere to send alerts yet, the dashboard nudges you with a reminder (as long as you're allowed to manage notifications). Follow it to **Notifications** to add email, Slack, Discord, Microsoft Teams, or a webhook — and dismiss it once you're set.
 
-You can dismiss the reminder for the current team.
+## A note on teams
 
-## Current team context
-
-Dashboard data always belongs to your current team. Switch teams from **Teams** or the team selector before interpreting health totals, issue counts, billing usage, or notification settings.
+Everything on the dashboard reflects your **current team**. If the numbers look off, check you're in the right team — switch from **Teams** or the team selector at any time.
 
