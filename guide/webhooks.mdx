@@ -14,7 +14,7 @@ SitePulse can deliver issue lifecycle alerts to URLs you control. This guide cov
 | Field | Applies to | Description |
 |-------|------------|-------------|
 | **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; SitePulse stores the webhook URL after you connect), `discord` (OAuth connection; SitePulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
-| **Destination** | URL channels | Public `http://` or `https://` webhook URL, max 2,048 characters |
+| **Destination** | URL channels | Public `http://` or `https://` webhook URL, max 2,048 characters. Stored encrypted and shown masked after saving (see [How destinations are stored](#how-destinations-are-stored)) |
 | **HTTP method** | `webhook` only | `post` (default) or `get`. Slack, Slack app, and Teams always use POST. |
 | **Events** | All | `open` (Issue detected — new issues and reopens, plus [escalation](/guide/monitoring#escalation) follow-ups) and/or `resolve` (Issue resolved — automatic monitoring confirms recovery) |
 | **Tool scope** | All | All tools, or a subset of enabled check tools |
@@ -221,6 +221,16 @@ SitePulse blocks destinations that resolve to private, loopback, or link-local a
 <Warning>
   Internal network URLs (private RFC 1918 ranges, metadata endpoints, etc.) are rejected by design.
 </Warning>
+
+## How destinations are stored
+
+Webhook URLs frequently contain a secret — a Slack or Teams token, or a signed path on your own endpoint. SitePulse treats the destination as sensitive:
+
+- **Encrypted at rest** — the destination is encrypted at the application layer before it's written to the database, in addition to disk-level encryption.
+- **Masked on display** — once saved, the dashboard shows a masked value (scheme, host, and the last few characters of the token), never the full URL.
+- **Decrypted only for delivery** — SitePulse decrypts the destination only when sending an alert or a test.
+
+When you edit a saved configuration, the **Destination** field starts empty. Leave it blank to keep the existing URL, or enter a new one to replace it. The **Test** button works the same way — testing with the field left blank uses the stored URL.
 
 ## Example receiver
 
