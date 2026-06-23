@@ -31,11 +31,11 @@ Format: header **name** and **value** (for example `Authorization` and a bearer 
 
 Sites can [override this header](/guide/sites#site-specific-overrides) individually.
 
-### Enabled issue tools
+### Enabled checks
 
-Issue opening can be enabled or disabled per check tool. When disabled, automatic checks for that tool still run and save results, but they do not open or resolve issues.
+Each tool has one enabled switch. Turning a tool off stops its scheduled checks and prevents that tool from opening or resolving issues. Dashboard on-demand checks remain available when your role, plan, and monthly quota allow them.
 
-Use this to monitor a tool without generating incidents (for example, run performance checks for trends only).
+Individual sites can inherit this setting or override it from the site's edit page.
 
 ### Default thresholds
 
@@ -56,7 +56,7 @@ Every new team starts with these defaults — adjust any of them to taste:
 | **Performance** | Max TTFB (ms) | 4000 |
 | **Performance** | Max load time (seconds) | Not set |
 | **Performance** | Consecutive breaches to open | 2 |
-| **DNS** | Hard failures only | On |
+| **DNS** | Hard failures only | Off |
 | **DNS** | Monitored record types | A, AAAA, CNAME, MX, NS, TXT |
 | **Escalation** | Enabled | Off |
 

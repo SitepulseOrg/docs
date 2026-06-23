@@ -6,12 +6,12 @@ description: "Track, acknowledge, and resolve monitoring incidents across your t
 An issue is SitePulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together — so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
 
 <Info>
-  Manual checks save results to check history and can send completion notifications, but they do not open or resolve issues.
+  On-demand checks save results to check history and can send completion notifications, but they do not open or resolve issues.
 </Info>
 
 ## When issues are created
 
-SitePulse opens an issue when an automatic check meets the problem thresholds configured under **[Monitoring](/guide/monitoring)** and the check tool has **issue opening enabled** for that team or site. Examples include:
+SitePulse opens an issue when an enabled automatic check meets the problem thresholds configured under **[Monitoring](/guide/monitoring)**. Examples include:
 
 - Repeated status failures after confirmation retries
 - Invalid or expiring SSL certificates
@@ -88,8 +88,7 @@ Per-site settings can affect issue behavior:
 
 - **Snooze** — pauses issue opening until a datetime passes
 - **Threshold overrides** — different problem rules for one site
-- **Enabled issue tools** — disable issue opening per tool while checks still run
-- **Disabled check tools** — if a tool is not enabled on the site, it is not checked or evaluated
+- **Enabled checks** — turning a tool off stops its scheduled checks and issue evaluation for that site
 
 See [Managing sites](/guide/sites#site-specific-overrides) for override options.
 

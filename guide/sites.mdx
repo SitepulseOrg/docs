@@ -13,10 +13,10 @@ Search by name or URL, and use the health filter to narrow down to sites with a 
 
 ## Creating sites
 
-Adding a site only takes a URL — everything else is optional:
+The dashboard requires a URL and site name:
 
-- **Website URL** — the site you want to monitor (the only required field)
-- **Site name** — a display name; leave it blank and use **Auto-generate** to name it from the domain
+- **Website URL** — the site you want to monitor
+- **Site name** — a display name; use **Auto-generate** to create one from the domain
 - **Notes** — anything you want to remember about the site (client details, goals, and so on)
 - **JavaScript rendering** — turn this on for sites built with React, Vue, Next.js, and similar so broken-link checks crawl the fully rendered page; leave it off for server-rendered sites like WordPress, Ghost, or plain HTML
 
@@ -77,13 +77,13 @@ Open a site to see:
 - Recent check history
 - Buttons to **Run Check**, **Edit**, or **Visit** the site
 
-Use **Run Check** to check a site right now instead of waiting for the next scheduled run. What you can run depends on your role, your plan's tools, and how many manual checks your team has left this month.
+Use **Run Check** to check a site right now instead of waiting for the next scheduled run. What you can run depends on your role, your plan's tools, and how many on-demand checks your team has left this month.
 
 ### Check history
 
-Filter past checks by source (**All**, **Manual**, **Automatic**) and by tool — handy for separating your on-demand troubleshooting from the routine scheduled monitoring.
+Filter past checks by source (**All**, **On-demand**, **Automatic**) and by tool — handy for separating your on-demand troubleshooting from the routine scheduled monitoring.
 
-Open any result to see the full detail. You can delete your own manual results (with the right permission); automatic results are kept for as long as your plan allows and can't be deleted by hand.
+Open any result to see the full detail. You can delete your own on-demand results (with the right permission); automatic results are kept for as long as your plan allows and can't be deleted by hand.
 
 ### Reports
 
@@ -101,11 +101,10 @@ Every site keeps uptime and performance reports. You'll see summaries in the das
 | Notes | Team notes |
 | Pin state | Whether pinned |
 | JavaScript rendering | For broken-link checks |
-| Enabled checks | Which tools run for this site |
+| Enabled checks | Which tools run automatically and evaluate issues for this site |
 | Status-check header | Overrides the team default header |
 | Check cadence | Overrides team default cadence per tool |
 | Problem threshold overrides | Override team [issue rules](/guide/monitoring#issue-settings) |
-| Enabled issue tools | Disable issue opening for specific check tools on this site |
 | Issue snooze | Pause issue opening until a date/time |
 | Broken-link ignore paths | Paths excluded from broken-link crawls (overrides the [team default](/guide/monitoring#broken-link-thresholds-and-filters)) |
 | DNS expected records | Per-site expected DNS records for change detection |
@@ -132,11 +131,8 @@ Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides 
   <Accordion title="Performance page URL">
     Monitor a specific page, such as `https://example.com/pricing`, instead of the site's root URL. The URL must belong to the same domain as the site.
   </Accordion>
-  <Accordion title="Enabled issue tools">
-    Turn off issue opening for specific tools while still running automatic checks — for example, monitor performance for trends without opening performance incidents.
-  </Accordion>
   <Accordion title="Issue snooze">
-    Pause issue opening for selected tools until a datetime passes. Outbound notifications for new issues are suppressed during snooze; checks still run.
+    Pause issue opening for this site until a datetime passes. Checks still run, but no new issues or related alerts are created during the snooze.
   </Accordion>
   <Accordion title="Broken-link ignore paths">
     URL path patterns the broken-link crawler skips on this site (for example `/admin`, `/cart`, `/wp-admin/*`). Useful for admin areas or dynamic URL spaces that should not affect incident detection.

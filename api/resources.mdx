@@ -50,7 +50,7 @@ Returned on `GET /me` and nested on some issue responses.
 | `plan` | string | Plan key (`starter`, `growth`, `agency`) |
 | `sites` | object | `{ "used", "limit", "remaining" }` summary (`limit`/`remaining` are `null` when unlimited) |
 | `seats` | object | Seat usage: `members`, `pending_invitations`, plus `used`, `limit`, `remaining` |
-| `manual_checks` | object | Monthly manual-check `{ "used", "limit", "remaining" }` summary |
+| `manual_checks` | object | Monthly on-demand check `{ "used", "limit", "remaining" }` summary (JSON key remains `manual_checks`) |
 | `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools available to the team |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
 | `history_retention_days` | integer \| null | How long check history is kept |
@@ -335,7 +335,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
 | `uuid` | string | Check identifier |
 | `type` | string | Tool value |
 | `status` | string | `pending`, `completed`, `failed`, `skipped` |
-| `automatic` | boolean | Scheduled vs manual run |
+| `automatic` | boolean | Scheduled vs on-demand run |
 | `run_reason` | string \| null | `scheduled`, `confirmation_retry`, `incident_follow_up` when set |
 | `site` | object \| null | `{ uuid, name, url, domain }` when loaded |
 | `result` | mixed | Tool-specific payload; see [Check results](/api/check-results) |

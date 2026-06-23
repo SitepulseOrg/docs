@@ -113,7 +113,7 @@ Generic **Webhook** channel deliveries use this JSON shape on POST:
     "severity": "critical",
     "fingerprint": "status:down",
     "summary": "Example is down",
-    "link": "https://app.sitepulse.dev/dashboard/issues?status=active&site=..."
+    "link": "https://app.sitepulse.dev/issues?status=active&site=...&tool=status"
   },
   "site": {
     "id": 10,
@@ -316,6 +316,6 @@ Store `PAGERDUTY_ROUTING_KEY` in your middleware environment, not in SitePulse.
 
 ## Related guides
 
-- [Notifications](/guide/notifications) — all channels, quiet time, and manual check alerts
+- [Notifications](/guide/notifications) — all channels, quiet time, and on-demand check alerts
 - [Managing issues](/guide/issues) — issue lifecycle, severities, and notifications
 - [Issues API](/api/endpoints#issues) — programmatic issue access

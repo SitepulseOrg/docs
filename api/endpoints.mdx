@@ -116,7 +116,7 @@ Tool-specific fields match [the monitoring settings schema](#monitoring-settings
 </Warning>
 
 <Note>
-  DNS **expected records** are not writable through this endpoint. Use the dashboard or per-site `monitoring_settings.tools.dns.settings.expected_records` on `PATCH /sites/{site}`.
+  DNS **expected records** are not writable through this endpoint. Configure them on a site's edit page or through per-site `monitoring_settings.tools.dns.settings.expected_records` on `PATCH /sites/{site}`.
 </Note>
 
 **Example:**
@@ -351,7 +351,7 @@ Update a site. Sends the full site shape expected by the dashboard update form (
 **Team permission:** `update` site  
 **Response `200`:** Updated Site resource
 
-**Body (all optional except `url` is required when sent):**
+**Body:** `url` is required on every request. The other fields are optional.
 
 | Field | Description |
 |-------|-------------|
@@ -427,7 +427,7 @@ Paginated check history for a site.
 |-----------|------|-------------|
 | `type` | string | Tool filter |
 | `status` | string | Check status |
-| `automatic` | boolean | Automatic vs manual |
+| `automatic` | boolean | Automatic vs on-demand |
 | `run_reason` | string | `scheduled`, `confirmation_retry`, `incident_follow_up` |
 | `from` | date | `created_at` ≥ date |
 | `to` | date | `created_at` ≤ date (must be ≥ `from`) |
@@ -437,7 +437,7 @@ Paginated check history for a site.
 
 ### POST /sites/\{site\}/checks
 
-Queue one or more manual checks.
+Queue one or more on-demand checks. Every check queued through the API is an on-demand check and counts against your team's monthly on-demand check quota.
 
 **Scope:** `checks:run`  
 **Team permission:** `createCheck`  
@@ -449,20 +449,29 @@ Queue one or more manual checks.
 | Field | Required | Description |
 |-------|----------|-------------|
 | `tools` | no | Tool values to run; defaults to all **enabled** site tools |
-| `automatic` | no | Boolean; default `false` for API runs |
+| `automatic` | no | **Deprecated.** API runs are always on-demand. If sent, it must be `false`; sending `true` returns `422`. |
 
 **Rules:**
 
 - Each tool must be enabled on the site
+- The tool must not already have a `pending` check on the site
+- The same tool can only be run again after its minimum on-demand cadence has passed for the site
 
 **Example:**
 
 ```json
 {
-  "tools": ["status", "ssl"],
-  "automatic": false
+  "tools": ["status", "ssl"]
 }
 ```
+
+**Validation errors (`422`):**
+
+| `errors.tools[0]` message | Cause |
+|---------------------------|-------|
+| `Your current plan has reached its monthly on-demand check limit.` | The team has used its monthly on-demand check quota |
+| `This site already has a pending {tool} check.` | A check of that tool is still running on the site |
+| `{Tool} checks can only be run every {cadence} for this site.` | The tool was run too recently; wait for the minimum on-demand cadence |
 
 <Info>
   Poll `GET /checks/{check}` until `status` is terminal. See [Check results](/api/check-results).
@@ -479,7 +488,7 @@ Show one check by uuid, including full `result` and nested `site` summary.
 
 ### DELETE /checks/\{check\}
 
-Delete a **manual** check (`automatic: false`).
+Delete an **on-demand** check (`automatic: false`).
 
 **Scope:** `checks:delete`  
 **Team permission:** `deleteCheck`  

@@ -1,9 +1,9 @@
 ---
 title: "Notifications"
-description: "Configure alerts for monitoring issues via email, Slack, Microsoft Teams, webhooks, and in-app notifications"
+description: "Configure alerts for monitoring issues via email, Slack, Discord, Microsoft Teams, webhooks, and in-app notifications"
 ---
 
-SitePulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears — plus when a background manual check finishes or fails.
+SitePulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears. It also shows in-app notifications when on-demand checks finish or fail.
 
 ## Where alerts go
 
@@ -52,11 +52,11 @@ Escalation reminders are delivered to notification configurations subscribed to 
 
 Reminders stop when the issue is resolved or is no longer in an active state (`open` or `acknowledged`). Quiet time suppresses escalation the same way it suppresses initial issue alerts.
 
-### Manual check notifications
+### On-demand check notifications
 
-When you run a manual check, SitePulse can notify the team on completion or failure (for longer-running checks like SSL, broken links, or performance that finish in the background).
+Every on-demand check sends the team an in-app notification when it completes or fails. This is especially useful for slower checks such as SSL, Broken Links, and Performance that finish in the background.
 
-These notifications do not depend on automatic monitoring thresholds and do not open issues.
+On-demand check notifications are not sent to configured email, Slack, Discord, Microsoft Teams, or webhook destinations. They do not depend on automatic monitoring thresholds and do not open issues.
 
 ## Notification channels
 

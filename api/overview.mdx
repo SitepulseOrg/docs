@@ -15,7 +15,7 @@ The SitePulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v
     Create and manage monitored sites
   </Card>
   <Card title="Checks" icon="magnifying-glass">
-    Queue manual checks and read results
+    Queue on-demand checks and read results
   </Card>
   <Card title="Reports" icon="chart-line">
     Pull uptime and performance reports
@@ -268,7 +268,7 @@ Import a ready-made collection to explore the API without writing requests by ha
       -H "Authorization: Bearer YOUR_TOKEN" \
       -H "Accept: application/json" \
       -H "Content-Type: application/json" \
-      -d '{"tools":["status"],"automatic":false}' \
+      -d '{"tools":["status"]}' \
       "https://app.sitepulse.dev/api/v1/sites/{site-uuid}/checks"
 
     # Poll until completed
@@ -307,7 +307,7 @@ Import a ready-made collection to explore the API without writing requests by ha
       {
         method: 'POST',
         headers,
-        body: JSON.stringify({ tools: ['status'], automatic: false }),
+        body: JSON.stringify({ tools: ['status'] }),
       }
     );
     const check = await checkResponse.json();
@@ -345,7 +345,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     check = requests.post(
         f"https://app.sitepulse.dev/api/v1/sites/{site['data']['uuid']}/checks",
         headers=headers,
-        json={'tools': ['status'], 'automatic': False},
+        json={'tools': ['status']},
     ).json()
 
     # Poll until completed
@@ -375,7 +375,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     siteData, _ := io.ReadAll(siteResp.Body)
 
     // Run a status check (returns 202 with pending check records)
-    checkBody := strings.NewReader(`{"tools":["status"],"automatic":false}`)
+    checkBody := strings.NewReader(`{"tools":["status"]}`)
     checkReq, _ := http.NewRequest(http.MethodPost, "https://app.sitepulse.dev/api/v1/sites/{site-uuid}/checks", checkBody)
     for key, value := range headers {
         checkReq.Header.Set(key, value)
@@ -424,7 +424,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     check_uri = URI("https://app.sitepulse.dev/api/v1/sites/#{site['data']['uuid']}/checks")
     check_request = Net::HTTP::Post.new(check_uri)
     headers.each { |key, value| check_request[key] = value }
-    check_request.body = { tools: ['status'], automatic: false }.to_json
+    check_request.body = { tools: ['status'] }.to_json
 
     check_response = Net::HTTP.start(check_uri.hostname, check_uri.port, use_ssl: true) do |http|
       http.request(check_request)
@@ -471,7 +471,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
         CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
-        CURLOPT_POSTFIELDS => json_encode(['tools' => ['status'], 'automatic' => false]),
+        CURLOPT_POSTFIELDS => json_encode(['tools' => ['status']]),
         CURLOPT_RETURNTRANSFER => true,
     ]);
     $check = json_decode(curl_exec($ch), true);

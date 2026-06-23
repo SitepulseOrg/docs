@@ -1,6 +1,6 @@
 ---
 title: "Check tools"
-description: "What the five check tools measure, how manual and automatic checks differ, and how to read results"
+description: "What the five check tools measure, how on-demand and automatic checks differ, and how to read results"
 ---
 
 SitePulse watches your sites with five different checks, each looking at a different part of website health. They run against the [sites](/guide/sites) your team has added, and every plan includes all five.
@@ -25,25 +25,24 @@ SitePulse watches your sites with five different checks, each looking at a diffe
   </Card>
 </CardGroup>
 
-## Manual vs automatic checks
+## On-demand vs automatic checks
 
-**Manual checks** run when you ask for them, for an answer right now. Status and DNS usually come back in seconds; SSL, broken links, and performance can take longer and may finish in the background — when they do, SitePulse lets your team know whether it succeeded or failed. Manual checks are saved to the site's history, but they **never open or resolve issues**.
+**On-demand checks** run when you ask for them, for an answer right now. Status and DNS usually come back in seconds; SSL, broken links, and performance can take longer and may finish in the background — when they do, SitePulse lets your team know whether it succeeded or failed. On-demand checks are saved to the site's history, but they **never open or resolve issues**.
 
 **Automatic checks** run on their own schedule, set in [team monitoring settings](/guide/monitoring) (or overridden per site). These are the ones that watch for trouble: when a site keeps failing or crosses one of your thresholds, SitePulse opens an [issue](/guide/issues) and alerts the people you've chosen. When things recover, the issue closes itself and a recovery alert goes out.
 
-Whether you can run a manual check comes down to your role, your plan's tools, whether the tool is enabled on the site, and how many manual checks your team has left this month. If any of those don't line up, the run button is greyed out.
+In the dashboard, on-demand check access depends on your role, your plan's tools, and how many on-demand checks your team has left this month. You can run a dashboard on-demand check even when that tool's automatic schedule is off for the site. The v1 API is stricter and only accepts tools enabled on the site. The same tool can't be run again until any pending check finishes and its minimum on-demand cadence has passed for that site.
 
 <Note>
   Performance is the only tool that allows you to choose a **page URL** to check a specific page (for example `https://example.com/pricing`) instead of the site's root URL.
 </Note>
 
-## Running manual checks
+## Running on-demand checks
 
-You can run manual checks from:
+You can run on-demand checks from:
 
 - A site's **Run Check** menu
-- The dashboard quick actions
-- A tool's own page in the **Manual Checks** section of the sidebar (SSL, DNS, Status, Broken Links, Performance)
+- The dashboard quick actions, which open the tool's own page (SSL, DNS, Status, Broken Links, Performance)
 - The API, when your token has permission
 
 From a tool's page, pick a site from your team. For Performance, you can also point the check at a specific page — it just has to be on the same domain as the site.
@@ -55,7 +54,7 @@ Some checks take a little longer and show as **pending** at first. Check back in
 If you have a check's ID (from the API or a webhook), this link opens it directly:
 
 ```
-https://app.sitepulse.dev/dashboard/check-link/{check-uuid}
+https://app.sitepulse.dev/check-link/{check-uuid}
 ```
 
 It jumps to the check detail on the site page — handy for runbooks or integrations that want to deep-link to a result.
@@ -115,4 +114,4 @@ Automatic status checks can include a run reason:
 | `confirmation_retry` | Follow-up run used to confirm an apparent outage before opening an issue |
 | `incident_follow_up` | Follow-up run while a status issue remains active |
 
-Manual checks usually have `run_reason: null`.
+On-demand checks usually have `run_reason: null`.
