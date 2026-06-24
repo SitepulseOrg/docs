@@ -103,13 +103,14 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `settings` | object | Normalized monitoring settings: `tools`, `quiet_time`, and `escalation` |
+| `settings` | object | Normalized monitoring settings: `tools`, `request_header`, `quiet_time`, and `escalation` |
 | `cadence_presets` | array | Available cadence options with `minutes`, `label`, and `disabled` (plan-gated) |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest cadence allowed by the team's plan |
 | `allowed_tools` | array | Tools the team can configure, with per-tool cadence floors |
 | `failure_threshold_presets` | array | Status failures-to-open presets (`instant`, `aggressive`, `conservative`) |
 | `escalation_interval_presets` | array | Escalation reminder options (`immediately`, `15m` through `daily`) |
 | `dns_record_types` | string[] | Supported DNS record types for `monitored_record_types` |
+| `status_incident_code_options` | array | Selectable status codes with `code`, `label`, and `group` (`client` or `server`) |
 
 ### Example
 
@@ -121,7 +122,7 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
         "enabled": true,
         "cadence_minutes": 5,
         "settings": {
-          "header": { "name": null, "value": null },
+          "incident_status_codes": [400, 401, 403, 404, 405, 408, 410, 429, 500, 501, 502, 503, 504, 521, 522, 523, 524],
           "failures_to_open": 2,
           "successes_to_resolve": 1,
           "confirmation_retry_minutes": 2,
@@ -159,6 +160,7 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
         }
       }
     },
+    "request_header": { "name": null, "value": null },
     "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
     "escalation": { "enabled": false, "intervals": [] }
   },
@@ -169,7 +171,26 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
   "escalation_interval_presets": [
     { "key": "15m", "label": "15 minutes", "minutes": 15 }
   ],
-  "dns_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"]
+  "dns_record_types": ["A", "AAAA", "CNAME", "MX", "NS", "TXT"],
+  "status_incident_code_options": [
+    { "code": 400, "label": "Bad Request", "group": "client" },
+    { "code": 401, "label": "Unauthorized", "group": "client" },
+    { "code": 403, "label": "Forbidden", "group": "client" },
+    { "code": 404, "label": "Not Found", "group": "client" },
+    { "code": 405, "label": "Method Not Allowed", "group": "client" },
+    { "code": 408, "label": "Request Timeout", "group": "client" },
+    { "code": 410, "label": "Gone", "group": "client" },
+    { "code": 429, "label": "Too Many Requests", "group": "client" },
+    { "code": 500, "label": "Internal Server Error", "group": "server" },
+    { "code": 501, "label": "Not Implemented", "group": "server" },
+    { "code": 502, "label": "Bad Gateway", "group": "server" },
+    { "code": 503, "label": "Service Unavailable", "group": "server" },
+    { "code": 504, "label": "Gateway Timeout", "group": "server" },
+    { "code": 521, "label": "Web Server Is Down", "group": "server" },
+    { "code": 522, "label": "Connection Timed Out", "group": "server" },
+    { "code": 523, "label": "Origin Is Unreachable", "group": "server" },
+    { "code": 524, "label": "A Timeout Occurred", "group": "server" }
+  ]
 }
 ```
 
@@ -225,6 +246,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
 | `enabled_tools` | string[] | Tools that can open issues (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
 | `snoozed_until` | string \| null | ISO 8601 datetime; issue opening paused until this time |
 | `status.failures_to_open` | integer | Failed status checks before opening an issue |
+| `status.incident_status_codes` | integer[] | HTTP response codes that count as failed status checks; request failures always count |
 | `status.successes_to_resolve` | integer | Successful status checks before resolving |
 | `status.confirmation_retry_minutes` | integer | Minutes before confirmation retry (1–5) |
 | `status.incident_follow_up_minutes` | integer | Minutes between incident follow-up checks (1–60) |
@@ -273,7 +295,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
           "enabled": true,
           "cadence_minutes": 5,
           "settings": {
-            "header": { "name": null, "value": null }
+            "incident_status_codes": [400, 401, 403, 404, 405, 408, 410, 429, 500, 501, 502, 503, 504, 521, 522, 523, 524]
           }
         },
         "ssl": {
@@ -291,6 +313,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
           }
         }
       },
+      "request_header": { "name": null, "value": null },
       "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
       "escalation": { "enabled": false, "intervals": [] },
       "snoozed_until": null
@@ -300,6 +323,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
     "enabled_tools": ["status", "ssl", "performance"],
     "snoozed_until": null,
     "status": {
+      "incident_status_codes": [400, 401, 403, 404, 405, 408, 410, 429, 500, 501, 502, 503, 504, 521, 522, 523, 524],
       "failures_to_open": 2,
       "successes_to_resolve": 1,
       "confirmation_retry_minutes": 2,

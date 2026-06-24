@@ -102,7 +102,7 @@ Every site keeps uptime and performance reports. You'll see summaries in the das
 | Pin state | Whether pinned |
 | JavaScript rendering | For broken-link checks |
 | Enabled checks | Which tools run automatically and evaluate issues for this site |
-| Status-check header | Overrides the team default header |
+| Request header | Overrides the team header for Status, Broken Links, and Performance checks |
 | Check cadence | Overrides team default cadence per tool |
 | Problem threshold overrides | Override team [issue rules](/guide/monitoring#issue-settings) |
 | Issue snooze | Pause issue opening until a date/time |
@@ -119,14 +119,14 @@ Every site keeps uptime and performance reports. You'll see summaries in the das
 Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides only when one site needs different behavior.
 
 <AccordionGroup>
-  <Accordion title="Status-check header">
-    Send a different HTTP header with status checks for this site — for example, a site behind authentication that other team sites don't need.
+  <Accordion title="Request header">
+    Send a different HTTP header when Status, Broken Links, and Performance checks fetch this site. Both the name and value are required. If you leave them empty, the site inherits the team header. For broken-link crawls, SitePulse sends the header only to URLs on this site's host and not to external links.
   </Accordion>
   <Accordion title="Check cadence">
     Check one or more tools more or less often than the team default.
   </Accordion>
   <Accordion title="Problem thresholds">
-    Override status, SSL, broken-link, performance, or DNS thresholds for this site only.
+    Override status, SSL, broken-link, performance, or DNS thresholds for this site only. Status overrides can choose which supported HTTP response codes count as incidents.
   </Accordion>
   <Accordion title="Performance page URL">
     Monitor a specific page, such as `https://example.com/pricing`, instead of the site's root URL. The URL must belong to the same domain as the site.

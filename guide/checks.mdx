@@ -69,7 +69,7 @@ You'll find every threshold explained per tool in [Monitoring settings](/guide/m
 
 <AccordionGroup>
   <Accordion title="Status failures">
-    Usually mean the site is down, blocked, or redirecting incorrectly.
+    Mean the request failed or returned an HTTP response code selected under **Status codes that count as an incident**. A connection error or timeout always counts as a failure.
   </Accordion>
   <Accordion title="SSL failures">
     Usually mean the certificate is expired, missing, misconfigured, or not yet trusted.
@@ -90,6 +90,8 @@ You'll find every threshold explained per tool in [Monitoring settings](/guide/m
 A status of `0` isn't a real HTTP code — it's SitePulse's way of saying it couldn't get any response from your site at all.
 
 This usually points to a connection problem rather than the site itself returning an error: a DNS failure, a connection that timed out or was refused, a TLS handshake that didn't complete, or a URL that SitePulse won't connect to for safety reasons.
+
+Status `0` always counts as a failed status check for incident evaluation.
 
 <Info>
   If the first connection attempt can't be established, SitePulse automatically tries again over IPv4. This catches the common case where a domain advertises an IPv6 address that isn't actually reachable.

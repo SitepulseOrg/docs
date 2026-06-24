@@ -23,13 +23,15 @@ Change a site's checks or cadence and its schedule updates straight away — no 
 
 Issue rules are what turn a failing check into an alert. They decide when SitePulse **opens** an issue, when it considers the problem **resolved**, and when notifications go out. Your team defaults apply everywhere unless a site sets its own.
 
-### Status check header
+### Request header
 
-A default HTTP header sent with every status check across the team. Use this when monitored sites require authentication or a custom header to respond correctly.
+A default HTTP header sent when Status, Broken Links, and Performance checks fetch your sites. Use it when monitored sites require authentication, an allowlist token, or another custom header to respond correctly.
 
 Format: header **name** and **value** (for example `Authorization` and a bearer token).
 
 Sites can [override this header](/guide/sites#site-specific-overrides) individually.
+
+For broken-link checks, SitePulse sends the header only to URLs on the monitored site's host. It does not send the header to external links found during a crawl.
 
 ### Enabled checks
 
@@ -44,6 +46,7 @@ Every new team starts with these defaults — adjust any of them to taste:
 | Tool | Setting | Default |
 |------|---------|---------|
 | **Status** | Failures to open incident | 2 |
+| **Status** | Incident status codes | All supported 4xx and 5xx codes |
 | **Status** | Resolve after successes | 1 |
 | **Status** | Confirmation retry (minutes) | 2 |
 | **Status** | Follow-up while open (minutes) | 5 |
@@ -66,12 +69,17 @@ Status rules control when uptime incidents open and resolve:
 
 | Setting | Meaning |
 |---------|---------|
+| **Status codes that count as an incident** | HTTP response codes that count as failed status checks |
 | **Failures to open** | Consecutive failed status checks required before an issue opens |
 | **Confirmation retry (minutes)** | How soon SitePulse reruns a failed check to confirm the failure before opening an issue |
 | **Successes to resolve** | Consecutive successful checks required before the issue is marked recovered |
 | **Follow-up while open (minutes)** | How often SitePulse rechecks an active uptime incident until it recovers |
 
 To set **Failures to open** quickly, pick a preset — **Instant** (1 failed check), **Aggressive** (2 failed checks), or **Conservative** (3 failed checks) — or choose **Custom** to enter your own number. The confirmation retry, successes to resolve, and follow-up timing are set separately.
+
+By default, every supported `4xx` and `5xx` response counts as a failed status check. You can clear codes that are expected for a site, such as `401` for a protected endpoint. A connection error, timeout, or other request failure always counts as a failed check, even when no response code is selected.
+
+The selectable response codes are `400`, `401`, `403`, `404`, `405`, `408`, `410`, `429`, `500`, `501`, `502`, `503`, `504`, `521`, `522`, `523`, and `524`.
 
 ### SSL thresholds
 
