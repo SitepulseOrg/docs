@@ -9,7 +9,7 @@ Sites are the websites your team keeps an eye on. Each site lives in one team an
 
 The **Sites** page shows every site in your current team. Search, filter, see how each one is doing at a glance, and act on several at once.
 
-Search by name or URL, and use the health filter to narrow down to sites with a particular problem (or sites you haven't checked yet). Sort by name, URL, or pinned status. The list refreshes on its own, so the status indicators stay current while you're looking.
+Search by name or URL, and use the health filter to narrow down to sites with a particular problem (or sites you haven't checked yet). Sort by name, URL, or pinned status. The list refreshes on its own, so health indicators stay current while you're looking.
 
 ## Creating sites
 
@@ -36,7 +36,9 @@ Text import accepts one URL per line. File import accepts a header row with `URL
 
 ## Pinning
 
-Pinned sites jump to the top of the list (newest pins first) and get their own spot on the dashboard. Pin the sites you care about most — production, key clients — so they're always one glance away.
+Pinned sites jump to the top of the list (newest pins first), appear in the sidebar, and get their own spot on the dashboard. Pin the sites you care about most — production, key clients — so they're always one glance away.
+
+Each pinned site in the sidebar shows a [pulse indicator](#pulse-indicator) so you can spot problems without opening the site.
 
 Pin or unpin a single site from its row, or select several and do it in bulk.
 
@@ -52,7 +54,28 @@ Select sites from the table to act on several at once.
 
 Bulk deletion asks for confirmation before it runs.
 
-## Health states
+## Pulse indicator {#pulse-indicator}
+
+The pulse is a small animated dot that summarizes a site's latest Status, SSL, Broken Links, and Performance results in one place. You'll see it next to pinned sites in the sidebar and on each site's detail page.
+
+| Level | Meaning |
+|-------|---------|
+| **Positive** (green) | All four checks are healthy |
+| **Warning** (amber) | One to three checks have problems |
+| **Critical** (red) | All four checks have problems |
+
+SitePulse counts a problem when:
+
+- The latest status check reports the site as down
+- The latest SSL check reports an invalid certificate
+- The latest broken-link check found one or more broken URLs
+- The latest performance check breaches your configured thresholds
+
+DNS is not included in the pulse — use the [health filters](#health-states) or site detail view for DNS status.
+
+Hover the pulse on a site detail page to see how many issues were detected.
+
+## Health states {#health-states}
 
 You can filter the list by health, based on each site's **most recent** check results:
 
@@ -69,7 +92,7 @@ You can filter the list by health, based on each site's **most recent** check re
 
 Open a site to see:
 
-- The site screenshot, favicon, URL, and notes
+- The site screenshot, favicon, URL, notes, and [pulse indicator](#pulse-indicator)
 - Latest Status, SSL, DNS, Performance, and Broken Links indicators
 - Uptime stats for today, 30 days, and 90 days
 - A response-time chart
