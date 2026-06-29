@@ -493,8 +493,9 @@ Queue one or more on-demand checks. Every check queued through the API is an on-
 **Rules:**
 
 - Each tool must be enabled on the site
-- The tool must not already have a `pending` check on the site
-- The same tool can only be run again after its minimum on-demand cadence has passed for the site
+- The tool must not already have a `pending` on-demand check on the site
+- The same tool can only be run on demand again after its minimum on-demand cadence has passed for the site
+- Automatic checks do not block on-demand runs
 
 **Example:**
 
@@ -509,8 +510,8 @@ Queue one or more on-demand checks. Every check queued through the API is an on-
 | `errors.tools[0]` message | Cause |
 |---------------------------|-------|
 | `Your current plan has reached its monthly on-demand check limit.` | The team has used its monthly on-demand check quota |
-| `This site already has a pending {tool} check.` | A check of that tool is still running on the site |
-| `{Tool} checks can only be run every {cadence} for this site.` | The tool was run too recently; wait for the minimum on-demand cadence |
+| `This site already has a pending {tool} check.` | An on-demand check of that tool is still running on the site |
+| `{Tool} checks can only be run every {cadence} for this site.` | The tool was run on demand too recently; wait for the minimum on-demand cadence |
 
 <Info>
   Poll `GET /checks/{check}` until `status` is terminal. See [Check results](/api/check-results).
