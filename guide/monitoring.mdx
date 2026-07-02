@@ -51,6 +51,7 @@ Every new team starts with these defaults — adjust any of them to taste:
 | **Status** | Confirmation retry (minutes) | 2 |
 | **Status** | Follow-up while open (minutes) | 5 |
 | **SSL** | Expiry window (days) | 14 |
+| **SSL** | Failures to open | 2 |
 | **Broken links** | Minimum broken links | 5 |
 | **Broken links** | Consecutive breaches to open | 1 |
 | **Broken links** | Ignore external links | Off |
@@ -132,7 +133,7 @@ If broken-link checks return many `503` responses, the target site may be blocki
 
 Escalation sends **follow-up reminders** while an issue stays open or acknowledged. Reminders use the same destinations as **Issue detected** notifications (email, Slack, Teams, webhooks, in-app).
 
-Choose one or more intervals: 15 minutes, 30 minutes, 1 hour, 6 hours, or daily after the issue opens. Escalation is off by default.
+Choose one or more intervals: immediately, 15 minutes, 30 minutes, 1 hour, 6 hours, or daily after the issue opens. Escalation is off by default.
 
 Escalation does not open new issues. It re-sends alerts on the schedule you choose until the issue is resolved or no longer active. Quiet time suppresses escalation reminders the same way it suppresses other outbound alerts.
 

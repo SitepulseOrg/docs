@@ -31,7 +31,7 @@ SitePulse watches your sites with five different checks, each looking at a diffe
 
 **Automatic checks** run on their own schedule, set in [team monitoring settings](/guide/monitoring) (or overridden per site). These are the ones that watch for trouble: when a site keeps failing or crosses one of your thresholds, SitePulse opens an [issue](/guide/issues) and alerts the people you've chosen. When things recover, the issue closes itself and a recovery alert goes out.
 
-In the dashboard, on-demand check access depends on your role, your plan's tools, and how many on-demand checks your team has left this month. You can run a dashboard on-demand check even when that tool's automatic schedule is off for the site. The v1 API is stricter and only accepts tools enabled on the site. The same tool can't be run on demand again until any pending on-demand check finishes and its minimum on-demand cadence has passed for that site. Automatic checks do not block on-demand runs.
+In the dashboard, on-demand check access depends on your plan's tools and how many on-demand checks your team has left this month. All team members can run dashboard on-demand checks when quota remains, even when that tool's automatic schedule is off for the site. The v1 API is stricter and only accepts tools enabled on the site. The same tool can't be run on demand again until any pending on-demand check finishes and its minimum on-demand cadence has passed for that site. Automatic checks do not block on-demand runs.
 
 <Note>
   Performance is the only tool that allows you to choose a **page URL** to check a specific page (for example `https://example.com/pricing`) instead of the site's root URL.

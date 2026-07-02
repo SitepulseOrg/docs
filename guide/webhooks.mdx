@@ -42,7 +42,7 @@ Alerts are sent moments after an issue opens or resolves — usually within a fe
 |----------|----------------|
 | **Timing** | Sent shortly after an issue opens or resolves |
 | **Quiet time** | Pauses all alerts (webhooks, email, in-app) while it's active |
-| **Slow endpoints** | SitePulse waits up to 10 seconds for a response before treating the attempt as failed, so your endpoint should reply quickly |
+| **Slow endpoints** | SitePulse allows 5 seconds to establish a connection and up to 10 seconds total for a response before treating the attempt as failed — reply quickly |
 | **Retries** | If your endpoint is unreachable or returns a server error, SitePulse retries for a few minutes before giving up |
 | **Redirects** | Not followed — point the webhook at its final URL |
 | **Failed deliveries** | A failed webhook never affects your monitoring or issue history |
@@ -77,10 +77,12 @@ All HTTP webhook deliveries include channel-specific headers where applicable:
 
 | Header | Test delivery | Issue delivery | Value |
 |--------|---------------|----------------|-------|
-| `X-SitePulse-Event` | `notification.test` | `issue.opened`, `issue.recovered`, or `issue.escalated` | Event name |
-| `X-SitePulse-Delivery` | `test` | `issue-lifecycle` | Delivery type |
+| `X-Sitepulse-Event` | `notification.test` | `issue.opened`, `issue.recovered`, or `issue.escalated` | Event name |
+| `X-Sitepulse-Delivery` | `test` | Delivery UUID | Stable id for this delivery attempt; identical across retries of the same alert |
 
-The `X-SitePulse-Event` header mirrors the `event` field in the JSON body (for POST) or query payload (for GET).
+The `X-Sitepulse-Event` header mirrors the `event` field in the JSON body (for POST) or query payload (for GET).
+
+Use `X-Sitepulse-Delivery` to deduplicate retries. SitePulse may resend the same alert if your endpoint accepts the request but the connection drops before SitePulse records success.
 
 ### Event mapping
 
@@ -168,11 +170,11 @@ The **Test** button sends a different payload from production issue alerts. Use 
     "channel": "webhook",
     "destination": "https://hooks.example.com/sitepulse"
   },
-  "message": "This is a test webhook from SitePulse."
+  "message": "This is a test webhook from Sitepulse."
 }
 ```
 
-Test deliveries set `X-SitePulse-Delivery: test` and `X-SitePulse-Event: notification.test`.
+Test deliveries set `X-Sitepulse-Delivery: test` and `X-Sitepulse-Event: notification.test`.
 
 Slack and Microsoft Teams test messages use channel-specific formatting (Slack blocks or Teams MessageCard) with the same test metadata.
 
@@ -238,7 +240,7 @@ Minimal POST handler (Node.js / Express):
 
 ```javascript
 app.post('/sitepulse/hooks', express.json(), (req, res) => {
-  const event = req.get('X-SitePulse-Event');
+  const event = req.get('X-Sitepulse-Event');
 
   if (event === 'notification.test') {
     console.log('Test webhook received');
@@ -267,7 +269,7 @@ Return any `2xx` status promptly. SitePulse treats other responses as delivery f
 
 Use this table when building idempotent handlers for the generic **Webhook** channel (POST JSON):
 
-| `X-SitePulse-Event` | `event` (body) | `transition` | Suggested action |
+| `X-Sitepulse-Event` | `event` (body) | `transition` | Suggested action |
 |---------------------|----------------|--------------|------------------|
 | `notification.test` | `notification.test` | — | Verify connectivity only |
 | `issue.opened` | `issue.opened` | `open` | Page on-call, open ticket, post to chat |
@@ -277,52 +279,6 @@ Use this table when building idempotent handlers for the generic **Webhook** cha
 <Note>
   Slack, Slack webhook, Discord, and Microsoft Teams channels receive **formatted** payloads, not the raw issue JSON above. Use the generic Webhook channel for custom integrations.
 </Note>
-
-### PagerDuty (Events API v2)
-
-Route SitePulse alerts to PagerDuty using a generic webhook and a small translation layer.
-
-1. Create a **Webhook** configuration: method **POST**, events **Issue detected** and **Issue resolved**, destination set to your middleware URL.
-2. Map SitePulse events to PagerDuty `trigger` and `resolve` actions using `X-SitePulse-Event` or `event` in the body.
-3. Use `issue.fingerprint` combined with `site.uuid` as the PagerDuty `dedup_key` so reopen and recovery events update the same incident.
-
-**Example middleware** (forwards to PagerDuty Events API v2):
-
-```javascript
-app.post('/sitepulse/pagerduty', express.json(), async (req, res) => {
-  const event = req.get('X-SitePulse-Event');
-  const { issue, site } = req.body;
-
-  if (event === 'notification.test') {
-    return res.sendStatus(200);
-  }
-
-  const dedupKey = `${site.uuid}:${issue.fingerprint}`;
-  const summary = issue.summary || `SitePulse alert for ${site.name}`;
-
-  const payload = {
-    routing_key: process.env.PAGERDUTY_ROUTING_KEY,
-    event_action: event === 'issue.recovered' ? 'resolve' : 'trigger',
-    dedup_key: dedupKey,
-    payload: {
-      summary,
-      severity: issue.severity === 'critical' ? 'critical' : 'warning',
-      source: site.domain,
-      custom_details: issue,
-    },
-  };
-
-  await fetch('https://events.pagerduty.com/v2/enqueue', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  res.sendStatus(200);
-});
-```
-
-Store `PAGERDUTY_ROUTING_KEY` in your middleware environment, not in SitePulse.
 
 ## Related guides
 

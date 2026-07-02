@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "SitePulse Docs",
+  "description": "Documentation for SitePulse. Set up uptime, SSL, DNS, broken-link, and performance monitoring, configure alerts, and use the API.",
   "colors": {
     "primary": "#7f22fe",
     "light": "#b5a2fa",
@@ -79,7 +80,66 @@
   },
   "footer": {
     "socials": {
-
+      "x": "https://x.com/usesitepulse",
+      "linkedin": "https://www.linkedin.com/company/usesitepulse/"
+    },
+    "links": [
+      {
+        "header": "Sitepulse",
+        "items": [
+          {
+            "label": "About",
+            "href": "https://sitepulse.dev/about/"
+          },
+          {
+            "label": "Changelog",
+            "href": "https://sitepulse.dev/changelog/"
+          },
+          {
+            "label": "Pricing",
+            "href": "https://sitepulse.dev/pricing/"
+          },
+          {
+            "label": "Support",
+            "href": "https://sitepulse.dev/support/"
+          }
+        ]
+      },
+      {
+        "header": "Legal",
+        "items": [
+          {
+            "label": "Security",
+            "href": "https://sitepulse.dev/security/"
+          },
+          {
+            "label": "Terms",
+            "href": "https://sitepulse.dev/terms/"
+          },
+          {
+            "label": "Privacy",
+            "href": "https://sitepulse.dev/privacy/"
+          },
+          {
+            "label": "Cookies",
+            "href": "https://sitepulse.dev/cookies/"
+          },
+          {
+            "label": "DPA",
+            "href": "https://sitepulse.dev/dpa/"
+          }
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "indexing": "navigable",
+    "metatags": {
+      "og:site_name": "SitePulse Docs",
+      "og:image": "https://sitepulse.dev/og/default.png",
+      "og:locale": "en_GB",
+      "twitter:card": "summary_large_image",
+      "twitter:site": "@usesitepulse"
     }
   }
 }
