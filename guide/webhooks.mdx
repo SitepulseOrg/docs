@@ -103,6 +103,7 @@ Generic **Webhook** channel deliveries use this JSON shape on POST:
 {
   "event": "issue.opened",
   "transition": "open",
+  "message": "Example is down",
   "occurred_at": "2026-05-25T12:00:00+00:00",
   "team": {
     "id": 1,
@@ -133,6 +134,7 @@ Generic **Webhook** channel deliveries use this JSON shape on POST:
 |-------|------|-------------|
 | `event` | string | `issue.opened`, `issue.recovered`, or `issue.escalated` |
 | `transition` | string | `open`, `resolve`, or `escalate` |
+| `message` | string | Human-readable issue lifecycle message |
 | `occurred_at` | string | ISO 8601 timestamp when the alert was generated |
 | `team.id` | integer | Team id |
 | `team.name` | string | Team display name |
@@ -248,12 +250,12 @@ app.post('/sitepulse/hooks', express.json(), (req, res) => {
   }
 
   if (event === 'issue.opened') {
-    console.log(`Issue opened: ${req.body.issue.summary}`);
+    console.log(`Issue opened: ${req.body.message}`);
     // Page on-call, create ticket, etc.
   }
 
   if (event === 'issue.recovered') {
-    console.log(`Issue recovered: ${req.body.issue.summary}`);
+    console.log(`Issue recovered: ${req.body.message}`);
     // Close ticket, notify channel, etc.
   }
 
