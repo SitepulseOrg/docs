@@ -3,7 +3,7 @@ title: "Webhook notifications"
 description: "Configure HTTP webhooks for issue alerts, payload format, delivery behavior, and testing"
 ---
 
-SitePulse can deliver issue lifecycle alerts to URLs you control. This guide covers webhook-style channels: the generic **Webhook** channel, **Slack webhook**, **Microsoft Teams**, connected **Slack**, and connected **Discord**.
+Sitepulse can deliver issue lifecycle alerts to URLs you control. This guide covers webhook-style channels: the generic **Webhook** channel, **Slack webhook**, **Microsoft Teams**, connected **Slack**, and connected **Discord**.
 
 <Info>
   Email and in-app notifications use separate delivery paths. See [Notifications](/guide/notifications) for the full channel overview.
@@ -13,7 +13,7 @@ SitePulse can deliver issue lifecycle alerts to URLs you control. This guide cov
 
 | Field | Applies to | Description |
 |-------|------------|-------------|
-| **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; SitePulse stores the webhook URL after you connect), `discord` (OAuth connection; SitePulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
+| **Channel** | All | `webhook` (your own HTTP endpoint), `slack` (incoming webhook URL), `slack_app` (OAuth connection; Sitepulse stores the webhook URL after you connect), `discord` (OAuth connection; Sitepulse stores the webhook URL after you connect), or `microsoft_teams` (workflow incoming webhook URL) |
 | **Destination** | URL channels | Public `http://` or `https://` webhook URL, max 2,048 characters. Stored encrypted and shown masked after saving (see [How destinations are stored](#how-destinations-are-stored)) |
 | **HTTP method** | `webhook` only | `post` (default) or `get`. Slack, Slack app, and Teams always use POST. |
 | **Events** | All | `open` (Issue detected — new issues and reopens, plus [escalation](/guide/monitoring#escalation) follow-ups) and/or `resolve` (Issue resolved — automatic monitoring confirms recovery) |
@@ -28,7 +28,7 @@ A configuration delivers an alert only when **all** of the following are true:
 2. The issue transition matches a subscribed **event** (`open`, `resolve`, or `escalate` via an Issue detected subscription)
 3. The issue's check tool is in scope (all tools, or listed in the configuration)
 4. The team is **not** in **quiet time**
-5. The destination URL passes SitePulse's outbound safety checks
+5. The destination URL passes Sitepulse's outbound safety checks
 
 <Note>
   Acknowledging or refreshing an issue does not send webhook alerts. **Open** (including reopen), **resolve**, and **escalate** transitions can trigger delivery when subscribed.
@@ -42,20 +42,20 @@ Alerts are sent moments after an issue opens or resolves — usually within a fe
 |----------|----------------|
 | **Timing** | Sent shortly after an issue opens or resolves |
 | **Quiet time** | Pauses all alerts (webhooks, email, in-app) while it's active |
-| **Slow endpoints** | SitePulse allows 5 seconds to establish a connection and up to 10 seconds total for a response before treating the attempt as failed — reply quickly |
-| **Retries** | If your endpoint is unreachable or returns a server error, SitePulse retries for a few minutes before giving up |
+| **Slow endpoints** | Sitepulse allows 5 seconds to establish a connection and up to 10 seconds total for a response before treating the attempt as failed — reply quickly |
+| **Retries** | If your endpoint is unreachable or returns a server error, Sitepulse retries for a few minutes before giving up |
 | **Redirects** | Not followed — point the webhook at its final URL |
 | **Failed deliveries** | A failed webhook never affects your monitoring or issue history |
 
 <Warning>
-  Because SitePulse retries, you may occasionally receive the same alert more than once. Make your handler **idempotent** — for example, skip an alert you've already processed by checking `issue.id` and `transition`. Treat the SitePulse dashboard as the definitive record of incidents, not your webhook log.
+  Because Sitepulse retries, you may occasionally receive the same alert more than once. Make your handler **idempotent** — for example, skip an alert you've already processed by checking `issue.id` and `transition`. Treat the Sitepulse dashboard as the definitive record of incidents, not your webhook log.
 </Warning>
 
 ## Request format
 
 ### POST (recommended)
 
-SitePulse sends `Content-Type: application/json` with `Accept: application/json`.
+Sitepulse sends `Content-Type: application/json` with `Accept: application/json`.
 
 **Generic webhook** — raw issue lifecycle JSON (see [Production payload](#production-payload) below).
 
@@ -67,7 +67,7 @@ SitePulse sends `Content-Type: application/json` with `Accept: application/json`
 
 ### GET (generic webhook only)
 
-SitePulse sends the production payload as **query string parameters** on the configured URL. Nested objects are encoded using Laravel's query serialization (e.g. `issue[summary]=...`, `team[id]=...`).
+Sitepulse sends the production payload as **query string parameters** on the configured URL. Nested objects are encoded using Laravel's query serialization (e.g. `issue[summary]=...`, `team[id]=...`).
 
 Use GET only when your receiver cannot accept POST bodies. POST is recommended for nested payloads.
 
@@ -82,7 +82,7 @@ All HTTP webhook deliveries include channel-specific headers where applicable:
 
 The `X-Sitepulse-Event` header mirrors the `event` field in the JSON body (for POST) or query payload (for GET).
 
-Use `X-Sitepulse-Delivery` to deduplicate retries. SitePulse may resend the same alert if your endpoint accepts the request but the connection drops before SitePulse records success.
+Use `X-Sitepulse-Delivery` to deduplicate retries. Sitepulse may resend the same alert if your endpoint accepts the request but the connection drops before Sitepulse records success.
 
 ### Event mapping
 
@@ -142,7 +142,7 @@ Generic **Webhook** channel deliveries use this JSON shape on POST:
 | `issue.severity` | string | `critical`, `warning`, or `info` |
 | `issue.fingerprint` | string | Stable deduplication key (e.g. `status:down`, `ssl:expiring`) |
 | `issue.summary` | string | Human-readable issue title |
-| `issue.link` | string | URL to the filtered Issues page in SitePulse |
+| `issue.link` | string | URL to the filtered Issues page in Sitepulse |
 | `site.id` | integer | Internal site id |
 | `site.uuid` | string | Site UUID (used in API paths) |
 | `site.name` | string | Site display name |
@@ -190,8 +190,8 @@ Production Slack messages are POSTed as JSON with:
 - `blocks` — formatted sections for summary, site, tool, severity, status, and a **View issue** button linking to `issue.link`
 
 Titles:
-- Issue detected: `SitePulse detected an issue: {site name}`
-- Issue resolved: `SitePulse recovered: {site name}`
+- Issue detected: `Sitepulse detected an issue: {site name}`
+- Issue resolved: `Sitepulse recovered: {site name}`
 
 ### Discord
 
@@ -215,10 +215,10 @@ Production Teams messages are POSTed as MessageCard JSON with:
 Webhook URLs must be:
 
 - Valid `http://` or `https://` URLs
-- Publicly reachable from SitePulse workers
+- Publicly reachable from Sitepulse workers
 - Free of embedded credentials (`user:pass@host` is rejected)
 
-SitePulse blocks destinations that resolve to private, loopback, or link-local addresses. This includes hostnames like `localhost`, `*.local`, and hosts whose DNS resolves to non-public IPs.
+Sitepulse blocks destinations that resolve to private, loopback, or link-local addresses. This includes hostnames like `localhost`, `*.local`, and hosts whose DNS resolves to non-public IPs.
 
 <Warning>
   Internal network URLs (private RFC 1918 ranges, metadata endpoints, etc.) are rejected by design.
@@ -226,11 +226,11 @@ SitePulse blocks destinations that resolve to private, loopback, or link-local a
 
 ## How destinations are stored
 
-Webhook URLs frequently contain a secret — a Slack or Teams token, or a signed path on your own endpoint. SitePulse treats the destination as sensitive:
+Webhook URLs frequently contain a secret — a Slack or Teams token, or a signed path on your own endpoint. Sitepulse treats the destination as sensitive:
 
 - **Encrypted at rest** — the destination is encrypted at the application layer before it's written to the database, in addition to disk-level encryption.
 - **Masked on display** — once saved, the dashboard shows a masked value (scheme, host, and the last few characters of the token), never the full URL.
-- **Decrypted only for delivery** — SitePulse decrypts the destination only when sending an alert or a test.
+- **Decrypted only for delivery** — Sitepulse decrypts the destination only when sending an alert or a test.
 
 When you edit a saved configuration, the **Destination** field starts empty. Leave it blank to keep the existing URL, or enter a new one to replace it. The **Test** button works the same way — testing with the field left blank uses the stored URL.
 
@@ -261,7 +261,7 @@ app.post('/sitepulse/hooks', express.json(), (req, res) => {
 });
 ```
 
-Return any `2xx` status promptly. SitePulse treats other responses as delivery failures.
+Return any `2xx` status promptly. Sitepulse treats other responses as delivery failures.
 
 ## Integration recipes
 

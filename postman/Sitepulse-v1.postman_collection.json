@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "SitePulse API v1",
-    "description": "Public SitePulse v1 API. Set `auth_token` to a personal access token (Settings \u2192 API tokens) and leave `base_url` as the production host (or your self-hosted hostname). Every request inherits bearer auth from the collection. Replace `:team`, `:site`, `:check`, and `:issue` path variables in the Params tab.",
+    "name": "Sitepulse API v1",
+    "description": "Public Sitepulse v1 API. Set `auth_token` to a personal access token (Settings \u2192 API tokens) and leave `base_url` as the production host (or your self-hosted hostname). Every request inherits bearer auth from the collection. Replace `:team`, `:site`, `:check`, and `:issue` path variables in the Params tab.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -462,7 +462,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"url\": \"https://example.com\",\n  \"name\": \"Example\",\n  \"notes\": \"Updated notes\",\n  \"pinned\": true,\n  \"js_rendered\": true,\n  \"monitoring_settings\": {\n    \"tools\": {\n      \"status\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 60,\n        \"settings\": {\n          \"failures_to_open\": 1,\n          \"successes_to_resolve\": 1\n        }\n      },\n      \"broken-links\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 1440,\n        \"settings\": {\n          \"ignore_paths\": [\n            \"/admin\",\n            \"/preview\"\n          ],\n          \"ignore_external_links\": true,\n          \"ignore_redirects\": false\n        }\n      },\n      \"dns\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 1440,\n        \"settings\": {\n          \"hard_failures_only\": false,\n          \"expected_records\": {\n            \"A\": [\n              \"203.0.113.1\"\n            ]\n          },\n          \"monitored_record_types\": [\n            \"A\",\n            \"TXT\"\n          ]\n        }\n      }\n    },\n    \"snoozed_until\": null\n  }\n}",
+              "raw": "{\n  \"url\": \"https://example.com\",\n  \"name\": \"Example\",\n  \"notes\": \"Updated notes\",\n  \"pinned\": true,\n  \"js_rendered\": true,\n  \"monitoring_settings\": {\n    \"tools\": {\n      \"status\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 60,\n        \"settings\": {\n          \"failures_to_open\": 1,\n          \"successes_to_resolve\": 1\n        }\n      },\n      \"broken-links\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 1440,\n        \"settings\": {\n          \"ignore_paths\": [\n            \"/admin\",\n            \"/preview\"\n          ],\n          \"ignore_external_links\": true,\n          \"ignore_redirects\": false\n        }\n      },\n      \"dns\": {\n        \"enabled\": true,\n        \"cadence_minutes\": 1440,\n        \"settings\": {\n          \"hard_failures_only\": false,\n          \"monitored_record_types\": [\n            \"A\",\n            \"TXT\"\n          ]\n        }\n      }\n    },\n    \"snoozed_until\": null\n  },\n  \"dns_expected_records\": {\n    \"A\": [\n      \"203.0.113.1\"\n    ]\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"

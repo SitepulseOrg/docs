@@ -3,7 +3,7 @@ title: "Managing Issues"
 description: "Track, acknowledge, and resolve monitoring incidents across your team"
 ---
 
-An issue is SitePulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together — so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
+An issue is Sitepulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together — so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
 
 <Info>
   On-demand checks save results to check history and can send completion notifications, but they do not open or resolve issues.
@@ -11,7 +11,7 @@ An issue is SitePulse's record of something going wrong. **Automatic** monitorin
 
 ## When issues are created
 
-SitePulse opens an issue when an enabled automatic check meets the problem thresholds configured under **[Monitoring](/guide/monitoring)**. Examples include:
+Sitepulse opens an issue when an enabled automatic check meets the problem thresholds configured under **[Monitoring](/guide/monitoring)**. Examples include:
 
 - Repeated status failures after confirmation retries, based on the selected incident response codes
 - Invalid or expiring SSL certificates
@@ -19,7 +19,16 @@ SitePulse opens an issue when an enabled automatic check meets the problem thres
 - Broken-link counts above your threshold across consecutive crawls (after team or site link filters are applied)
 - Performance scores, TTFB, or load time (TTI) outside configured limits
 
-When the underlying problem clears on subsequent automatic checks, SitePulse marks the issue **resolved** and can send recovery notifications.
+When the underlying problem clears on subsequent automatic checks, Sitepulse marks the issue **resolved** and can send recovery notifications.
+
+### How quickly do issues open?
+
+Different failures use different evidence, so they open on different timelines:
+
+- **Status, SSL, and DNS failures** are confirmed before alerting you. A failed scheduled check triggers a confirmation retry, and the issue opens once the required consecutive failures are reached. With default settings, a persistent failure produces an issue and alert within a few minutes, while a momentary blip produces nothing.
+- **Broken-link and performance issues** open after their configured consecutive breach threshold is met.
+
+DNS expected-record issues also require matching observations from multiple resolvers before Sitepulse treats a record change as confirmed.
 
 See [Monitoring settings](/guide/monitoring#issue-settings) for the full threshold reference.
 
@@ -31,7 +40,7 @@ See [Monitoring settings](/guide/monitoring#issue-settings) for the full thresho
 | `acknowledged` | Someone on the team is investigating; recorded with the acting user and timestamp |
 | `resolved` | The problem has cleared; kept for history |
 
-You can acknowledge and resolve issues yourself, or let SitePulse resolve them automatically once checks start passing again. If the same problem comes back — same site, same tool, same kind of failure — SitePulse reopens the original issue instead of creating a new one, so a recurring fault stays as a single thread of history rather than cluttering your list.
+You can acknowledge and resolve issues yourself, or let Sitepulse resolve them automatically once checks start passing again. If the same problem comes back — same site, same tool, same kind of failure — Sitepulse reopens the original issue instead of creating a new one, so a recurring fault stays as a single thread of history rather than cluttering your list.
 
 ## Issues page
 
@@ -44,7 +53,7 @@ Available filters:
 - **Tool** — Status, SSL, DNS, Broken Links, Performance, or all tools
 - **Severity** — Critical, Warning, Info, or all severities
 
-You can sort by summary, site, tool, status, or opened date. Issue summaries link to the related check result when SitePulse has one.
+You can sort by summary, site, tool, status, or opened date. Issue summaries link to the related check result when Sitepulse has one.
 
 ## Actions
 
@@ -56,7 +65,7 @@ Select one or more issues to use bulk actions.
 | **Resolve** | Selected active issues can be resolved | Marks them as resolved manually |
 | **Delete** | Selected issues can be deleted | Removes the incident record from the dashboard |
 
-Single-row actions follow the same rules. Manual resolution does not stop future automatic checks; if the same failure happens again, SitePulse can reopen or create an issue according to the normal evaluation rules.
+Single-row actions follow the same rules. Manual resolution does not stop future automatic checks; if the same failure happens again, Sitepulse can reopen or create an issue according to the normal evaluation rules.
 
 <Note>
   Broken-link entries appear on the Issues page only after the site breaches its broken-link issue rule. A latest broken-link check with one failed URL may show on the Sites page without opening an issue if it is below your threshold.

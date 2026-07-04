@@ -3,7 +3,7 @@ title: "Notifications"
 description: "Configure alerts for monitoring issues via email, Slack, Discord, Microsoft Teams, webhooks, and in-app notifications"
 ---
 
-SitePulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears. It also shows in-app notifications when on-demand checks finish or fail.
+Sitepulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears. It also shows in-app notifications when on-demand checks finish or fail.
 
 ## Where alerts go
 
@@ -12,7 +12,7 @@ Owners and admins choose where alerts are sent. You can set up as many destinati
 | Channel | Description |
 |---------|-------------|
 | **Email** | Send alerts to one or more email addresses |
-| **Slack** | Connect the SitePulse Slack app and choose a channel |
+| **Slack** | Connect the Sitepulse Slack app and choose a channel |
 | **Discord** | Connect Discord and choose a channel |
 | **Slack webhook** | Send to a Slack incoming webhook URL |
 | **Microsoft Teams** | Send to a Microsoft Teams incoming webhook URL |
@@ -32,7 +32,7 @@ These settings decide **where** alerts go. **When** an issue opens in the first 
 
 ### Issue lifecycle notifications
 
-When automatic monitoring opens an issue or marks one resolved, SitePulse sends notifications to all enabled destinations that subscribe to the matching event and tool scope.
+When automatic monitoring opens an issue or marks one resolved, Sitepulse sends notifications to all enabled destinations that subscribe to the matching event and tool scope.
 
 | Event | When it fires |
 |-------|---------------|
@@ -46,7 +46,7 @@ When automatic monitoring opens an issue or marks one resolved, SitePulse sends 
 
 ### Issue escalation
 
-When [escalation](/guide/monitoring#escalation) is enabled, SitePulse schedules follow-up reminders at the intervals you select (15 minutes through daily).
+When [escalation](/guide/monitoring#escalation) is enabled, Sitepulse schedules follow-up reminders at the intervals you select (15 minutes through daily).
 
 Escalation reminders are delivered to notification configurations subscribed to **Issue detected**. No separate channel setup is required.
 
@@ -73,23 +73,23 @@ Each email notification typically includes:
 
 ### Slack
 
-**Slack app** — an OAuth connection: authorize the SitePulse app and pick a channel. No webhook URL is required.
+**Slack app** — an OAuth connection: authorize the Sitepulse app and pick a channel. No webhook URL is required.
 
 **Slack webhook** — a Slack incoming webhook URL, if you prefer webhook-based delivery.
 
 ### Discord
 
-Authorize the SitePulse Discord integration and choose a channel. SitePulse stores the incoming webhook returned by Discord and formats issue alerts as Discord embeds.
+Authorize the Sitepulse Discord integration and choose a channel. Sitepulse stores the incoming webhook returned by Discord and formats issue alerts as Discord embeds.
 
 ### Microsoft Teams
 
-A Microsoft Teams incoming webhook URL. SitePulse formats messages for Teams workflow webhooks.
+A Microsoft Teams incoming webhook URL. Sitepulse formats messages for Teams workflow webhooks.
 
 ### Generic webhook
 
-A URL of your own that SitePulse calls whenever an issue opens, escalates, or resolves. Use this for your own automation or third-party integrations.
+A URL of your own that Sitepulse calls whenever an issue opens, escalates, or resolves. Use this for your own automation or third-party integrations.
 
-If you're setting one up, the [Webhook notifications](/guide/webhooks) guide has everything a developer needs — the data SitePulse sends, headers, GET vs POST, and example handler code.
+If you're setting one up, the [Webhook notifications](/guide/webhooks) guide has everything a developer needs — the data Sitepulse sends, headers, GET vs POST, and example handler code.
 
 ### Testing a destination
 
@@ -97,7 +97,7 @@ Any webhook-based destination has a **Test** button. It sends a sample message s
 
 ### How secret URLs are stored
 
-Webhook URLs often embed a secret token — Slack incoming webhooks, Microsoft Teams workflow URLs, and your own signed endpoints all do. SitePulse protects these:
+Webhook URLs often embed a secret token — Slack incoming webhooks, Microsoft Teams workflow URLs, and your own signed endpoints all do. Sitepulse protects these:
 
 - **Encrypted at rest** — the destination is encrypted in the database, not just on disk. Anyone with raw database access still can't read it.
 - **Masked in the dashboard** — after you save, the URL is shown masked (the host plus the last few characters, e.g. `https://hooks.slack.com/****wXyz`). The full secret is never sent back to your browser.
@@ -107,7 +107,7 @@ Email addresses are shown in full (they aren't secrets), and connected **Slack**
 
 ### In-app notifications
 
-While using the SitePulse dashboard, issue lifecycle notifications appear in real time (subject to quiet time and your permissions).
+While using the Sitepulse dashboard, issue lifecycle notifications appear in real time (subject to quiet time and your permissions).
 
 ## Quiet time
 
@@ -116,5 +116,5 @@ While using the SitePulse dashboard, issue lifecycle notifications appear in rea
 Checks continue to run during quiet time — only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.
 
 <Card title="Webhook reference" icon="webhook" href="/guide/webhooks">
-  For developers: the data SitePulse sends, headers, GET vs POST, retries, and example handler code
+  For developers: the data Sitepulse sends, headers, GET vs POST, retries, and example handler code
 </Card>

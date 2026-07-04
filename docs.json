@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "SitePulse Docs",
-  "description": "Documentation for SitePulse. Set up uptime, SSL, DNS, broken-link, and performance monitoring, configure alerts, and use the API.",
+  "name": "Sitepulse Docs",
+  "description": "Documentation for Sitepulse. Set up uptime, SSL, DNS, broken-link, and performance monitoring, configure alerts, and use the API.",
   "colors": {
     "primary": "#7f22fe",
     "light": "#b5a2fa",
@@ -135,7 +135,7 @@
   "seo": {
     "indexing": "navigable",
     "metatags": {
-      "og:site_name": "SitePulse Docs",
+      "og:site_name": "Sitepulse Docs",
       "og:image": "https://sitepulse.dev/og/default.png",
       "og:locale": "en_GB",
       "twitter:card": "summary_large_image",

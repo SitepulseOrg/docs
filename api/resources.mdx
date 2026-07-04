@@ -238,7 +238,7 @@ These are fully qualified route URLs for the report endpoints on this site.
 Returned as `issue_settings` on Site resources. The response is resolved for the site, so it includes team defaults plus any per-site overrides.
 
 <Note>
-  PATCH requests use `monitoring_settings` in the request body. The response returns the normalized issue shape as `issue_settings`.
+  PATCH requests use `monitoring_settings` for cadence and rule overrides, and `dns_expected_records` for the per-site DNS baseline. The response returns the normalized issue shape as `issue_settings`.
 </Note>
 
 | Field | Type | Description |

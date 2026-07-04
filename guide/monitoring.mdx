@@ -3,7 +3,7 @@ title: "Monitoring settings"
 description: "Configure automatic check cadence, issue thresholds, escalation, quiet time, and team defaults"
 ---
 
-Monitoring settings are where you decide how often SitePulse checks your sites and what counts as a problem worth flagging. Owners and admins can change them; members can see them.
+Monitoring settings are where you decide how often Sitepulse checks your sites and what counts as a problem worth flagging. Owners and admins can change them; members can see them.
 
 <Info>
   Individual [sites](/guide/sites) can override cadence, thresholds, and other issue settings. Team defaults apply when a site has no override.
@@ -11,7 +11,7 @@ Monitoring settings are where you decide how often SitePulse checks your sites a
 
 ## Automatic check cadence
 
-Each check tool (Status, SSL, DNS, Broken Links, Performance) has its own cadence — how often SitePulse runs **automatic** checks across the team's sites.
+Each check tool (Status, SSL, DNS, Broken Links, Performance) has its own cadence — how often Sitepulse runs **automatic** checks across the team's sites.
 
 Presets range from every minute to every week. Your [plan](/guide/billing#plans) sets the **fastest** you can go: 10 minutes on Starter, 5 minutes on Growth, 1 minute on Agency.
 
@@ -19,9 +19,13 @@ Broken-link and performance checks are heavier, so the fastest they'll run is ev
 
 Change a site's checks or cadence and its schedule updates straight away — no need to do anything else.
 
+<Note>
+  Each site runs its checks at its own consistent moment within the interval — one site's every-minute status check might always run at second :17, another's at :43. The gap between checks is always exactly one cadence; spreading sites out keeps checks fast and reliable for everyone.
+</Note>
+
 ## Issue rules {#issue-settings}
 
-Issue rules are what turn a failing check into an alert. They decide when SitePulse **opens** an issue, when it considers the problem **resolved**, and when notifications go out. Your team defaults apply everywhere unless a site sets its own.
+Issue rules are what turn a failing check into an alert. They decide when Sitepulse **opens** an issue, when it considers the problem **resolved**, and when notifications go out. Your team defaults apply everywhere unless a site sets its own.
 
 ### Request header
 
@@ -31,7 +35,7 @@ Format: header **name** and **value** (for example `Authorization` and a bearer 
 
 Sites can [override this header](/guide/sites#site-specific-overrides) individually.
 
-For broken-link checks, SitePulse sends the header only to URLs on the monitored site's host. It does not send the header to external links found during a crawl.
+For broken-link checks, Sitepulse sends the header only to URLs on the monitored site's host. It does not send the header to external links found during a crawl.
 
 ### Enabled checks
 
@@ -72,9 +76,9 @@ Status rules control when uptime incidents open and resolve:
 |---------|---------|
 | **Status codes that count as an incident** | HTTP response codes that count as failed status checks |
 | **Failures to open** | Consecutive failed status checks required before an issue opens |
-| **Confirmation retry (minutes)** | How soon SitePulse reruns a failed check to confirm the failure before opening an issue |
+| **Confirmation retry (minutes)** | How soon Sitepulse reruns a failed check to confirm the failure before opening an issue |
 | **Successes to resolve** | Consecutive successful checks required before the issue is marked recovered |
-| **Follow-up while open (minutes)** | How often SitePulse rechecks an active uptime incident until it recovers |
+| **Follow-up while open (minutes)** | How often Sitepulse rechecks an active uptime incident until it recovers |
 
 To set **Failures to open** quickly, pick a preset — **Instant** (1 failed check), **Aggressive** (2 failed checks), or **Conservative** (3 failed checks) — or choose **Custom** to enter your own number. The confirmation retry, successes to resolve, and follow-up timing are set separately.
 
@@ -84,7 +88,7 @@ The selectable response codes are `400`, `401`, `403`, `404`, `405`, `408`, `410
 
 ### SSL thresholds
 
-The **expiry window (days)** controls how many days before certificate expiry SitePulse opens an SSL issue. SitePulse also opens an issue when a certificate is invalid, missing, or cannot be verified, regardless of the expiry window.
+The **expiry window (days)** controls how many days before certificate expiry Sitepulse opens an SSL issue. Sitepulse also opens an issue when a certificate is invalid, missing, or cannot be verified, regardless of the expiry window.
 
 ### Performance thresholds
 
@@ -108,9 +112,9 @@ The performance page URL must belong to the monitored site's domain. Set it per 
 | **Hard failures only** | Open incidents only when DNS lookups fail with a hard error |
 | **Monitored record types** | Which record types (`A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`) are compared for changes on each check |
 
-SitePulse stores a baseline from each site's first DNS check. To define explicit expected values instead of the first-check baseline, set [DNS expected records per site](/guide/sites#site-specific-overrides).
+Sitepulse stores a baseline from each site's first DNS check. To define explicit expected values instead of the first-check baseline, set [DNS expected records per site](/guide/sites#site-specific-overrides).
 
-SitePulse opens a DNS issue when:
+Sitepulse opens a DNS issue when:
 
 - A DNS lookup **hard fails**, or
 - **Hard failures only** is off and a monitored record type is missing or changed from the site's expected values

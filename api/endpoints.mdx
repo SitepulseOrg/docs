@@ -137,7 +137,7 @@ Tool-specific fields match [the monitoring settings schema](#monitoring-settings
 </Warning>
 
 <Note>
-  DNS **expected records** are not writable through this endpoint. Configure them on a site's edit page or through per-site `monitoring_settings.tools.dns.settings.expected_records` on `PATCH /sites/{site}`.
+  DNS **expected records** are not writable through this endpoint. Configure them on a site's edit page or with `dns_expected_records` on `POST /teams/{team}/sites` or `PATCH /sites/{site}`.
 </Note>
 
 **Example:**
@@ -257,7 +257,6 @@ The same nested shape is used for team monitoring updates and per-site overrides
 | `tools.dns.cadence_minutes` | integer | cadence preset | Automatic DNS cadence |
 | `tools.dns.settings.hard_failures_only` | boolean | — | Open only on lookup failures when true |
 | `tools.dns.settings.monitored_record_types` | string[] | `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT` | Record types to monitor for changes |
-| `tools.dns.settings.expected_records` | object | per-site only | Expected DNS records by type |
 | `quiet_time.enabled` | boolean | team only | Suppress outbound issue alerts during a daily window |
 | `quiet_time.starts_at` | string | `H:i` | Quiet time start |
 | `quiet_time.ends_at` | string | `H:i`, different from start | Quiet time end |
@@ -265,7 +264,7 @@ The same nested shape is used for team monitoring updates and per-site overrides
 | `escalation.intervals` | integer[] | `0`, `15`, `30`, `60`, `360`, `1440` | Reminder schedule in minutes (`0` sends immediately) |
 | `snoozed_until` | string \| null | per-site only | Pause issue opening for one site until this datetime |
 
-For broken-link crawls, SitePulse sends `request_header` only to URLs on the monitored site's host. External links do not receive it.
+For broken-link crawls, Sitepulse sends `request_header` only to URLs on the monitored site's host. External links do not receive it.
 
 At site level, provide both `request_header.name` and `request_header.value` to replace the team header. Omit the object or leave it empty to inherit the team value.
 
@@ -311,6 +310,7 @@ Create a site.
 | `notes` | no | Team notes |
 | `js_rendered` | no | Boolean; broken-link JS rendering |
 | `monitoring_settings` | no | Per-site monitoring overrides using [the monitoring settings schema](#monitoring-settings-fields) |
+| `dns_expected_records` | no | Per-site expected DNS records by type. Omit to use the first DNS check as the baseline. |
 
 <Note>
   The API accepts omitted `name`. The dashboard add-site form requires a display name and exposes detailed overrides on the site edit page after creation.
@@ -326,6 +326,9 @@ Create a site.
 {
   "url": "https://example.com",
   "name": "Example",
+  "dns_expected_records": {
+    "A": ["203.0.113.1"]
+  },
   "monitoring_settings": {
     "tools": {
       "status": {
@@ -395,12 +398,16 @@ Update a site. Sends the full site shape expected by the dashboard update form (
 | `pinned` | Boolean pin state |
 | `js_rendered` | Broken-link JS mode |
 | `monitoring_settings` | Per-site monitoring overrides using [the monitoring settings schema](#monitoring-settings-fields) |
+| `dns_expected_records` | Per-site expected DNS records by type. Send `{}` or `null` to clear the baseline. |
 
 **Example:**
 
 ```json
 {
   "url": "https://example.com",
+  "dns_expected_records": {
+    "A": ["203.0.113.1"]
+  },
   "monitoring_settings": {
     "tools": {
       "status": {
@@ -424,9 +431,7 @@ Update a site. Sends the full site shape expected by the dashboard update form (
         "cadence_minutes": 1440,
         "settings": {
           "hard_failures_only": false,
-          "expected_records": {
-            "A": ["203.0.113.1"]
-          }
+          "monitored_record_types": ["A", "TXT"]
         }
       }
     },

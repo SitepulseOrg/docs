@@ -3,7 +3,7 @@ title: "API Overview"
 description: "Programmatic access to teams, sites, checks, reports, and issues"
 ---
 
-The SitePulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v1`. Responses use stable resource shapes designed for integrations and automation.
+The Sitepulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v1`. Responses use stable resource shapes designed for integrations and automation.
 
 ## What you can do with the API
 
@@ -33,7 +33,7 @@ All API endpoints use this base URL:
 https://app.sitepulse.dev/api/v1
 ```
 
-Replace `app.sitepulse.dev` with your SitePulse installation hostname if using a self-hosted instance.
+Replace `app.sitepulse.dev` with your Sitepulse installation hostname if using a self-hosted instance.
 
 <Note>
   All paths in this documentation are relative to the base URL unless noted otherwise.
@@ -44,18 +44,18 @@ Replace `app.sitepulse.dev` with your SitePulse installation hostname if using a
 Import a ready-made collection to explore the API without writing requests by hand.
 
 <CardGroup cols={2}>
-  <Card title="API collection" icon="download" href="/postman/SitePulse-v1.postman_collection.json">
+  <Card title="API collection" icon="download" href="/postman/Sitepulse-v1.postman_collection.json">
     Every public `/api/v1` endpoint
   </Card>
-  <Card title="Environment" icon="sliders" href="/postman/SitePulse.postman_environment.json">
+  <Card title="Environment" icon="sliders" href="/postman/Sitepulse.postman_environment.json">
     `base_url` and `auth_token` variables
   </Card>
 </CardGroup>
 
 <AccordionGroup>
   <Accordion title="Import and configure">
-    1. In Postman, click **Import** and upload [SitePulse-v1.postman_collection.json](/postman/SitePulse-v1.postman_collection.json).
-    2. Set `auth_token` to your [personal access token](/guide/account-settings#api-tokens). You can set it on the collection's **Variables** tab, or import [SitePulse.postman_environment.json](/postman/SitePulse.postman_environment.json) and set it there. Leave `base_url` as `https://app.sitepulse.dev` unless you use a self-hosted instance.
+    1. In Postman, click **Import** and upload [Sitepulse-v1.postman_collection.json](/postman/Sitepulse-v1.postman_collection.json).
+    2. Set `auth_token` to your [personal access token](/guide/account-settings#api-tokens). You can set it on the collection's **Variables** tab, or import [Sitepulse.postman_environment.json](/postman/Sitepulse.postman_environment.json) and set it there. Leave `base_url` as `https://app.sitepulse.dev` unless you use a self-hosted instance.
     3. Every request inherits **Bearer** auth from the collection, so there is nothing else to configure per request.
     4. Send **Get current user and teams** (`GET /api/v1/me`) to confirm authentication, then **List teams** (`GET /api/v1/teams`) to find your team id for team-scoped requests.
   </Accordion>
@@ -72,10 +72,10 @@ Import a ready-made collection to explore the API without writing requests by ha
 
 <Steps>
   <Step title="Create an API token">
-    In the SitePulse dashboard, open **Settings → API tokens**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
+    In the Sitepulse dashboard, open **Settings → API tokens**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
     
     <Warning>
-      Copy the token when it is shown. SitePulse does not display it again.
+      Copy the token when it is shown. Sitepulse does not display it again.
     </Warning>
   </Step>
   
@@ -506,7 +506,7 @@ Only `/api/v1` is documented here. Breaking changes will ship under a new versio
 
 Before using the API, ensure you have:
 
-- A verified SitePulse user account (email verified)
+- A verified Sitepulse user account (email verified)
 - An active subscription on the team you are accessing (inactive billing returns `402`)
 - API token scopes that cover the operation (missing scope returns `403`)
 - Team membership and role permissions for the underlying action (returns `403` or `404` as appropriate)
@@ -526,7 +526,7 @@ Before using the API, ensure you have:
   <Card title="Endpoints" icon="list" href="/api/endpoints">
     Complete HTTP method and path reference
   </Card>
-  <Card title="Postman collection" icon="download" href="/postman/SitePulse-v1.postman_collection.json">
+  <Card title="Postman collection" icon="download" href="/postman/Sitepulse-v1.postman_collection.json">
     Import v1 requests and environment template
   </Card>
   <Card title="Check Results" icon="check" href="/api/check-results">

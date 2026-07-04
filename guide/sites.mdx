@@ -26,7 +26,7 @@ The dashboard requires a URL and site name:
 
 You can't add the same site to a team twice, and your plan sets how many sites you can monitor.
 
-As soon as you add a site, SitePulse grabs its favicon and screenshot, runs its first checks, and starts monitoring on a regular schedule.
+As soon as you add a site, Sitepulse grabs its favicon and screenshot, runs its first checks, and starts monitoring on a regular schedule.
 
 ### Bulk import
 
@@ -64,7 +64,7 @@ The pulse is a small animated dot that summarizes a site's latest Status, SSL, B
 | **Warning** (amber) | One to three checks have problems |
 | **Critical** (red) | All four checks have problems |
 
-SitePulse counts a problem when:
+Sitepulse counts a problem when:
 
 - The latest status check reports the site as down
 - The latest SSL check reports an invalid certificate
@@ -141,9 +141,11 @@ Every site keeps uptime and performance reports. You'll see summaries in the das
 
 Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides only when one site needs different behavior.
 
+DNS expected records are stored on the site itself. Resetting monitoring overrides does not clear that DNS baseline.
+
 <AccordionGroup>
   <Accordion title="Request header">
-    Send a different HTTP header when Status, Broken Links, and Performance checks fetch this site. Both the name and value are required. If you leave them empty, the site inherits the team header. For broken-link crawls, SitePulse sends the header only to URLs on this site's host and not to external links.
+    Send a different HTTP header when Status, Broken Links, and Performance checks fetch this site. Both the name and value are required. If you leave them empty, the site inherits the team header. For broken-link crawls, Sitepulse sends the header only to URLs on this site's host and not to external links.
   </Accordion>
   <Accordion title="Check cadence">
     Check one or more tools more or less often than the team default.
@@ -161,7 +163,7 @@ Most sites inherit [team monitoring defaults](/guide/monitoring). Use overrides 
     URL path patterns the broken-link crawler skips on this site (for example `/admin`, `/cart`, `/wp-admin/*`). Useful for admin areas or dynamic URL spaces that should not affect incident detection.
   </Accordion>
   <Accordion title="DNS expected records">
-    Explicit expected DNS records by type and value (for example `A` → `203.0.113.1`). When unset, SitePulse uses the first DNS check as the baseline for [record change monitoring](/guide/monitoring#dns-record-monitoring).
+    Explicit expected DNS records by type and value (for example `A` -> `203.0.113.1`). You can add values by hand or pull them from the latest DNS check. When unset, Sitepulse uses the first DNS check as the baseline for [record change monitoring](/guide/monitoring#dns-record-monitoring).
   </Accordion>
   <Accordion title="JavaScript rendering">
     Enable for JavaScript-heavy sites so broken-link checks see the rendered page. Leave off for server-rendered sites (WordPress, Ghost, plain HTML).
