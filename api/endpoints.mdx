@@ -25,7 +25,7 @@ Returns the authenticated user and all teams they belong to.
 ```json
 {
   "data": {
-    "user": { "id": 1, "name": "...", "email": "...", "email_verified_at": "..." },
+    "user": { "name": "...", "email": "...", "email_verified_at": "..." },
     "teams": [ /* Team resources with limits */ ]
   }
 }
@@ -44,7 +44,7 @@ List teams for the authenticated user.
 
 ### GET /teams/\{team\}
 
-Show one team by numeric id.
+Show one team by UUID.
 
 **Scope:** `teams:read`  
 **Team permission:** `view` on team
@@ -226,26 +226,26 @@ The same nested shape is used for team monitoring updates and per-site overrides
 |-------|------|--------|-------------|
 | `request_header.name` | string \| null | valid HTTP header name, max 255 chars | Header name sent by Status, Broken Links, and Performance checks |
 | `request_header.value` | string \| null | max 2,000 chars, no newlines | Header value sent by Status, Broken Links, and Performance checks |
-| `tools.status.enabled` | boolean | — | Run Status automatically and allow status issues |
+| `tools.status.enabled` | boolean | - | Run Status automatically and allow status issues |
 | `tools.status.cadence_minutes` | integer | cadence preset | Automatic Status cadence |
 | `tools.status.settings.incident_status_codes` | integer[] | supported status-code options | Response codes that count as failed status checks; request failures always count |
 | `tools.status.settings.failures_to_open` | integer | min 1 | Failed status checks before opening an issue |
 | `tools.status.settings.successes_to_resolve` | integer | min 1 | Successful checks before resolving |
 | `tools.status.settings.confirmation_retry_minutes` | integer | 1-5 | Confirmation retry delay |
 | `tools.status.settings.incident_follow_up_minutes` | integer | 1-60 | Active incident follow-up interval |
-| `tools.ssl.enabled` | boolean | — | Run SSL automatically and allow SSL issues |
+| `tools.ssl.enabled` | boolean | - | Run SSL automatically and allow SSL issues |
 | `tools.ssl.cadence_minutes` | integer | cadence preset | Automatic SSL cadence |
 | `tools.ssl.settings.expiry_days` | integer | min 1 | Days before expiry to alert |
 | `tools.ssl.settings.failures_to_open` | integer | min 1 | Failed SSL checks before opening an issue |
 | `tools.ssl.settings.confirmation_retry_minutes` | integer | 1-5 | Confirmation retry delay |
-| `tools.broken-links.enabled` | boolean | — | Run Broken Links automatically and allow broken-link issues |
+| `tools.broken-links.enabled` | boolean | - | Run Broken Links automatically and allow broken-link issues |
 | `tools.broken-links.cadence_minutes` | integer | cadence preset, 12-hour floor | Automatic Broken Links cadence |
 | `tools.broken-links.settings.min_broken_count` | integer | min 1 | Broken URLs to breach |
 | `tools.broken-links.settings.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches before opening |
 | `tools.broken-links.settings.ignore_paths` | string[] | max 255 chars each | Crawl exclusion path patterns |
-| `tools.broken-links.settings.ignore_external_links` | boolean | — | Exclude links outside the site host |
-| `tools.broken-links.settings.ignore_redirects` | boolean | — | Exclude redirect responses |
-| `tools.performance.enabled` | boolean | — | Run Performance automatically and allow performance issues |
+| `tools.broken-links.settings.ignore_external_links` | boolean | - | Exclude links outside the site host |
+| `tools.broken-links.settings.ignore_redirects` | boolean | - | Exclude redirect responses |
+| `tools.performance.enabled` | boolean | - | Run Performance automatically and allow performance issues |
 | `tools.performance.cadence_minutes` | integer | cadence preset, 12-hour floor | Automatic Performance cadence |
 | `tools.performance.settings.url` | string \| null | same site domain | Page URL to audit instead of the site root |
 | `tools.performance.settings.min_score` | integer | 1-100 | Minimum performance score |
@@ -253,24 +253,22 @@ The same nested shape is used for team monitoring updates and per-site overrides
 | `tools.performance.settings.max_ttfb_ms` | integer \| null | min 1 | Max time to first byte |
 | `tools.performance.settings.max_load_time_seconds` | integer \| null | min 1 | Max Time to Interactive |
 | `tools.performance.settings.consecutive_breaches_to_open` | integer | min 1 | Consecutive breaches before opening |
-| `tools.dns.enabled` | boolean | — | Run DNS automatically and allow DNS issues |
+| `tools.dns.enabled` | boolean | - | Run DNS automatically and allow DNS issues |
 | `tools.dns.cadence_minutes` | integer | cadence preset | Automatic DNS cadence |
-| `tools.dns.settings.hard_failures_only` | boolean | — | Open only on lookup failures when true |
+| `tools.dns.settings.hard_failures_only` | boolean | - | Open only on lookup failures when true |
 | `tools.dns.settings.monitored_record_types` | string[] | `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT` | Record types to monitor for changes |
 | `quiet_time.enabled` | boolean | team only | Suppress outbound issue alerts during a daily window |
 | `quiet_time.starts_at` | string | `H:i` | Quiet time start |
 | `quiet_time.ends_at` | string | `H:i`, different from start | Quiet time end |
 | `escalation.enabled` | boolean | team only | Send reminders for active issues |
 | `escalation.intervals` | integer[] | `0`, `15`, `30`, `60`, `360`, `1440` | Reminder schedule in minutes (`0` sends immediately) |
-| `snoozed_until` | string \| null | per-site only | Pause issue opening for one site until this datetime |
-
 For broken-link crawls, Sitepulse sends `request_header` only to URLs on the monitored site's host. External links do not receive it.
 
 At site level, provide both `request_header.name` and `request_header.value` to replace the team header. Omit the object or leave it empty to inherit the team value.
 
 ## Sites
 
-Team-scoped site management uses numeric `{team}` id. Individual site routes use `{site}` uuid.
+Team-scoped site management uses the team UUID as `{team}`. Individual site routes use `{site}` uuid.
 
 ### GET /teams/\{team\}/sites
 
@@ -438,8 +436,7 @@ Update a site. Sends the full site shape expected by the dashboard update form (
     "request_header": {
       "name": "X-Monitoring-Token",
       "value": "site-secret"
-    },
-    "snoozed_until": null
+    }
   }
 }
 ```
@@ -481,7 +478,7 @@ Paginated check history for a site.
 
 ### POST /sites/\{site\}/checks
 
-Queue one or more on-demand checks. Every check queued through the API is an on-demand check and counts against your team's monthly on-demand check quota.
+Queue one or more on-demand checks. Every check queued through the API is an on-demand check, counts against your team's monthly on-demand check quota, and is subject to API cadence protection.
 
 **Scope:** `checks:run`  
 **Team permission:** `createCheck`  
@@ -499,7 +496,7 @@ Queue one or more on-demand checks. Every check queued through the API is an on-
 
 - Each tool must be enabled on the site
 - The tool must not already have a `pending` on-demand check on the site
-- The same tool can only be run on demand again after its minimum on-demand cadence has passed for the site
+- Through the API, the same tool can only be queued again after its minimum on-demand cadence has passed for the site
 - Automatic checks do not block on-demand runs
 
 **Example:**
@@ -516,7 +513,7 @@ Queue one or more on-demand checks. Every check queued through the API is an on-
 |---------------------------|-------|
 | `Your current plan has reached its monthly on-demand check limit.` | The team has used its monthly on-demand check quota |
 | `This site already has a pending {tool} check.` | An on-demand check of that tool is still running on the site |
-| `{Tool} checks can only be run every {cadence} for this site.` | The tool was run on demand too recently; wait for the minimum on-demand cadence |
+| `{Tool} checks can only be run every {cadence} for this site.` | The tool was queued through the API too recently; wait for the minimum on-demand cadence |
 
 <Info>
   Poll `GET /checks/{check}` until `status` is terminal. See [Check results](/api/check-results).
@@ -574,11 +571,11 @@ Paginated list of issues across teams the user can view.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `team` | integer | — | Limit to one team id |
+| `team` | string | - | Limit to one team UUID |
 | `status` | string | `active` | `active` (open + acknowledged), `open`, `acknowledged`, or `resolved` |
-| `site` | string | — | Site uuid |
-| `tool` | string | — | Check tool (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
-| `severity` | string | — | `critical`, `warning`, `info` |
+| `site` | string | - | Site uuid |
+| `tool` | string | - | Check tool (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
+| `severity` | string | - | `critical`, `warning`, `info` |
 | `page`, `per_page` | integer | | Pagination (max 100 per page) |
 
 **Response `200`:** Paginated collection of [Issue](/api/resources#issue) resources.

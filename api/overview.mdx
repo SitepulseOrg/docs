@@ -15,7 +15,7 @@ The Sitepulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v
     Create and manage monitored sites
   </Card>
   <Card title="Checks" icon="magnifying-glass">
-    Queue on-demand checks and read results
+    Create on-demand checks and read results
   </Card>
   <Card title="Reports" icon="chart-line">
     Pull uptime and performance reports
@@ -33,39 +33,8 @@ All API endpoints use this base URL:
 https://app.sitepulse.dev/api/v1
 ```
 
-Replace `app.sitepulse.dev` with your Sitepulse installation hostname if using a self-hosted instance.
-
 <Note>
   All paths in this documentation are relative to the base URL unless noted otherwise.
-</Note>
-
-## Postman collection
-
-Import a ready-made collection to explore the API without writing requests by hand.
-
-<CardGroup cols={2}>
-  <Card title="API collection" icon="download" href="/postman/Sitepulse-v1.postman_collection.json">
-    Every public `/api/v1` endpoint
-  </Card>
-  <Card title="Environment" icon="sliders" href="/postman/Sitepulse.postman_environment.json">
-    `base_url` and `auth_token` variables
-  </Card>
-</CardGroup>
-
-<AccordionGroup>
-  <Accordion title="Import and configure">
-    1. In Postman, click **Import** and upload [Sitepulse-v1.postman_collection.json](/postman/Sitepulse-v1.postman_collection.json).
-    2. Set `auth_token` to your [personal access token](/guide/account-settings#api-tokens). You can set it on the collection's **Variables** tab, or import [Sitepulse.postman_environment.json](/postman/Sitepulse.postman_environment.json) and set it there. Leave `base_url` as `https://app.sitepulse.dev` unless you use a self-hosted instance.
-    3. Every request inherits **Bearer** auth from the collection, so there is nothing else to configure per request.
-    4. Send **Get current user and teams** (`GET /api/v1/me`) to confirm authentication, then **List teams** (`GET /api/v1/teams`) to find your team id for team-scoped requests.
-  </Accordion>
-  <Accordion title="Path variables">
-    Requests use Postman path variables such as `:team`, `:site`, `:check`, and `:issue`. Each is pre-defined with a description on the request's **Params** tab — fill in the value there before sending. Use the numeric team id from **List teams**, and the UUIDs returned by create/list responses for site, check, and issue paths.
-  </Accordion>
-</AccordionGroup>
-
-<Note>
-  The collection covers every public `/api/v1` endpoint.
 </Note>
 
 ## Quick start
@@ -73,15 +42,15 @@ Import a ready-made collection to explore the API without writing requests by ha
 <Steps>
   <Step title="Create an API token">
     In the Sitepulse dashboard, open **Settings → API tokens**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
-    
+
     <Warning>
       Copy the token when it is shown. Sitepulse does not display it again.
     </Warning>
   </Step>
-  
+
   <Step title="Call the API">
     Use the token in the `Authorization` header:
-    
+
     <CodeGroup>
 
     ```bash cURL
@@ -162,10 +131,10 @@ Import a ready-made collection to explore the API without writing requests by ha
 
     </CodeGroup>
   </Step>
-  
+
   <Step title="Work inside a team">
     Most write operations require an active team context. Team-scoped routes resolve the team from the URL (`/teams/{team}/sites`) or from the site or check in the path.
-    
+
     <CodeGroup>
 
     ```bash cURL
@@ -246,14 +215,14 @@ Import a ready-made collection to explore the API without writing requests by ha
 
     </CodeGroup>
   </Step>
-  
+
   <Step title="Create a site and run a check">
     Only `url` is required. New sites inherit the team's monitoring defaults; to enable specific tools or set cadences at creation, send a [`monitoring_settings`](/api/endpoints#monitoring-settings-fields) object.
 
     <CodeGroup>
 
     ```bash cURL
-    TEAM_ID=1
+    TEAM_ID=01JZ7VQ3J7Y5S8N9P0Q1R2S3T4
 
     # Create a site
     curl -sS -X POST \
@@ -285,7 +254,7 @@ Import a ready-made collection to explore the API without writing requests by ha
       'Content-Type': 'application/json',
     };
 
-    const teamId = 1;
+    const teamId = '01JZ7VQ3J7Y5S8N9P0Q1R2S3T4';
 
     // Create a site
     const siteResponse = await fetch(
@@ -329,11 +298,11 @@ Import a ready-made collection to explore the API without writing requests by ha
         'Content-Type': 'application/json',
     }
 
-    team_id = 1
+    team_uuid = '01JZ7VQ3J7Y5S8N9P0Q1R2S3T4'
 
     # Create a site
     site = requests.post(
-        f'https://app.sitepulse.dev/api/v1/teams/{team_id}/sites',
+        f'https://app.sitepulse.dev/api/v1/teams/{team_uuid}/sites',
         headers=headers,
         json={
             'url': 'https://example.com',
@@ -362,11 +331,11 @@ Import a ready-made collection to explore the API without writing requests by ha
         "Content-Type":  "application/json",
     }
 
-    teamID := 1
+    teamID := "01JZ7VQ3J7Y5S8N9P0Q1R2S3T4"
 
     // Create a site
     siteBody := strings.NewReader(`{"url":"https://example.com","name":"Example"}`)
-    siteReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://app.sitepulse.dev/api/v1/teams/%d/sites", teamID), siteBody)
+    siteReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("https://app.sitepulse.dev/api/v1/teams/%s/sites", teamID), siteBody)
     for key, value := range headers {
         siteReq.Header.Set(key, value)
     }
@@ -404,10 +373,10 @@ Import a ready-made collection to explore the API without writing requests by ha
       'Content-Type' => 'application/json',
     }
 
-    team_id = 1
+    team_uuid = '01JZ7VQ3J7Y5S8N9P0Q1R2S3T4'
 
     # Create a site
-    site_uri = URI("https://app.sitepulse.dev/api/v1/teams/#{team_id}/sites")
+    site_uri = URI("https://app.sitepulse.dev/api/v1/teams/#{team_uuid}/sites")
     site_request = Net::HTTP::Post.new(site_uri)
     headers.each { |key, value| site_request[key] = value }
     site_request.body = {
@@ -456,7 +425,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     $ch = curl_init("https://app.sitepulse.dev/api/v1/teams/{$teamId}/sites");
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
-        CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+        CURLOPT_HTTPHEADER => $headers,
         CURLOPT_POSTFIELDS => json_encode([
             'url' => 'https://example.com',
             'name' => 'Example',
@@ -470,7 +439,7 @@ Import a ready-made collection to explore the API without writing requests by ha
     $ch = curl_init("https://app.sitepulse.dev/api/v1/sites/{$site['data']['uuid']}/checks");
     curl_setopt_array($ch, [
         CURLOPT_POST => true,
-        CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+        CURLOPT_HTTPHEADER => $headers,
         CURLOPT_POSTFIELDS => json_encode(['tools' => ['status']]),
         CURLOPT_RETURNTRANSFER => true,
     ]);
@@ -526,9 +495,6 @@ Before using the API, ensure you have:
   <Card title="Endpoints" icon="list" href="/api/endpoints">
     Complete HTTP method and path reference
   </Card>
-  <Card title="Postman collection" icon="download" href="/postman/Sitepulse-v1.postman_collection.json">
-    Import v1 requests and environment template
-  </Card>
   <Card title="Check Results" icon="check" href="/api/check-results">
     Result object shapes per check tool
   </Card>
@@ -536,7 +502,7 @@ Before using the API, ensure you have:
 
 ## Related guides
 
-- [Account settings - API tokens](/guide/account-settings#api-tokens)
+- [API authentication](/api/authentication)
 - [Managing sites](/guide/sites)
 - [Using check tools](/guide/checks)
 - [Monitoring settings](/guide/monitoring)

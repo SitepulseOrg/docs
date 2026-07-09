@@ -1,9 +1,9 @@
 ---
 title: "Billing and plans"
-description: "Manage plan selection, Stripe billing, invoices, and plan limits"
+description: "Manage plan selection, Stripe billing, and plan limits"
 ---
 
-Billing works per team — each one has its own plan, limits, payment method, and invoices, so you can bill a client team separately from your own.
+Billing works per team - each one has its own plan and limits, so you can bill a client team separately from your own.
 
 <Note>
   Only the team owner can manage billing.
@@ -11,7 +11,7 @@ Billing works per team — each one has its own plan, limits, payment method, an
 
 ## Billing page
 
-Open **Teams -> Manage current team -> Billing** to review the current plan, usage, payment method, invoices, and available upgrades or downgrades.
+Open **Teams -> Manage current team -> Billing** to review the current plan, usage, and available upgrades or downgrades.
 
 From this page, owners can:
 
@@ -19,17 +19,16 @@ From this page, owners can:
 - Start checkout for a plan
 - Switch plans or billing period
 - Open the Stripe billing portal
-- Download invoice history when invoices are available
 
 ## Plans
 
 All plans include Status, SSL, DNS, Broken Links, and Performance checks.
 
-| Plan | Monthly | Yearly | Sites | Seats | On-demand checks / month | Fastest cadence | History retention | Priority queue |
-|------|---------|--------|-------|-------|-----------------------|-----------------|-------------------|----------------|
-| **Starter** | $10 | $100 | 5 | 3 | 50 | 10 minutes | 30 days | No |
-| **Growth** | $25 | $250 | 25 | 10 | 250 | 5 minutes | 90 days | Yes |
-| **Agency** | $50 | $500 | 100 | 25 | 1000 | 1 minute | 365 days | Yes |
+| Plan | Sites | Seats | On-demand checks / month | Fastest cadence | History retention |
+|------|-------|-------|-----------------------|-----------------|-------------------|
+| **Starter** | 5 | 3 | 50 | 10 minutes | 30 days |
+| **Growth** | 25 | 10 | 250 | 5 minutes | 90 days |
+| **Agency** | 100 | 25 | 1000 | 1 minute | 365 days |
 
 <Info>
   Broken-link and performance checks have an additional fastest cadence floor of 12 hours. If your plan allows checks every 1 or 5 minutes, those faster intervals apply to tools such as Status, SSL, and DNS.
@@ -44,17 +43,12 @@ Plan limits affect:
 - Monthly on-demand check runs
 - Fastest automatic check cadence
 - Check history retention
-- Whether queued checks use priority processing
 
-Once you hit a limit, the action that would go over it is simply unavailable — you can't add a site when you're at your site limit, invite someone when seats are full, or run more on-demand checks once you've used this month's quota. Upgrading lifts the limit straight away.
+Once you hit a limit, the action that would go over it is simply unavailable - you can't add a site when you're at your site limit, invite someone when seats are full, or run more on-demand checks once you've used this month's quota. Upgrading lifts the limit straight away.
 
 ## When billing lapses
 
 If a team's plan becomes inactive, its features pause until billing is sorted out: the dashboard switches to a limited, read-only view, and API requests for that team are turned away (with a `402 Payment Required`, if you're calling the API). Sorting out payment restores access right away.
-
-## Invoices and payment method
-
-The billing page shows the current payment method and recent invoices when Stripe returns them. Use **Manage in Stripe** to update payment details, cancel, or handle other billing portal actions.
 
 ## Related guides
 

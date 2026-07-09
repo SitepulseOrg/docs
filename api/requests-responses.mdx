@@ -3,7 +3,7 @@ title: "Requests and Responses"
 description: "JSON conventions, pagination, team context, errors, and rate limits"
 ---
 
-The Sitepulse API uses consistent JSON formatting, standard HTTP status codes, and Laravel pagination conventions.
+The Sitepulse API uses consistent JSON formatting, standard HTTP status codes, and pagination conventions.
 
 ## Content type
 
@@ -32,7 +32,7 @@ Some endpoints (for example `GET /me`) nest multiple objects inside `data`:
 ```json
 {
   "data": {
-    "user": { "id": 1, "name": "...", "email": "..." },
+    "user": { "name": "...", "email": "..." },
     "teams": [ ... ]
   }
 }
@@ -40,7 +40,7 @@ Some endpoints (for example `GET /me`) nest multiple objects inside `data`:
 
 ### Collections
 
-Collections use Laravel's paginator format:
+Collections use standard paginator format:
 
 ```json
 {
@@ -81,25 +81,26 @@ Datetime fields on resource objects (such as `created_at`, `updated_at`, `opened
 
 ## Identifiers
 
-Different resources use different identifier types:
+Resources use UUID strings in API paths:
 
 | Resource | Route key | Format | Example path |
 |----------|-----------|--------|--------------|
-| Team | Numeric `id` | Integer | `/teams/1` |
+| Team | `uuid` | UUID string | `/teams/{team-uuid}` |
 | Site | `uuid` | UUID string | `/sites/{uuid}` |
 | Check | `uuid` | UUID string | `/checks/{uuid}` |
 | Issue | `uuid` | UUID string | `/issues/{uuid}` |
-| User | Numeric `id` | Integer | Appears on nested user objects |
+
+`{team-uuid}` is only a placeholder label. It is a UUID, named separately in examples so it is not confused with a site, check, or issue UUID.
 
 ## Team context
 
 For routes under a team, site, check, or issue, middleware resolves the team and sets it as the token user's current team for that request. This drives plan-limit checks and policies that depend on `currentTeam`.
 
 <Info>
-  You do not send a separate `X-Team-Id` header. Scope operations with the team id or site uuid in the path.
+  You do not send a separate `X-Team-Id` header. Scope operations with the team UUID or site uuid in the path.
 </Info>
 
-For `GET /issues`, filter to one team with `?team={team_id}`. Without `team`, results include all teams where the user has `viewIssues` permission.
+For `GET /issues`, filter to one team with `?team={team-uuid}`. Without `team`, results include all teams where the user has `viewIssues` permission.
 
 ## Pagination
 
@@ -107,7 +108,7 @@ List endpoints accept these query parameters:
 
 | Query | Type | Default | Max |
 |-------|------|---------|-----|
-| `page` | integer ≥ 1 | `1` | — |
+| `page` | integer ≥ 1 | `1` | - |
 | `per_page` | integer | `25` | `100` |
 
 ### Example
@@ -118,12 +119,12 @@ List endpoints accept these query parameters:
 curl -sS \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Accept: application/json" \
-  "https://app.sitepulse.dev/api/v1/teams/1/sites?page=2&per_page=50"
+  "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites?page=2&per_page=50"
 ```
 
 ```javascript JavaScript
 const response = await fetch(
-  'https://app.sitepulse.dev/api/v1/teams/1/sites?page=2&per_page=50',
+  'https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites?page=2&per_page=50',
   {
     headers: {
       Authorization: 'Bearer YOUR_TOKEN',
@@ -138,7 +139,7 @@ const data = await response.json();
 import requests
 
 response = requests.get(
-    'https://app.sitepulse.dev/api/v1/teams/1/sites',
+    'https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites',
     headers={
         'Authorization': 'Bearer YOUR_TOKEN',
         'Accept': 'application/json',
@@ -151,7 +152,7 @@ data = response.json()
 ```go Go
 req, _ := http.NewRequest(
     http.MethodGet,
-    "https://app.sitepulse.dev/api/v1/teams/1/sites?page=2&per_page=50",
+    "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites?page=2&per_page=50",
     nil,
 )
 req.Header.Set("Authorization", "Bearer YOUR_TOKEN")
@@ -171,7 +172,7 @@ fmt.Println(string(body))
 require 'net/http'
 require 'json'
 
-uri = URI('https://app.sitepulse.dev/api/v1/teams/1/sites?page=2&per_page=50')
+uri = URI('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites?page=2&per_page=50')
 request = Net::HTTP::Get.new(uri)
 request['Authorization'] = 'Bearer YOUR_TOKEN'
 request['Accept'] = 'application/json'
@@ -184,7 +185,7 @@ data = JSON.parse(response.body)
 ```
 
 ```php PHP
-$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/1/sites?page=2&per_page=50');
+$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites?page=2&per_page=50');
 curl_setopt_array($ch, [
     CURLOPT_HTTPHEADER => [
         'Authorization: Bearer YOUR_TOKEN',
@@ -217,7 +218,7 @@ $data = json_decode($response, true);
 
 ## Validation errors (422)
 
-Laravel's standard validation shape:
+Standard validation shape:
 
 ```json
 {
@@ -247,8 +248,10 @@ All API routes use the default `api` throttle middleware.
 Check runs are further limited:
 
 <Warning>
-  `POST /sites/{site}/checks` — **10 requests per minute** per token/user
+  `POST /sites/{site}/checks` - **10 requests per minute** per token/user
 </Warning>
+
+API check runs also enforce the site's per-tool on-demand cadence, so repeated requests for the same tool may return `422` before the request throttle is reached.
 
 When throttled, the API returns `429 Too Many Requests` with `Retry-After` headers where configured.
 
@@ -306,7 +309,7 @@ Filter with `status=active` to include both `open` and `acknowledged` issues.
 curl -sS \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Accept: application/json" \
-  "https://app.sitepulse.dev/api/v1/teams/1/sites"
+  "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites"
 
 # POST request
 curl -sS -X POST \
@@ -314,7 +317,7 @@ curl -sS -X POST \
   -H "Accept: application/json" \
   -H "Content-Type: application/json" \
   -d '{"url":"https://example.com","name":"Example"}' \
-  "https://app.sitepulse.dev/api/v1/teams/1/sites"
+  "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites"
 
 # DELETE request
 curl -sS -X DELETE \
@@ -330,12 +333,12 @@ const headers = {
 };
 
 // GET request
-const sites = await fetch('https://app.sitepulse.dev/api/v1/teams/1/sites', {
+const sites = await fetch('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites', {
   headers,
 }).then((response) => response.json());
 
 // POST request
-const site = await fetch('https://app.sitepulse.dev/api/v1/teams/1/sites', {
+const site = await fetch('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites', {
   method: 'POST',
   headers: { ...headers, 'Content-Type': 'application/json' },
   body: JSON.stringify({ url: 'https://example.com', name: 'Example' }),
@@ -358,13 +361,13 @@ headers = {
 
 # GET request
 sites = requests.get(
-    'https://app.sitepulse.dev/api/v1/teams/1/sites',
+    'https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites',
     headers=headers,
 ).json()
 
 # POST request
 site = requests.post(
-    'https://app.sitepulse.dev/api/v1/teams/1/sites',
+    'https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites',
     headers={**headers, 'Content-Type': 'application/json'},
     json={'url': 'https://example.com', 'name': 'Example'},
 ).json()
@@ -383,7 +386,7 @@ headers := map[string]string{
 }
 
 // GET request
-getReq, _ := http.NewRequest(http.MethodGet, "https://app.sitepulse.dev/api/v1/teams/1/sites", nil)
+getReq, _ := http.NewRequest(http.MethodGet, "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites", nil)
 for key, value := range headers {
     getReq.Header.Set(key, value)
 }
@@ -392,7 +395,7 @@ defer getResp.Body.Close()
 
 // POST request
 postBody := strings.NewReader(`{"url":"https://example.com","name":"Example"}`)
-postReq, _ := http.NewRequest(http.MethodPost, "https://app.sitepulse.dev/api/v1/teams/1/sites", postBody)
+postReq, _ := http.NewRequest(http.MethodPost, "https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites", postBody)
 for key, value := range headers {
     postReq.Header.Set(key, value)
 }
@@ -419,7 +422,7 @@ headers = {
 }
 
 # GET request
-get_uri = URI('https://app.sitepulse.dev/api/v1/teams/1/sites')
+get_uri = URI('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites')
 get_request = Net::HTTP::Get.new(get_uri)
 headers.each { |key, value| get_request[key] = value }
 sites = Net::HTTP.start(get_uri.hostname, get_uri.port, use_ssl: true) do |http|
@@ -427,7 +430,7 @@ sites = Net::HTTP.start(get_uri.hostname, get_uri.port, use_ssl: true) do |http|
 end
 
 # POST request
-post_uri = URI('https://app.sitepulse.dev/api/v1/teams/1/sites')
+post_uri = URI('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites')
 post_request = Net::HTTP::Post.new(post_uri)
 headers.each { |key, value| post_request[key] = value }
 post_request['Content-Type'] = 'application/json'
@@ -452,22 +455,19 @@ $headers = [
 ];
 
 // GET request
-$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/1/sites');
+$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites');
 curl_setopt_array($ch, [
-    CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+    CURLOPT_HTTPHEADER => $headers,
     CURLOPT_RETURNTRANSFER => true,
 ]);
 $sites = json_decode(curl_exec($ch), true);
 curl_close($ch);
 
 // POST request
-$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/1/sites');
+$ch = curl_init('https://app.sitepulse.dev/api/v1/teams/{team-uuid}/sites');
 curl_setopt_array($ch, [
     CURLOPT_POST => true,
-    CURLOPT_HTTPHEADER => array_merge(
-        array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
-        ['Content-Type: application/json']
-    ),
+    CURLOPT_HTTPHEADER => array_merge($headers, ['Content-Type: application/json']),
     CURLOPT_POSTFIELDS => json_encode(['url' => 'https://example.com', 'name' => 'Example']),
     CURLOPT_RETURNTRANSFER => true,
 ]);
@@ -478,7 +478,7 @@ curl_close($ch);
 $ch = curl_init('https://app.sitepulse.dev/api/v1/sites/{uuid}');
 curl_setopt_array($ch, [
     CURLOPT_CUSTOMREQUEST => 'DELETE',
-    CURLOPT_HTTPHEADER => array_map(fn ($k, $v) => "$k: $v", array_keys($headers), $headers),
+    CURLOPT_HTTPHEADER => $headers,
     CURLOPT_RETURNTRANSFER => true,
 ]);
 curl_exec($ch);

@@ -3,7 +3,7 @@ title: "Managing Issues"
 description: "Track, acknowledge, and resolve monitoring incidents across your team"
 ---
 
-An issue is Sitepulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together — so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
+An issue is Sitepulse's record of something going wrong. **Automatic** monitoring opens one when a site crosses the thresholds you've set, and it bundles repeated failures for the same site and check together - so a site that's been down for an hour is one issue to deal with, not a hundred separate alerts.
 
 <Info>
   On-demand checks save results to check history and can send completion notifications, but they do not open or resolve issues.
@@ -40,7 +40,7 @@ See [Monitoring settings](/guide/monitoring#issue-settings) for the full thresho
 | `acknowledged` | Someone on the team is investigating; recorded with the acting user and timestamp |
 | `resolved` | The problem has cleared; kept for history |
 
-You can acknowledge and resolve issues yourself, or let Sitepulse resolve them automatically once checks start passing again. If the same problem comes back — same site, same tool, same kind of failure — Sitepulse reopens the original issue instead of creating a new one, so a recurring fault stays as a single thread of history rather than cluttering your list.
+You can acknowledge and resolve issues yourself, or let Sitepulse resolve them automatically once checks start passing again. If the same problem comes back - same site, same tool, same kind of failure - Sitepulse reopens the original issue instead of creating a new one, so a recurring fault stays as a single thread of history rather than cluttering your list.
 
 ## Issues page
 
@@ -48,10 +48,10 @@ Use **Issues** to filter, sort, and act on incidents for the current team.
 
 Available filters:
 
-- **Status** — Active, Open, Acknowledged, or Resolved
-- **Site** — one site or all sites
-- **Tool** — Status, SSL, DNS, Broken Links, Performance, or all tools
-- **Severity** — Critical, Warning, Info, or all severities
+- **Status** - Active, Open, Acknowledged, or Resolved
+- **Site** - one site or all sites
+- **Tool** - Status, SSL, DNS, Broken Links, Performance, or all tools
+- **Severity** - Critical, Warning, Info, or all severities
 
 You can sort by summary, site, tool, status, or opened date. Issue summaries link to the related check result when Sitepulse has one.
 
@@ -83,26 +83,16 @@ Single-row actions follow the same rules. Manual resolution does not stop future
 
 Issue lifecycle events drive outbound alerts:
 
-- **Issue detected** — when a new issue opens (including when a resolved issue reopens)
-- **Issue resolved** — when automatic monitoring confirms recovery
-- **Escalation** — follow-up reminders while an issue stays open or acknowledged (when [escalation](/guide/monitoring#escalation) is enabled)
+- **Issue detected** - when a new issue opens (including when a resolved issue reopens)
+- **Issue resolved** - when automatic monitoring confirms recovery
+- **Escalation** - follow-up reminders while an issue stays open or acknowledged (when [escalation](/guide/monitoring#escalation) is enabled)
 
 Configure destinations under **Notifications**. Quiet time (set in **Monitoring**) suppresses outbound alerts but does not stop checks or issue evaluation.
 
-See [Notifications](/guide/notifications) for channel setup and [Webhook notifications](/guide/webhooks) for HTTP payload and delivery details.
-
-## Site-level controls
-
-Per-site settings can affect issue behavior:
-
-- **Snooze** — pauses issue opening until a datetime passes
-- **Threshold overrides** — different problem rules for one site
-- **Enabled checks** — turning a tool off stops its scheduled checks and issue evaluation for that site
-
-See [Managing sites](/guide/sites#site-specific-overrides) for override options.
+See [Notifications](/guide/notifications) for channel setup.
 
 ## API access
 
-Integrations can read issues through the v1 API with the `issues:read` scope. The API is read-only — acknowledge and resolve actions are available in the dashboard only.
+Integrations can read issues through the v1 API with the `issues:read` scope. The API is read-only - acknowledge and resolve actions are available in the dashboard only.
 
 See [Issues endpoints](/api/endpoints#issues) and the [Issue resource](/api/resources#issue).

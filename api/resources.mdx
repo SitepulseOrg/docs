@@ -11,9 +11,7 @@ Returned on `GET /me` and nested on some issue responses.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | integer | User id |
 | `name` | string | Display name |
-| `role` | string \| null | User role/title from profile settings |
 | `email` | string | Email address |
 | `email_verified_at` | string \| null | ISO 8601 when verified |
 
@@ -21,9 +19,7 @@ Returned on `GET /me` and nested on some issue responses.
 
 ```json
 {
-  "id": 1,
   "name": "John Doe",
-  "role": "Engineering lead",
   "email": "john@example.com",
   "email_verified_at": "2026-05-28T10:00:00+00:00"
 }
@@ -33,10 +29,8 @@ Returned on `GET /me` and nested on some issue responses.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `id` | integer | Team id (use in `/teams/{team}` paths) |
+| `uuid` | string | Team UUID (use in `/teams/{team}` paths) |
 | `name` | string | Team name |
-| `personal_team` | boolean | Whether this is the user's personal team |
-| `owner_id` | integer | Owner user id |
 | `sites_count` | integer | Present when counted |
 | `members_count` | integer | Members including owner, when counted |
 | `limits` | object | Plan limits (see below) |
@@ -54,16 +48,13 @@ Returned on `GET /me` and nested on some issue responses.
 | `enabled_checks` | object | `{ "allowed": ["status", ...] }` tools available to the team |
 | `minimum_check_cadence_minutes` | integer \| null | Fastest allowed automatic cadence |
 | `history_retention_days` | integer \| null | How long check history is kept |
-| `priority_queue` | boolean | Whether checks use priority queue |
 
 ### Example
 
 ```json
 {
-  "id": 1,
+  "uuid": "01JZ7VQ3J7Y5S8N9P0Q1R2S3T4",
   "name": "Acme Inc",
-  "personal_team": false,
-  "owner_id": 1,
   "sites_count": 12,
   "members_count": 5,
   "limits": {
@@ -89,8 +80,7 @@ Returned on `GET /me` and nested on some issue responses.
       "allowed": ["status", "ssl", "dns", "broken-links", "performance"]
     },
     "minimum_check_cadence_minutes": 5,
-    "history_retention_days": 90,
-    "priority_queue": true
+    "history_retention_days": 90
   },
   "created_at": "2026-01-15T10:00:00+00:00",
   "updated_at": "2026-05-28T14:30:00+00:00"
@@ -199,7 +189,7 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
 | Field | Type | Description |
 |-------|------|-------------|
 | `uuid` | string | Site identifier in API paths |
-| `team_id` | integer | Owning team |
+| `team_uuid` | string | Owning team UUID |
 | `name` | string | Display name |
 | `url` | string | Canonical monitored URL |
 | `domain` | string | Hostname derived from URL |
@@ -218,7 +208,7 @@ Returned under `data` by `GET /teams/{team}/monitoring` and `PATCH /teams/{team}
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `settings` | object | Resolved site monitoring settings. Same shape as team `settings`, plus `snoozed_until` when set. |
+| `settings` | object | Resolved site monitoring settings. Same shape as team `settings`. |
 
 ### Latest checks object
 
@@ -244,7 +234,6 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
 | Field | Type | Description |
 |-------|------|-------------|
 | `enabled_tools` | string[] | Tools that can open issues (`status`, `ssl`, `dns`, `broken-links`, `performance`) |
-| `snoozed_until` | string \| null | ISO 8601 datetime; issue opening paused until this time |
 | `status.failures_to_open` | integer | Failed status checks before opening an issue |
 | `status.incident_status_codes` | integer[] | HTTP response codes that count as failed status checks; request failures always count |
 | `status.successes_to_resolve` | integer | Successful status checks before resolving |
@@ -280,7 +269,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
 ```json
 {
   "uuid" : "9d4e2c8f-1234-5678-9abc-def012345678",
-  "team_id": 1,
+  "team_uuid": "01JZ7VQ3J7Y5S8N9P0Q1R2S3T4",
   "name": "Example Site",
   "url": "https://example.com",
   "domain": "example.com",
@@ -315,13 +304,11 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
       },
       "request_header": { "name": null, "value": null },
       "quiet_time": { "enabled": false, "starts_at": "22:00", "ends_at": "07:00" },
-      "escalation": { "enabled": false, "intervals": [] },
-      "snoozed_until": null
+      "escalation": { "enabled": false, "intervals": [] }
     }
   },
   "issue_settings": {
     "enabled_tools": ["status", "ssl", "performance"],
-    "snoozed_until": null,
     "status": {
       "incident_status_codes": [400, 401, 403, 404, 405, 408, 410, 429, 500, 501, 502, 503, 504, 521, 522, 523, 524],
       "failures_to_open": 2,
@@ -331,7 +318,7 @@ Returned as `issue_settings` on Site resources. The response is resolved for the
     },
     "ssl": {
       "expiry_days": 14,
-      "failures_to_open": 1,
+      "failures_to_open": 2,
       "confirmation_retry_minutes": 2
     },
     "performance": {
@@ -406,7 +393,7 @@ Issues represent monitoring incidents opened by automatic checks. The API expose
 | Field | Type | Description |
 |-------|------|-------------|
 | `uuid` | string | Issue identifier |
-| `team_id` | integer | Owning team |
+| `team_uuid` | string | Owning team UUID |
 | `type` | string | Check tool that detected the problem |
 | `status` | string | `open`, `acknowledged`, or `resolved` |
 | `severity` | string | `critical`, `warning`, `info` |
@@ -432,7 +419,7 @@ Issues represent monitoring incidents opened by automatic checks. The API expose
 ```json
 {
   "uuid": "9d4e2c8f-issue-5678-9abc-def012345678",
-  "team_id": 1,
+  "team_uuid": "01JZ7VQ3J7Y5S8N9P0Q1R2S3T4",
   "type": "status",
   "status": "open",
   "severity": "critical",

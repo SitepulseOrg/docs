@@ -3,25 +3,13 @@ title: "Managing Teams"
 description: "Team setup, members, invitations, billing, notifications, and security"
 ---
 
-Teams are how you bring other people in and share the monitoring workload. Every team is its own separate space — its own sites, monitoring settings, billing, and members — so work for one client or project never bleeds into another.
-
-<Info>
-  See also [Account and security](/guide/account-settings) for per-user profile, password, passkeys, 2FA, and API tokens.
-</Info>
-
-## Personal team
-
-When you sign up, Sitepulse gives you a **personal team** to start with — your own space for adding sites and running checks.
-
-- It's always there; you can't delete it
-- You can spin up as many other teams as you need for clients or projects
-- It's marked as your personal team everywhere it appears, including the API
+Teams are how you bring other people in and share the monitoring workload. Every team is its own separate space - its own sites, monitoring settings, billing, and members - so work for one client or project never bleeds into another.
 
 ## Creating or joining a team
 
 You'll need to verify your email first. After that, if you don't already have a team and don't have an invitation waiting, Sitepulse helps you create one.
 
-The **Teams** page is your home base for all of this — switch between teams, see who owns each one and how many members and sites it has, create a new team, or pick up a pending invitation.
+The **Teams** page is your home base for all of this - switch between teams, see who owns each one and how many members and sites it has, create a new team, or pick up a pending invitation.
 
 When you create a team, you set the team name and can upload a team avatar. The new team becomes available as a separate workspace with its own sites, checks, issues, monitoring settings, notifications, and billing.
 
@@ -59,37 +47,12 @@ Admins and owners can invite members by email and choose a role.
 
 The **Members** page has separate tabs for current members and pending invitations. Admins and owners can invite a member, edit a member's role, remove a member, or cancel an invitation. Non-owner members can leave a team themselves when policy allows it.
 
-## Team-scoped settings
-
-Monitoring defaults (cadence, thresholds, escalation, quiet time) and notification destinations are configured per team by admins and owners. See [Monitoring settings](/guide/monitoring) and [Notifications](/guide/notifications).
-
 ## Billing
 
-Billing is managed by the team owner through Stripe (checkout and billing portal), covering plan selection, payment methods, plan limits, and invoice history.
+Billing is managed by the team owner through Stripe.
 
-### Plans
-
-Sitepulse offers three pricing tiers. All plans include all five check tools.
-
-See [Billing and plans](/guide/billing) for current prices, usage limits, on-demand check quotas, invoices, and Stripe portal behavior.
+See [Billing and plans](/guide/billing) for plan limits, usage limits, and on-demand check quotas.
 
 ## Security
 
 Admins and owners can require two-factor authentication (2FA) for all members from the team edit page. When the requirement is enabled, members who have not set up 2FA are prompted to do so and cannot access team-scoped areas until they complete setup.
-
-## Danger zone
-
-Team danger-zone actions are permanent.
-
-| Action | Who can use it | Effect |
-|--------|----------------|--------|
-| **Leave team** | Non-owner members when allowed | Removes you from the team. You lose access until invited again. |
-| **Delete team** | Owner only, non-personal teams only | Deletes the team, removes members, cancels pending invitations, and deletes related sites, checks, and issues. |
-
-Your personal team cannot be deleted.
-
-Before deleting any other team, cancel its renewing subscription from **Billing**. You can delete the team as soon as the cancellation is scheduled.
-
-## Team context
-
-Sites, monitoring settings, notifications, and billing are always scoped to your **current team**. Switching teams changes that context for the rest of the session. You can leave a team yourself (owner removal and self-removal rules apply).

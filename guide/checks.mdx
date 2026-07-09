@@ -27,11 +27,11 @@ Sitepulse watches your sites with five different checks, each looking at a diffe
 
 ## On-demand vs automatic checks
 
-**On-demand checks** run when you ask for them, for an answer right now. Status and DNS usually come back in seconds; SSL, broken links, and performance can take longer and may finish in the background — when they do, Sitepulse lets your team know whether it succeeded or failed. On-demand checks are saved to the site's history, but they **never open or resolve issues**.
+**On-demand checks** run when you ask for them, for an answer right now. Status and DNS usually come back in seconds; SSL, broken links, and performance can take longer and may finish in the background - when they do, Sitepulse lets your team know whether it succeeded or failed. On-demand checks are saved to the site's history, but they **never open or resolve issues**.
 
 **Automatic checks** run on their own schedule, set in [team monitoring settings](/guide/monitoring) (or overridden per site). These are the ones that watch for trouble: when a site keeps failing or crosses one of your thresholds, Sitepulse opens an [issue](/guide/issues) and alerts the people you've chosen. When things recover, the issue closes itself and a recovery alert goes out.
 
-In the dashboard, on-demand check access depends on your plan's tools and how many on-demand checks your team has left this month. All team members can run dashboard on-demand checks when quota remains, even when that tool's automatic schedule is off for the site. The v1 API is stricter and only accepts tools enabled on the site. The same tool can't be run on demand again until any pending on-demand check finishes and its minimum on-demand cadence has passed for that site. Automatic checks do not block on-demand runs.
+In the dashboard, on-demand check access depends on your plan's tools and how many on-demand checks your team has left this month. All team members can run dashboard on-demand checks when quota remains, even when that tool's automatic schedule is off for the site. Dashboard checks are not held back by automatic cadence limits, though a tool that is already pending for the site still needs to finish first.
 
 <Note>
   Performance is the only tool that allows you to choose a **page URL** to check a specific page (for example `https://example.com/pricing`) instead of the site's root URL.
@@ -41,13 +41,15 @@ In the dashboard, on-demand check access depends on your plan's tools and how ma
 
 You can run on-demand checks from:
 
-- A site's **Run Check** menu
-- The dashboard quick actions, which open the tool's own page (SSL, DNS, Status, Broken Links, Performance)
+- A site's **Run Check** menu, which queues the selected check and opens its detail page
+- A tool page for SSL, DNS, Status, Broken Links, or Performance
 - The API, when your token has permission
 
-From a tool's page, pick a site from your team. For Performance, you can also point the check at a specific page — it just has to be on the same domain as the site.
+From a tool's page, pick a site from your team. For Performance, you can also point the check at a specific page - it just has to be on the same domain as the site.
 
-Some checks take a little longer and show as **pending** at first. Check back in a moment and the result will be there.
+API-triggered checks keep their own per-site, per-tool cadence guard in addition to API rate limits.
+
+Some checks take a little longer and show as **pending** at first. The check detail page updates automatically when the result is ready.
 
 ### Linking straight to a check
 
@@ -57,11 +59,11 @@ If you have a check's ID (from the API or a webhook), this link opens it directl
 https://app.sitepulse.dev/check-link/{check-uuid}
 ```
 
-It jumps to the check detail on the site page — handy for runbooks or integrations that want to deep-link to a result.
+It jumps to the check detail on the site page - handy for runbooks or integrations that want to deep-link to a result.
 
 ## Problem thresholds
 
-Thresholds are how you tell Sitepulse what "a problem" means — for example, how many failed status checks in a row count as an outage, or how many days before a certificate expires you want a heads-up.
+Thresholds are how you tell Sitepulse what "a problem" means - for example, how many failed status checks in a row count as an outage, or how many days before a certificate expires you want a heads-up.
 
 You'll find every threshold explained per tool in [Monitoring settings](/guide/monitoring#issue-settings). Your defaults apply to the whole team, and any single site can [use its own](/guide/sites#site-specific-overrides).
 
@@ -87,7 +89,7 @@ You'll find every threshold explained per tool in [Monitoring settings](/guide/m
 
 ### HTTP status code 0
 
-A status of `0` isn't a real HTTP code — it's Sitepulse's way of saying it couldn't get any response from your site at all.
+A status of `0` isn't a real HTTP code - it's Sitepulse's way of saying it couldn't get any response from your site at all.
 
 This usually points to a connection problem rather than the site itself returning an error: a DNS failure, a connection that timed out or was refused, a TLS handshake that didn't complete, or a URL that Sitepulse won't connect to for safety reasons.
 

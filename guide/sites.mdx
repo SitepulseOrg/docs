@@ -7,21 +7,21 @@ Sites are the websites your team keeps an eye on. Each site lives in one team an
 
 ## Sites list
 
-The **Sites** page shows every site in your current team. Search, filter, see how each one is doing at a glance, and act on several at once.
+The **Sites** page shows every site in your current team. Search, filter, see how each one is doing at a glance.
 
-Search by name or URL, and use the health filter to narrow down to sites with a particular problem (or sites you haven't checked yet). Sort by name, URL, or pinned status. The list refreshes on its own, so health indicators stay current while you're looking.
+Search by name or URL, and use the health filter to narrow down to sites with a particular problem (or sites you haven't checked yet). Sort by name, URL, or pinned status.
 
 ## Creating sites
 
 The dashboard requires a URL and site name:
 
-- **Website URL** — the site you want to monitor
-- **Site name** — a display name; use **Auto-generate** to create one from the domain
-- **Notes** — anything you want to remember about the site (client details, goals, and so on)
-- **JavaScript rendering** — turn this on for sites built with React, Vue, Next.js, and similar so broken-link checks crawl the fully rendered page; leave it off for server-rendered sites like WordPress, Ghost, or plain HTML
+- **Website URL** - the site you want to monitor
+- **Site name** - a display name; use **Auto-generate** to create one from the domain
+- **Notes** - anything you want to remember about the site (client details, goals, and so on)
+- **JavaScript rendering** - turn this on for sites built with React, Vue, Next.js, and similar so broken-link checks crawl the fully rendered page; leave it off for server-rendered sites like WordPress, Ghost, or plain HTML
 
 <Note>
-  You don't choose which checks run when you create a site — a new site **inherits your [team monitoring settings](/guide/monitoring)** automatically. To turn individual tools on or off or change how often they run for one site, edit it afterward (see [Site-specific overrides](#site-specific-overrides)).
+  You don't choose which checks run when you create a site - a new site **inherits your [team monitoring settings](/guide/monitoring)** automatically. To turn individual tools on or off or change how often they run for one site, edit it afterward (see [Site-specific overrides](#site-specific-overrides)).
 </Note>
 
 You can't add the same site to a team twice, and your plan sets how many sites you can monitor.
@@ -36,7 +36,7 @@ Text import accepts one URL per line. File import accepts a header row with `URL
 
 ## Pinning
 
-Pinned sites jump to the top of the list (newest pins first), appear in the sidebar, and get their own spot on the dashboard. Pin the sites you care about most — production, key clients — so they're always one glance away.
+Pinned sites jump to the top of the list (newest pins first), appear in the sidebar, and get their own spot on the dashboard. Pin the sites you care about most - production, key clients - so they're always one glance away.
 
 Each pinned site in the sidebar shows a [pulse indicator](#pulse-indicator) so you can spot problems without opening the site.
 
@@ -71,7 +71,7 @@ Sitepulse counts a problem when:
 - The latest broken-link check found one or more broken URLs
 - The latest performance check breaches your configured thresholds
 
-DNS is not included in the pulse — use the [health filters](#health-states) or site detail view for DNS status.
+DNS is not included in the pulse - use the [health filters](#health-states) or site detail view for DNS status.
 
 Hover the pulse on a site detail page to see how many issues were detected.
 
@@ -100,20 +100,13 @@ Open a site to see:
 - Recent check history
 - Buttons to **Run Check**, **Edit**, or **Visit** the site
 
-Use **Run Check** to check a site right now instead of waiting for the next scheduled run. What you can run depends on your plan's tools and how many on-demand checks your team has left this month.
+Use **Run Check** to check a site right now instead of waiting for the next scheduled run. What you can run depends on your plan's tools and how many on-demand checks your team has left this month. Dashboard checks can run outside the automatic cadence, unless the same tool already has a pending on-demand check for that site.
 
 ### Check history
 
-Filter past checks by source (**All**, **On-demand**, **Automatic**) and by tool — handy for separating your on-demand troubleshooting from the routine scheduled monitoring.
+Filter past checks by source (**All**, **On-demand**, **Automatic**) and by tool - handy for separating your on-demand troubleshooting from the routine scheduled monitoring.
 
 Open any result to see the full detail. You can delete your own on-demand results (with the right permission); automatic results are kept for as long as your plan allows and can't be deleted by hand.
-
-### Reports
-
-Every site keeps uptime and performance reports. You'll see summaries in the dashboard, and you can pull the same data into your own tools through the API:
-
-- `GET /api/v1/sites/{site}/reports/uptime`
-- `GET /api/v1/sites/{site}/reports/performance`
 
 ## Site settings
 
@@ -128,7 +121,6 @@ Every site keeps uptime and performance reports. You'll see summaries in the das
 | Request header | Overrides the team header for Status, Broken Links, and Performance checks |
 | Check cadence | Overrides team default cadence per tool |
 | Problem threshold overrides | Override team [issue rules](/guide/monitoring#issue-settings) |
-| Issue snooze | Pause issue opening until a date/time |
 | Broken-link ignore paths | Paths excluded from broken-link crawls (overrides the [team default](/guide/monitoring#broken-link-thresholds-and-filters)) |
 | DNS expected records | Per-site expected DNS records for change detection |
 | Performance page URL | Optional page on the same domain used for performance monitoring |
@@ -155,9 +147,6 @@ DNS expected records are stored on the site itself. Resetting monitoring overrid
   </Accordion>
   <Accordion title="Performance page URL">
     Monitor a specific page, such as `https://example.com/pricing`, instead of the site's root URL. The URL must belong to the same domain as the site.
-  </Accordion>
-  <Accordion title="Issue snooze">
-    Pause issue opening for this site until a datetime passes. Checks still run, but no new issues or related alerts are created during the snooze.
   </Accordion>
   <Accordion title="Broken-link ignore paths">
     URL path patterns the broken-link crawler skips on this site (for example `/admin`, `/cart`, `/wp-admin/*`). Useful for admin areas or dynamic URL spaces that should not affect incident detection.

@@ -1,9 +1,9 @@
 ---
 title: "Notifications"
-description: "Configure alerts for monitoring issues via email, Slack, Discord, Microsoft Teams, webhooks, and in-app notifications"
+description: "Configure alerts for monitoring issues via email, Slack, Discord, Microsoft Teams, and webhooks"
 ---
 
-Sitepulse tells your team when something needs attention — when an issue opens, when it's still going (escalation), and when it clears. It also shows in-app notifications when on-demand checks finish or fail.
+Sitepulse tells your team when something needs attention - when an issue opens, when it's still going (escalation), and when it clears.
 
 ## Where alerts go
 
@@ -24,7 +24,7 @@ Each configuration:
 - Applies to all check tools or only specific tools (Status, SSL, DNS, Broken Links, Performance)
 - Can be enabled, disabled, and tested independently
 
-Because each one stands on its own, you can send different tools or environments to different places — say, critical outages to a paged on-call channel and everything else to email.
+Because each one stands on its own, you can send different tools or environments to different places - say, critical outages to a paged on-call channel and everything else to email.
 
 These settings decide **where** alerts go. **When** an issue opens in the first place is up to your [monitoring settings](/guide/monitoring).
 
@@ -52,12 +52,6 @@ Escalation reminders are delivered to notification configurations subscribed to 
 
 Reminders stop when the issue is resolved or is no longer in an active state (`open` or `acknowledged`). Quiet time suppresses escalation the same way it suppresses initial issue alerts.
 
-### On-demand check notifications
-
-Every on-demand check sends the team an in-app notification when it completes or fails. This is especially useful for slower checks such as SSL, Broken Links, and Performance that finish in the background.
-
-On-demand check notifications are not sent to configured email, Slack, Discord, Microsoft Teams, or webhook destinations. They do not depend on automatic monitoring thresholds and do not open issues.
-
 ## Notification channels
 
 ### Email
@@ -73,9 +67,9 @@ Each email notification typically includes:
 
 ### Slack
 
-**Slack app** — an OAuth connection: authorize the Sitepulse app and pick a channel. No webhook URL is required.
+**Slack app** - an OAuth connection: authorize the Sitepulse app and pick a channel. No webhook URL is required.
 
-**Slack webhook** — a Slack incoming webhook URL, if you prefer webhook-based delivery.
+**Slack webhook** - a Slack incoming webhook URL, if you prefer webhook-based delivery.
 
 ### Discord
 
@@ -89,32 +83,22 @@ A Microsoft Teams incoming webhook URL. Sitepulse formats messages for Teams wor
 
 A URL of your own that Sitepulse calls whenever an issue opens, escalates, or resolves. Use this for your own automation or third-party integrations.
 
-If you're setting one up, the [Webhook notifications](/guide/webhooks) guide has everything a developer needs — the data Sitepulse sends, headers, GET vs POST, and example handler code.
-
 ### Testing a destination
 
-Any webhook-based destination has a **Test** button. It sends a sample message so you can confirm alerts actually arrive and look right — it's a connectivity check, not a real issue alert.
+Any webhook-based destination has a **Test** button. It sends a sample message so you can confirm alerts actually arrive and look right - it's a connectivity check, not a real issue alert.
 
 ### How secret URLs are stored
 
-Webhook URLs often embed a secret token — Slack incoming webhooks, Microsoft Teams workflow URLs, and your own signed endpoints all do. Sitepulse protects these:
+Webhook URLs often embed a secret token - Slack incoming webhooks, Microsoft Teams workflow URLs, and your own signed endpoints all do. Sitepulse protects these:
 
-- **Encrypted at rest** — the destination is encrypted in the database, not just on disk. Anyone with raw database access still can't read it.
-- **Masked in the dashboard** — after you save, the URL is shown masked (the host plus the last few characters, e.g. `https://hooks.slack.com/****wXyz`). The full secret is never sent back to your browser.
-- **Editing keeps the secret** — when you edit a saved configuration, the **Destination** field starts empty. Leave it blank to keep the current URL, or enter a new URL to replace it.
+- **Encrypted at rest** - the destination is encrypted in the database, not just on disk. Anyone with raw database access still can't read it.
+- **Masked in the dashboard** - after you save, the URL is shown masked (the host plus the last few characters, e.g. `https://hooks.slack.com/****wXyz`). The full secret is never sent back to your browser.
+- **Editing keeps the secret** - when you edit a saved configuration, the **Destination** field starts empty. Leave it blank to keep the current URL, or enter a new URL to replace it.
 
 Email addresses are shown in full (they aren't secrets), and connected **Slack** and **Discord** integrations show "Connected" instead of a URL.
-
-### In-app notifications
-
-While using the Sitepulse dashboard, issue lifecycle notifications appear in real time (subject to quiet time and your permissions).
 
 ## Quiet time
 
 [Quiet time](/guide/monitoring#quiet-time) suppresses outbound notifications during a daily window. Use it for overnight periods or planned maintenance.
 
-Checks continue to run during quiet time — only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.
-
-<Card title="Webhook reference" icon="webhook" href="/guide/webhooks">
-  For developers: the data Sitepulse sends, headers, GET vs POST, retries, and example handler code
-</Card>
+Checks continue to run during quiet time - only outbound notifications are suppressed. Issues can still open, acknowledge, and resolve.

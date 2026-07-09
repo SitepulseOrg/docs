@@ -3,8 +3,6 @@ title: "Authentication"
 description: "Personal access tokens, OAuth scopes, and security best practices"
 ---
 
-Sitepulse v1 uses [Laravel Passport](https://laravel.com/docs/passport) OAuth2 personal access tokens. Each token belongs to the Sitepulse user who created it and acts on that user's behalf.
-
 ## Personal access tokens
 
 Create and revoke tokens in the dashboard under **Settings → API tokens**.
@@ -110,7 +108,7 @@ Each token carries one or more scopes. Routes declare the minimum scope required
 | `issues:read` | Read issues (monitoring incidents) |
 
 <Info>
-  Scopes map to team permissions. For example, `sites:write` satisfies the `createSite` and `updateSite` permissions when the token is used. Team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.
+  Scopes map to team permissions and team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.
 </Info>
 
 ### Recommended scope sets
@@ -196,14 +194,6 @@ Authentication proves **who** is calling. Team routes also enforce:
   </Step>
 </Steps>
 
-## What v1 does not support
-
-The public v1 API documented here is limited to personal access tokens created in the dashboard. The following are not part of the v1 API guide:
-
-- Third-party OAuth authorization code flows for the JSON API
-- Client credentials / machine-only tokens for customers
-- Anonymous or unauthenticated endpoints
-
 ## Security practices
 
 <CardGroup cols={2}>
@@ -226,7 +216,7 @@ The public v1 API documented here is limited to personal access tokens created i
 Tokens are created under **Settings → API tokens** in the dashboard. Give each token a descriptive name (for example "CI Pipeline") and select the required scopes.
 
 <Warning>
-  The token value is shown once at creation. Store it securely — it cannot be retrieved again.
+  The token value is shown once at creation. Store it securely - it cannot be retrieved again.
 </Warning>
 
 ## See also

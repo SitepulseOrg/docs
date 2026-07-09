@@ -19,7 +19,7 @@ HTTP reachability check (`type: "status"`).
 | `redirected` | boolean | Whether redirects occurred |
 | `redirect_count` | integer | Number of redirects |
 | `redirects` | string[] | Redirect chain; present only when redirects occurred |
-| `error` | string | Connection or validation failure message. Present only when the request could not complete (`code` is `0`) — an HTTP error status such as 500 is a completed request and has no `error`. |
+| `error` | string | Connection or validation failure message. Present only when the request could not complete (`code` is `0`) - an HTTP error status such as 500 is a completed request and has no `error`. |
 
 ### Example (up)
 
@@ -35,9 +35,9 @@ HTTP reachability check (`type: "status"`).
 }
 ```
 
-### Example (down — HTTP error status)
+### Example (down - HTTP error status)
 
-A 5xx response still completes, so there is no `error` field — only `up: false` and the status `code`.
+A 5xx response still completes, so there is no `error` field - only `up: false` and the status `code`.
 
 ```json
 {
@@ -51,7 +51,7 @@ A 5xx response still completes, so there is no `error` field — only `up: false
 }
 ```
 
-### Example (down — connection failure)
+### Example (down - connection failure)
 
 When the request cannot complete, `code` is `0` and `error` describes the failure.
 
@@ -358,7 +358,7 @@ Use `error` together with `result` to diagnose failures.
 </Steps>
 
 <Tip>
-  Status checks often complete synchronously. SSL, DNS, broken-links, and performance checks usually run on queues and take longer.
+  Status checks often complete synchronously. SSL, DNS, broken-links, and performance checks can take a little longer.
 </Tip>
 
 ## Check status values
