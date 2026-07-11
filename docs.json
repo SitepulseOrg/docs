@@ -4,9 +4,9 @@
   "name": "Sitepulse Docs",
   "description": "Documentation for Sitepulse. Set up uptime, SSL, DNS, broken-link, and performance monitoring, configure alerts, and use the API.",
   "colors": {
-    "primary": "#7f22fe",
+    "primary": "#7C3AED",
     "light": "#b5a2fa",
-    "dark": "#7f22fe"
+    "dark": "#7C3AED"
   },
   "favicon": "/favicon.svg",
   "navigation": {
