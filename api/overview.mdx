@@ -476,7 +476,7 @@ Only `/api/v1` is documented here. Breaking changes will ship under a new versio
 Before using the API, ensure you have:
 
 - A verified Sitepulse user account (email verified)
-- An active subscription on the team you are accessing (inactive billing returns `402`)
+- An active free trial or valid subscription for protected team routes (inactive access returns `402`; see [access exceptions](/api/authentication#team-access-and-billing))
 - API token scopes that cover the operation (missing scope returns `403`)
 - Team membership and role permissions for the underlying action (returns `403` or `404` as appropriate)
 

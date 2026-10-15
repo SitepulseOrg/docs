@@ -1,6 +1,6 @@
 ---
 title: "Billing and plans"
-description: "Manage plan selection, Stripe billing, and plan limits"
+description: "Understand free trials, plan limits, subscriptions, and Stripe billing"
 ---
 
 Billing works per team - each one has its own plan and limits, so you can bill a client team separately from your own.
@@ -8,6 +8,27 @@ Billing works per team - each one has its own plan and limits, so you can bill a
 <Note>
   Only the team owner can manage billing.
 </Note>
+
+## Free trial
+
+Eligible owners receive 14 days of Starter access when they create a new team after verifying their email. You do not need a payment card. Signing up or accepting an invitation does not start a trial.
+
+The trial includes all five check types and the [Starter limits](#plans): 5 sites, 3 seats including the owner and pending invitations, and 50 on-demand checks per calendar month. Check history follows Starter's rolling 30-day retention policy.
+
+### Eligibility
+
+- You can receive one trial per owner account, on a newly created team.
+- None of your owned teams can have previous trial or subscription history. Deleted teams still count.
+- Existing teams are not automatically enrolled.
+- Joining, switching, deleting, or restoring a team does not grant or restart a trial.
+
+If you do not qualify, choose a paid plan from **Billing** to start monitoring.
+
+### Trial status and reminders
+
+The dashboard notice shows your trial's end date. **Billing** shows the exact deadline in UTC and your remaining usage. Sitepulse emails the owner near the end of the trial and after it expires. The deadline applies even if a reminder is delayed.
+
+The trial is managed by Sitepulse. It does not create a Stripe subscription or renew automatically. You are not charged when the trial expires.
 
 ## Billing page
 
@@ -20,9 +41,21 @@ From this page, owners can:
 - Switch plans or billing period
 - Open the Stripe billing portal
 
+## Subscribing during a trial
+
+As the owner, choose any available plan and billing period on **Billing**, then click **Subscribe now**.
+
+<Note>
+  Payment starts immediately and replaces the remaining free trial. Unused trial days do not carry over to the subscription.
+</Note>
+
+Leaving Checkout before a subscription is created does not change your trial deadline. If a subscription is created but its payment needs confirmation, follow the payment recovery prompts. A failed or canceled subscription does not restore the free trial.
+
+You may briefly see pending activation while Sitepulse processes payment confirmation. Paid access depends on the subscription becoming valid, not only on returning from Checkout.
+
 ## Plans
 
-All plans include Status, SSL, DNS, Broken Links, and Performance checks.
+All plans include Status, SSL, DNS, Broken Links, and Performance checks. Paid subscriptions are billed in USD; see [current pricing](https://sitepulse.dev/pricing/) for monthly and yearly amounts.
 
 | Plan | Sites | Seats | On-demand checks / month | Fastest cadence | History retention |
 |------|-------|-------|-----------------------|-----------------|-------------------|
@@ -46,9 +79,15 @@ Plan limits affect:
 
 Once you hit a limit, the action that would go over it is simply unavailable - you can't add a site when you're at your site limit, invite someone when seats are full, or run more on-demand checks once you've used this month's quota. Upgrading lifts the limit straight away.
 
-## When billing lapses
+## When access ends
 
-If a team's plan becomes inactive, its features pause until billing is sorted out: the dashboard switches to a limited, read-only view, and API requests for that team are turned away (with a `402 Payment Required`, if you're calling the API). Sorting out payment restores access right away.
+When your team has neither an active trial nor a valid subscription, new monitoring pauses. Trial expiry does not delete your sites or settings. Check history continues to age out under the normal retention policy.
+
+Owners are directed to **Billing** to subscribe or resolve payment issues. Other members are directed to **Teams** with a message to contact the owner. Account settings and team switching remain available.
+
+Protected API requests return `402 Payment Required`. See [team access and billing](/api/authentication#team-access-and-billing) for error messages and endpoints that remain available.
+
+Monitoring resumes when the team's paid subscription becomes valid. Canceling a subscription does not grant another trial.
 
 ## Related guides
 

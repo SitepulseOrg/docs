@@ -177,8 +177,8 @@ Authentication proves **who** is calling. Team routes also enforce:
     </Note>
   </Step>
 
-  <Step title="Active subscription">
-    The team must have active plan access.
+  <Step title="Active team access">
+    Protected team routes require an active free trial or a valid subscription. Trials use Starter limits, with the same token scopes and role permissions as paid access.
 
     Otherwise the API returns `402` with:
 
@@ -187,12 +187,18 @@ Authentication proves **who** is calling. Team routes also enforce:
       "message": "An active team subscription is required."
     }
     ```
+
+    For an expired trial, the message is `Your trial has ended. Subscribe to resume monitoring.` See [inactive team access](/api/requests-responses#inactive-team-access-402).
   </Step>
 
   <Step title="Role permissions">
     Site, check, and issue policies apply on top of token scopes.
   </Step>
 </Steps>
+
+`GET /me`, `GET /teams`, and `GET /issues` remain available without an active trial or valid subscription. Their authentication, scope, and authorization requirements still apply. Use the first two endpoints to identify the account and its teams when monitoring access has expired.
+
+Only the team owner can restore access through the app's **Billing** page. The API does not start or restart trials.
 
 ## Security practices
 

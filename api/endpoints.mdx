@@ -10,7 +10,7 @@ All paths are prefixed with `/api/v1`. Unless noted, requests require:
 - Verified user email
 - Appropriate [OAuth scope](/api/authentication#oauth-scopes)
 
-Team-scoped routes also require [active team subscription](/api/authentication#team-access-and-billing).
+Protected team routes also require an [active free trial or valid subscription](/api/authentication#team-access-and-billing). `GET /me`, `GET /teams`, and `GET /issues` remain available without active plan access; their other scope and permission requirements still apply.
 
 ## Me
 

@@ -210,11 +210,25 @@ $data = json_decode($response, true);
 | `202` | Accepted (check run queued) |
 | `204` | Success, no body (delete) |
 | `401` | Missing or invalid token |
-| `402` | Team subscription inactive |
+| `402` | Team has no active free trial or valid subscription |
 | `403` | Missing scope or team permission |
 | `404` | Resource not found or not in your teams |
 | `422` | Validation error |
 | `429` | Rate limit exceeded |
+
+## Inactive team access (402)
+
+Protected team routes return `402 Payment Required` when a team has no active free trial or valid subscription. An expired trial returns:
+
+```json
+{
+  "message": "Your trial has ended. Subscribe to resume monitoring."
+}
+```
+
+Other inactive billing states use `An active team subscription is required.` The team owner must subscribe or resolve payment issues in the app's **Billing** page. Retrying with a new API token does not restore access.
+
+Account and team discovery remain available after expiry. See [team access and billing](/api/authentication#team-access-and-billing) for the endpoints that do not require active plan access.
 
 ## Validation errors (422)
 

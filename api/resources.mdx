@@ -39,6 +39,8 @@ Returned on `GET /me` and nested on some issue responses.
 
 ### Team limits object
 
+An active free trial uses Starter limits. The `plan` field describes the team's allowance; it does not prove that a paid subscription exists or that access is active. Protected requests can still return [402 when access ends](/api/requests-responses#inactive-team-access-402).
+
 | Field | Type | Description |
 |-------|------|-------------|
 | `plan` | string | Plan key (`starter`, `growth`, `agency`) |
