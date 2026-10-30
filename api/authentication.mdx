@@ -1,11 +1,11 @@
 ---
 title: "Authentication"
-description: "Personal access tokens, OAuth scopes, and security best practices"
+description: "Personal access tokens, MCP connections, OAuth scopes, and security best practices"
 ---
 
 ## Personal access tokens
 
-Create and revoke tokens in the dashboard under **Settings → API tokens**.
+Create and revoke tokens in the dashboard under **Settings → API & MCP**.
 
 ### Request headers
 
@@ -88,6 +88,49 @@ Personal access tokens expire six months after they are created. Expired or revo
 ## Email verification
 
 All `/api/v1/*` routes require a verified email address on the token owner. Unverified users receive an authentication error.
+
+## MCP access
+
+Connect your AI app to Sitepulse using the remote MCP server hosted inside the Sitepulse app. Your client must support Streamable HTTP and custom authorization headers.
+
+### Connect your client
+
+1. Open **Settings → API & MCP** in the Sitepulse dashboard. Under **Connect with MCP**, copy the **Server URL** using the copy icon beside it.
+2. Create a token below the connection details. For read-only monitoring, select `teams:read`, `sites:read`, `checks:read`, and `issues:read`. Add `reports:read` to read monthly reports.
+3. Copy the token when it is shown; Sitepulse does not display it again.
+4. Add a remote MCP server in your AI app. Paste the server URL, select **Streamable HTTP** if prompted, and add an `Authorization` header with the value `Bearer YOUR_SITEPULSE_API_TOKEN`.
+5. Connect and ask your AI app to list your Sitepulse teams. This uses `sitepulse_list_teams` and requires `teams:read`.
+
+The hosted server URL is:
+
+```text
+https://app.sitepulse.dev/mcp
+```
+
+The `/mcp` endpoint is separate from the REST API's `/api/v1` base path. Use the URL shown in your dashboard if you use another Sitepulse host.
+
+The connection uses these headers:
+
+```http
+Authorization: Bearer YOUR_SITEPULSE_API_TOKEN
+Accept: application/json, text/event-stream
+```
+
+Replace `YOUR_SITEPULSE_API_TOKEN` with your token. Your MCP client normally sets the `Accept` header when you select Streamable HTTP. Sign-in-only clients that cannot send a custom bearer header cannot connect with this setup.
+
+### Tools and permissions
+
+Use a verified account's personal access token with the scopes required by each tool. MCP calls enforce the same team membership, roles, plan access, quotas, and validation as API requests.
+
+The hosted server includes account, team, monitoring, site, check, issue, daily report, and monthly report tools. Existing tool names are preserved. Pass the opaque `uuid` returned by Sitepulse for resource identifiers, including arguments named `team_id`; these are not numeric database IDs or necessarily RFC UUIDs.
+
+Deletion tools require `confirm: true` as well as the matching delete scope and role permission. [Monthly report tools](/guide/reports#api-and-mcp-access) require `reports:read` and only read saved reports. For site updates, supply the site's current URL along with the settings you want to change.
+
+MCP operation failures are returned as tool results with `isError: true`, including the API status and validation or permission message. A successful MCP HTTP response alone does not mean the requested operation succeeded. Report downloads return embedded PDF or CSV resources with base64 file bytes.
+
+### Hosting and migration
+
+The MCP server deploys with the Laravel app. A separate Node server or Cloudflare Worker is not required for remote access. Clients previously using a standalone Worker should change their server URL to the app's `/mcp` endpoint and keep their bearer token header.
 
 ## OAuth scopes
 
@@ -222,7 +265,7 @@ Only the team owner can restore access through the app's **Billing** page. The A
 
 ## Creating a token
 
-Tokens are created under **Settings → API tokens** in the dashboard. Give each token a descriptive name (for example "CI Pipeline") and select the required scopes.
+Tokens are created under **Settings → API & MCP** in the dashboard. Give each token a descriptive name (for example "CI Pipeline") and select the required scopes.
 
 <Warning>
   The token value is shown once at creation. Store it securely - it cannot be retrieved again.

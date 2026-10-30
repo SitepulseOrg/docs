@@ -5,6 +5,8 @@ description: "Programmatic access to teams, sites, checks, reports, and issues"
 
 The Sitepulse API is a versioned JSON HTTP API. All v1 routes live under `/api/v1`. Responses use stable resource shapes designed for integrations and automation.
 
+To connect an AI app, use the [MCP server](/api/authentication#mcp-access) at `https://app.sitepulse.dev/mcp`. It uses Streamable HTTP and the same personal access tokens and permissions as the API.
+
 ## What you can do with the API
 
 <CardGroup cols={2}>
@@ -41,7 +43,7 @@ https://app.sitepulse.dev/api/v1
 
 <Steps>
   <Step title="Create an API token">
-    In the Sitepulse dashboard, open **Settings → API tokens**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
+    In the Sitepulse dashboard, open **Settings → API & MCP**. Create a personal access token and select the scopes your integration needs (for example `sites:read`, `sites:write`, `checks:run`).
 
     <Warning>
       Copy the token when it is shown. Sitepulse does not display it again.
