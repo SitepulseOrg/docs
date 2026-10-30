@@ -1,0 +1,109 @@
+---
+title: "Client reports"
+description: "Schedule branded monthly monitoring reports, manage recipients, and download PDF and CSV files"
+---
+
+Client reports summarize automatic monitoring for selected sites in your current team. Each recipient receives a separate branded email with a PDF attachment and private links to view the report and download its CSV.
+
+## Requirements
+
+- An active **Growth** or **Agency** plan, including the [Growth free trial](/guide/billing#free-trial).
+- An owner or admin role on the current team. Members cannot manage or download client reports in the app.
+- At least one site and one recipient for each schedule.
+
+Starter does not include client reports. If you move to Starter or lose active plan access, report generation, delivery, and access to saved reports become unavailable.
+
+## Create a report
+
+<Steps>
+  <Step title="Open Reports">
+    Click **Reports** in the sidebar, then **Create report**. You can also click **Report** on a site's detail page to start with that site selected.
+  </Step>
+  <Step title="Choose the name and sites">
+    Enter a **Name** for the report and select its **Client sites**. You can include up to 100 sites from the current team, within your plan's site allowance.
+  </Step>
+  <Step title="Add recipients">
+    Enter up to 10 email addresses under **Recipients**, one per line. Recipients do not need a Sitepulse account or a team seat.
+
+    Confirm that you are authorised to share the selected sites' results with those recipients. You must confirm this again whenever you save an enabled schedule.
+  </Step>
+  <Step title="Set monthly delivery">
+    Leave **Monthly delivery** enabled and choose a **Day** from the 1st through the 10th, a **Time**, and a **Timezone**. Click **Save report**.
+
+    The defaults are the 1st at 09:00 in your browser's timezone. The report covers the previous calendar month using the schedule's timezone for its boundaries.
+  </Step>
+</Steps>
+
+For example, a delivery on November 2 in `Europe/London` covers October 1 up to November 1 in that timezone. Generation runs in the background, and emails are sent once the PDF is ready.
+
+The **Reports** list shows each schedule's status and next delivery time in its configured timezone.
+
+## Set report branding
+
+On **Reports**, click **Edit** in the **Branding** section. Set the **Agency name**, optionally upload a logo, then click **Save branding**.
+
+- Logos must be PNG or JPG, no larger than 256 KB or 1600 × 1600 pixels.
+- Report branding applies to all report schedules in the current team. The team name is used until you set a report brand name.
+- The agency name appears as the email sender's display name. The sending email address remains Sitepulse's address, shown in the branding dialog.
+- Branding changes apply to future reports. Already generated reports keep their saved branding and results.
+
+## Generate and download reports
+
+Open a saved, enabled schedule and click **Generate report**, then **Generate and send** to generate the previous month's report immediately. Save any edits first.
+
+<Note>
+  Manual generation sends the report to its approved recipients once the PDF is ready. Use this action only when you are ready to share it.
+</Note>
+
+Each schedule has one report per calendar month. Repeating generation reuses that month's report and does not resend completed deliveries. This action covers the previous month; it does not let you select an arbitrary date range or backfill every missed month.
+
+Under **Report history**, you can review the latest 12 runs and their delivery counts:
+
+| Status | Meaning |
+|--------|---------|
+| **Pending** or **Generating** | The report is queued or being built. The history refreshes while generation is in progress. |
+| **Ready** | Use **View**, **PDF**, or **CSV** to open or download the saved report. Delivery counts show how many recipient emails have been sent. |
+| **Failed** | Generation failed. On an enabled schedule with eligible plan access, click **Retry generation**. |
+| **Cancelled** | Generation was stopped because the schedule or its access was no longer valid. |
+| **Expired** | The saved report has passed its retention period and is no longer available. |
+
+Saved reports are kept for 13 months. Their availability also depends on eligible plan access and the report's sites remaining in the schedule and current team.
+
+## What the metrics mean
+
+Reports use completed and failed **automatic checks** within the reporting period. On-demand checks are excluded.
+
+| Metric | Calculation |
+|--------|-------------|
+| Recorded checks | Automatic checks across Status, SSL, DNS, Broken Links, and Performance, with counts by tool. |
+| Failed probes | Automatic checks whose execution failed. This is separate from the number of issues opened. |
+| Successful uptime checks | Successful automatic Status observations divided by all known Status observations. Failed Status probes count as unsuccessful. |
+| Average response time | Average of valid response times from automatic Status checks, in milliseconds. |
+| Lighthouse performance | Average of valid performance scores from completed automatic Performance checks, out of 100. |
+| Average LCP and FCP | Averages of valid Largest Contentful Paint and First Contentful Paint measurements from completed automatic Performance checks, in milliseconds. |
+| Issues opened and resolved | Counts of issues opened or resolved during the period, including issues opened earlier and resolved in that month. |
+
+Uptime reflects observed checks, not an elapsed-time SLA. Gaps without observations remain unknown, and maintenance periods are not automatically excluded. Sites added during the month have partial coverage. Missing measurements remain unavailable rather than being treated as zero or full uptime.
+
+## Recipients and private links
+
+Recipients receive separate emails, so they do not see each other's addresses. The report and CSV links expire after seven days and can be opened without signing in. Anyone holding a valid link can use it, so share it only with intended recipients.
+
+Recipients can click **Unsubscribe from these reports** in an email and confirm to stop future deliveries for that schedule. Unsubscribing also revokes their existing links. Saving or removing and re-adding an unsubscribed address does not subscribe it again.
+
+Removing a recipient and saving the schedule revokes that recipient's older links. Changing the selected sites revokes older recipient links for the schedule. Pausing also revokes existing recipient links and cancels queued deliveries.
+
+Revoking a link cannot recall a PDF attachment or a file someone has already downloaded.
+
+## Pause or delete a schedule
+
+To pause, open the schedule, turn off **Monthly delivery**, and click **Save changes**. To resume, turn it on, confirm recipient authorisation, and save again. A paused schedule cannot generate a report manually.
+
+To delete, open **Report options**, choose **Delete schedule**, and confirm. This deletes the schedule, its saved reports, and private files, and revokes its recipient links.
+
+## Related guides
+
+- [Billing and plans](/guide/billing)
+- [Managing sites](/guide/sites)
+- [Managing teams](/guide/team-management)
+- [API report endpoints](/api/endpoints#reports) for per-site uptime and performance JSON reports
