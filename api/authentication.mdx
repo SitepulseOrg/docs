@@ -106,12 +106,15 @@ Each token carries one or more scopes. Routes declare the minimum scope required
 | `checks:run` | Queue on-demand check runs |
 | `checks:delete` | Delete on-demand check runs |
 | `issues:read` | Read issues (monitoring incidents) |
+| `reports:read` | Read monthly client report schedules, recipients, history, saved results, and PDF/CSV downloads |
 
 <Info>
   Scopes map to team permissions and team role rules still apply: a member without site-create permission cannot create sites even with `sites:write` on the token.
 </Info>
 
 ### Recommended scope sets
+
+Monthly client reports require `reports:read` and an owner or admin role on an active Growth or Agency team, including a Growth trial. Add `teams:read` if your integration also needs to discover team UUIDs. Existing tokens need the new scope to access these endpoints; `sites:read` alone only covers the daily uptime and performance reports.
 
 Different use cases require different scope combinations:
 

@@ -540,7 +540,7 @@ Delete an **on-demand** check (`automatic: false`).
 
 Read-only aggregates. Require `sites:read` and `view` on the site.
 
-For scheduled branded emails and PDF or CSV downloads, use [client reports](/guide/reports) in the app. The API endpoints below return per-site uptime and performance JSON reports.
+The two endpoints below return per-site uptime and performance JSON reports. [Monthly client reports](#monthly-client-reports) provide saved monthly results and PDF/CSV downloads.
 
 ### GET /sites/\{site\}/reports/uptime
 
@@ -557,6 +557,46 @@ Daily performance aggregates from automatic performance checks.
 **Query:** `days` (integer, default `30`, max `365`)
 
 **Response `200`:** [Performance report](/api/resources#performance-report)
+
+## Monthly client reports
+
+These endpoints only read existing [client reports](/guide/reports). Create and manage schedules, generate reports, or send emails in the app.
+
+All five endpoints require `reports:read`, an owner or admin role on the report's team, and active Growth or Agency access, including the Growth trial. Team membership and plan access are resolved from the resource in the URL; you do not need to switch your current team first.
+
+Use the opaque `uuid` values returned by the API for `team`, `reportProfile`, and `reportRun`. These identifiers are not necessarily RFC UUIDs. Foreign teams and resources return `404`. Insufficient scope, role, or an active Starter plan returns `403`. Inactive team access returns `402`.
+
+### GET /teams/\{team\}/reports
+
+List monthly report schedules for a team, newest first. Includes paused schedules. Returns a paginated collection of [monthly report schedules](/api/resources#monthly-report-schedule).
+
+**Query:** `page` (integer, minimum `1`) and `per_page` (integer, default `25`, range `1`–`100`).
+
+### GET /reports/\{reportProfile\}
+
+Read a [monthly report schedule](/api/resources#monthly-report-schedule), including its selected sites and current recipient email addresses and unsubscribe state. Removed recipients are excluded.
+
+### GET /reports/\{reportProfile\}/runs
+
+Read the schedule's history, newest first. Returns a paginated collection of [monthly report runs](/api/resources#monthly-report-run) with statuses and delivery counts. Snapshots are omitted from the list.
+
+**Query:** `page` (integer, minimum `1`) and `per_page` (integer, default `25`, range `1`–`100`).
+
+### GET /report-runs/\{reportRun\}
+
+Read a [monthly report run](/api/resources#monthly-report-run). A ready run includes its saved snapshot. Other statuses return `snapshot: null`, so you can check progress without generating a new report.
+
+A ready run returns `404` if it has expired or a site in its snapshot is no longer available in the schedule and team. Saved results retain the branding and measurements captured during generation.
+
+### GET /report-runs/\{reportRun\}/\{format\}
+
+Download the saved report. `format` must be `pdf` or `csv`.
+
+**Response `200`:** File bytes with `Content-Disposition: attachment`, using `application/pdf` or `text/csv; charset=UTF-8`. This response does not use the JSON `data` wrapper.
+
+Send the bearer token on downloads too. Download URLs are authenticated API URLs, not public links or recipient links. Responses use `Cache-Control: private, no-store`.
+
+Returns `404` if the run is not ready, has expired, a site is no longer available in the schedule and team, or the requested file is missing. Pausing a schedule revokes recipient links but does not prevent an eligible owner or admin from reading its saved reports through these endpoints.
 
 ## Issues
 
@@ -612,6 +652,11 @@ Quick reference table:
 | `POST` | `/sites/{site}/checks` | `checks:run` |
 | `GET` | `/sites/{site}/reports/uptime` | `sites:read` |
 | `GET` | `/sites/{site}/reports/performance` | `sites:read` |
+| `GET` | `/teams/{team}/reports` | `reports:read` |
+| `GET` | `/reports/{reportProfile}` | `reports:read` |
+| `GET` | `/reports/{reportProfile}/runs` | `reports:read` |
+| `GET` | `/report-runs/{reportRun}` | `reports:read` |
+| `GET` | `/report-runs/{reportRun}/{format}` | `reports:read` |
 | `GET` | `/checks/{check}` | `checks:read` |
 | `DELETE` | `/checks/{check}` | `checks:delete` |
 | `GET` | `/issues` | `issues:read` |

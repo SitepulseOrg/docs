@@ -523,6 +523,76 @@ Returned by `GET /sites/{site}/reports/performance`.
   - Default range: 30 days; override with `?days=` (max 365)
 </Info>
 
+## Monthly report schedule
+
+Returned in `data` by `GET /reports/{reportProfile}` and as items in the paginated `GET /teams/{team}/reports` collection. Requires `reports:read` and eligible owner/admin access.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uuid` | string | Opaque schedule identifier |
+| `team_uuid` | string | Team identifier |
+| `name` | string | Report title |
+| `enabled` | boolean | Whether monthly delivery is enabled |
+| `timezone` | string | Timezone used for scheduling and month boundaries |
+| `send_day` | integer | Delivery day, from 1 through 10 |
+| `send_time` | string | Local delivery time in `HH:MM` format |
+| `next_run_at` | string \| null | Next scheduled run, as an ISO 8601 timestamp |
+| `sites_count` | integer | Number of selected sites |
+| `runs_count` | integer | Number of saved run records |
+| `sites` | array | Detail response only: selected sites with `uuid`, `name`, and `url` |
+| `recipients` | array | Detail response only: current recipients with `email` and `unsubscribed`; removed recipients are excluded |
+| `created_at`, `updated_at` | string | ISO 8601 timestamps |
+
+## Monthly report run
+
+Returned in `data` by `GET /report-runs/{reportRun}` and as items in the paginated `GET /reports/{reportProfile}/runs` collection.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `uuid` | string | Opaque run identifier |
+| `report_profile_uuid` | string | Parent schedule identifier |
+| `period_key` | string | Reporting month in `YYYY-MM` format |
+| `period_start`, `period_end` | string | ISO 8601 reporting boundaries; the end is exclusive |
+| `status` | string | `pending`, `generating`, `ready`, `failed`, `cancelled`, or `expired` |
+| `generated_at` | string \| null | ISO 8601 generation timestamp |
+| `expires_at` | string | ISO 8601 artifact expiry timestamp |
+| `deliveries_count` | integer | Recipient deliveries created for this run |
+| `sent_count` | integer | Deliveries recorded as sent |
+| `snapshot` | object \| null | Detail response only: saved results when ready, otherwise `null` |
+| `downloads` | object \| null | `pdf` and `csv` authenticated API URLs for ready, unexpired runs; otherwise `null` |
+| `created_at` | string | ISO 8601 creation timestamp |
+
+Download URLs still check the current plan and site access, and whether the file exists, on every request. An expired or revoked ready run returns `404` from the detail and download endpoints. Its history entry can remain visible.
+
+### Saved snapshot
+
+The snapshot contains results and branding saved during generation. It does not recalculate live metrics. Internal numeric site IDs and storage paths are not exposed.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `version` | integer | Snapshot schema version, currently `1` |
+| `title`, `period` | string | Report name and month label |
+| `timezone` | string | Report timezone |
+| `start`, `end` | string | ISO 8601 reporting boundaries |
+| `brand` | object | `name` and `logo` (an image data URI, or `null` when no logo was saved) |
+| `sites` | array | Per-site results described below |
+| `methodology` | string | Explanation of calculations and incomplete coverage |
+
+Each site contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name`, `domain` | string | Saved site name and hostname |
+| `checks`, `failed_checks` | integer | Automatic checks recorded and failed probes |
+| `tools` | object | Recorded check counts keyed by tool; unobserved tools may be absent |
+| `status_observations`, `up_checks` | integer | Known Status observations and successful observations |
+| `successful_status_percentage` | number \| null | Successful observations as a percentage; `null` with no observations |
+| `averages` | object | Observed metric averages: `response_time`, `performance_score`, `lcp`, and `fcp`; unobserved metrics are absent |
+| `issues_opened`, `issues_resolved` | integer | Issues opened or resolved within the period |
+| `partial_period` | boolean | Whether the site was added after the reporting period began |
+
+Response time, LCP, and FCP use milliseconds. Performance scores are out of 100. See [report metrics](/guide/reports#what-the-metrics-mean) for calculation and coverage details.
+
 ## Bulk site create response
 
 `POST /teams/{team}/sites/bulk` returns:
